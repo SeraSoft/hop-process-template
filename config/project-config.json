@@ -1,0 +1,19 @@
+{
+  "description" : "Hop Template Project",
+  "company" : "Serasoft S.r.l.",
+  "department" : "Hop Gurus",
+  "metadataBaseFolder" : "${PROJECT_HOME}/metadata",
+  "unitTestsBasePath" : "${PROJECT_HOME}",
+  "dataSetsCsvFolder" : "${PROJECT_HOME}/datasets",
+  "enforcingExecutionInHome" : true,
+  "parentProjectName" : "default",
+  "config" : {
+    "variables" : [ {
+      "name" : "logs.dir"
+    }, {
+      "name" : "base.tmp.dir"
+    }, {
+      "name" : "locks.dir"
+    } ]
+  }
+}
