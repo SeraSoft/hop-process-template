@@ -537,7 +537,7 @@ PROCESS EXITS!
   </hops>
   <notepads>
     <notepad>
-      <note>Base template for ETL jobs
+      <note>Base template for Hop Processes
 
 Base Process Parameters:
 =================================================================
@@ -549,16 +549,16 @@ Base Instance Variables:
 =================================================================
 - v_job_run_date: Date when the job was started in format yyyyMMdd
 - v_job_run_timestamp: Date when the job was started in format yyyyMMddHHmmss
-- v_hostname: PDI server's hostname
-- v_host_ip: PDI server's host ip address
+- v_hostname: Hop server's hostname
+- v_host_ip: Hop server's host ip address
 - v_process_id: UUID to identify currently running process (36 chars string) 
 
 Base Variables from Config:
 =================================================================
 - base.dir: Root path to a convenient folder to store processes related things (Mandatory)
 - lock.dir: Path to a folder where the process will put locks' files (Mandatory)
-- pdi.user: Associates a user to a running PDI instance
-- pdi.program.name: Associates a name to a running PDI instance</note>
+- pdi.user: Associates a user to a running Hop instance
+- pdi.program.name: Associates a name to a running Hop instance</note>
       <xloc>752</xloc>
       <yloc>352</yloc>
       <width>614</width>
