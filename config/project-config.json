@@ -1,7 +1,4 @@
 {
-  "description" : "Hop Template Project",
-  "company" : "Serasoft S.r.l.",
-  "department" : "Hop Gurus",
   "metadataBaseFolder" : "${PROJECT_HOME}/metadata",
   "unitTestsBasePath" : "${PROJECT_HOME}",
   "dataSetsCsvFolder" : "${PROJECT_HOME}/datasets",
@@ -9,11 +6,111 @@
   "parentProjectName" : "default",
   "config" : {
     "variables" : [ {
-      "name" : "logs.dir"
-    }, {
       "name" : "base.tmp.dir"
     }, {
-      "name" : "locks.dir"
+      "name" : "lock.dir"
+    }, {
+      "name" : "pdi.user",
+      "value" : "hopuser"
+    }, {
+      "name" : "pdi.program.name",
+      "value" : "hop"
+    }, {
+      "name" : "sys.unhandled.exception",
+      "value" : "SYS001"
+    }, {
+      "name" : "integrations.sys.config.schema",
+      "value" : "config"
+    }, {
+      "name" : "integrations.sys.log.schema",
+      "value" : "log"
+    }, {
+      "name" : "integrations.sys.db.host",
+      "value" : "<changeme>"
+    }, {
+      "name" : "integrations.sys.db.type",
+      "value" : "<changeme>"
+    }, {
+      "name" : "integrations.sys.db.name",
+      "value" : "integrations_sys"
+    }, {
+      "name" : "integrations.sys.db.port",
+      "value" : "<changeme>"
+    }, {
+      "name" : "integrations.sys.db.user",
+      "value" : "hop_user"
+    }, {
+      "name" : "integrations.sys.db.pwd",
+      "value" : "password"
+    }, {
+      "name" : "email.success.feedback.enabled",
+      "value" : "0"
+    }, {
+      "name" : "email.fail.feedback.enabled",
+      "value" : "0"
+    }, {
+      "name" : "mail.isauthenticated",
+      "value" : "false"
+    }, {
+      "name" : "mail.isgmail",
+      "value" : "false"
+    }, {
+      "name" : "smtp.mail.host"
+    }, {
+      "name" : "smtp.mail.port",
+      "value" : "25"
+    }, {
+      "name" : "smtp.mail.user"
+    }, {
+      "name" : "smtp.mail.psw"
+    }, {
+      "name" : "mail.from.displayname",
+      "value" : "Hop Process Executor"
+    }, {
+      "name" : "mail.from.email",
+      "value" : "hopexecutor@maildomain.it"
+    }, {
+      "name" : "mail.subject",
+      "value" : "[${v_hostname} - ${p_base_process_name}]"
+    }, {
+      "name" : "mail.subject.error",
+      "value" : "${mail.subject} Failed for system exceptions"
+    }, {
+      "name" : "mail.subject.success",
+      "value" : "${mail.subject} Terminated successfully"
+    }, {
+      "name" : "mail.subject.lock",
+      "value" : "${mail.subject} Same instance is still running. Execution stopped."
+    }, {
+      "name" : "mail.subject.application.error",
+      "value" : "${mail.subject} Failed for application exceptions (integration_log_details)"
+    }, {
+      "name" : "default.mail.destination.addresses",
+      "value" : "destination@maildomain.it"
+    }, {
+      "name" : "success.mail.destination.addresses",
+      "value" : "${default.mail.destination.addresses}"
+    }, {
+      "name" : "errors.mail.destination.addresses",
+      "value" : "${default.mail.destination.addresses}"
+    }, {
+      "name" : "lock.mail.destination.addresses",
+      "value" : "${default.mail.destination.addresses}"
+    }, {
+      "name" : "application.error.mail.destination.addresses",
+      "value" : "${default.mail.destination.addresses}"
+    }, {
+      "name" : "success.mail.text",
+      "value" : "<html><head></head><body>The process ${p_base_process_name} running on server ${v_macchina_hostname} was terminated successfully.<p>Execution's log file available at: ${p_logfile_name}.<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>"
+    }, {
+      "name" : "error.mail.text",
+      "value" : "<html><head></head><body>The process was terminated abnormally because of an Exception.<p>Execution's log file available at: ${p_logfile_name}.<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>"
+    }, {
+      "name" : "lock.mail.text",
+      "value" : "<html><head></head><body>The process ${p_base_process_name} running on server ${v_macchina_hostname} can't be started because <strong>same process started at ${v_last_job_run_timestamp} is not yet terminated.</strong><p>Execution's log file available at: ${p_logfile_name}<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>"
+    }, {
+      "name" : "application.error.mail.text",
+      "value" : "<html><head></head><body>During process's execution we collected some exceptions on integrations_log_details. The detailed list of exception is in the attachment to this email.<p>If needed, execution's log file is available at: ${p_logfile_name}<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>"
     } ]
   }
 }

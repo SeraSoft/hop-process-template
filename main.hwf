@@ -561,9 +561,9 @@ Base Variables from Config:
 - pdi.program.name: Associates a name to a running PDI instance</note>
       <xloc>752</xloc>
       <yloc>352</yloc>
-      <width>660</width>
-      <heigth>428</heigth>
-      <fontname>.SF NS Text</fontname>
+      <width>614</width>
+      <heigth>362</heigth>
+      <fontname>Verdana</fontname>
       <fontsize>10</fontsize>
       <fontbold>N</fontbold>
       <fontitalic>N</fontitalic>
