@@ -31,24 +31,6 @@
       <attributes_hac/>
     </action>
     <action>
-      <name>DUMMY</name>
-      <description/>
-      <type>SPECIAL</type>
-      <attributes/>
-      <repeat>N</repeat>
-      <schedulerType>0</schedulerType>
-      <intervalSeconds>0</intervalSeconds>
-      <intervalMinutes>60</intervalMinutes>
-      <hour>12</hour>
-      <minutes>0</minutes>
-      <weekDay>1</weekDay>
-      <DayOfMonth>1</DayOfMonth>
-      <parallel>N</parallel>
-      <xloc>704</xloc>
-      <yloc>256</yloc>
-      <attributes_hac/>
-    </action>
-    <action>
       <name>Clear lock only if is set by this instance</name>
       <description/>
       <type>SIMPLE_EVAL</type>
@@ -66,7 +48,7 @@
       <successbooleancondition>false</successbooleancondition>
       <successwhenvarset>N</successwhenvarset>
       <parallel>N</parallel>
-      <xloc>496</xloc>
+      <xloc>508</xloc>
       <yloc>256</yloc>
       <attributes_hac/>
     </action>
@@ -95,8 +77,8 @@
       </parameters>
       <set_append_logfile>N</set_append_logfile>
       <parallel>N</parallel>
-      <xloc>592</xloc>
-      <yloc>352</yloc>
+      <xloc>960</xloc>
+      <yloc>256</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -105,7 +87,7 @@
       <type>SUCCESS</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>896</xloc>
+      <xloc>1088</xloc>
       <yloc>256</yloc>
       <attributes_hac/>
     </action>
@@ -115,8 +97,76 @@
       <type>ABORT</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>592</xloc>
-      <yloc>480</yloc>
+      <xloc>672</xloc>
+      <yloc>496</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Check for any errors in integrations_log_details</name>
+      <description/>
+      <type>PIPELINE</type>
+      <attributes/>
+      <filename>${Internal.Entry.Current.Folder}/logging/check_for_soft_errors.hpl</filename>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <run_configuration>local</run_configuration>
+      <parameters>
+        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>
+      <parallel>N</parallel>
+      <xloc>688</xloc>
+      <yloc>256</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Set process termination</name>
+      <description/>
+      <type>PIPELINE</type>
+      <attributes/>
+      <filename>${Internal.Entry.Current.Folder}/update_process_reference.hpl</filename>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <run_configuration>local</run_configuration>
+      <parameters>
+        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>
+      <parallel>N</parallel>
+      <xloc>852</xloc>
+      <yloc>256</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Dummy</name>
+      <description/>
+      <type>DUMMY</type>
+      <attributes/>
+      <parallel>N</parallel>
+      <xloc>672</xloc>
+      <yloc>368</yloc>
       <attributes_hac/>
     </action>
   </actions>
@@ -130,6 +180,41 @@
     </hop>
     <hop>
       <from>Clear lock only if is set by this instance</from>
+      <to>Check for any errors in integrations_log_details</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Check for any errors in integrations_log_details</from>
+      <to>Set process termination</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Clear lock only if is set by this instance</from>
+      <to>Dummy</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Check for any errors in integrations_log_details</from>
+      <to>Dummy</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Set process termination</from>
+      <to>Dummy</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Set process termination</from>
       <to>Clear synchro lock - ok</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
@@ -137,31 +222,17 @@
     </hop>
     <hop>
       <from>Clear synchro lock - ok</from>
-      <to>DUMMY</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Clear lock only if is set by this instance</from>
-      <to>DUMMY</to>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>DUMMY</from>
       <to>Success</to>
       <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
+      <evaluation>N</evaluation>
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Clear synchro lock - ok</from>
+      <from>Dummy</from>
       <to>Abort job</to>
       <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
     </hop>
   </hops>
   <notepads>

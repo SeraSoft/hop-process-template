@@ -45,7 +45,7 @@
       <weekDay>1</weekDay>
       <DayOfMonth>1</DayOfMonth>
       <parallel>N</parallel>
-      <xloc>656</xloc>
+      <xloc>752</xloc>
       <yloc>288</yloc>
       <attributes_hac/>
     </action>
@@ -55,7 +55,7 @@
       <type>ABORT</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>656</xloc>
+      <xloc>752</xloc>
       <yloc>432</yloc>
       <attributes_hac/>
     </action>
@@ -65,7 +65,7 @@
       <type>SUCCESS</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>816</xloc>
+      <xloc>912</xloc>
       <yloc>592</yloc>
       <attributes_hac/>
     </action>
@@ -94,7 +94,7 @@
       </parameters>
       <set_append_logfile>N</set_append_logfile>
       <parallel>N</parallel>
-      <xloc>816</xloc>
+      <xloc>912</xloc>
       <yloc>416</yloc>
       <attributes_hac/>
     </action>
@@ -158,7 +158,7 @@
         <pass_all_parameters>Y</pass_all_parameters>
       </parameters>
       <parallel>N</parallel>
-      <xloc>816</xloc>
+      <xloc>912</xloc>
       <yloc>48</yloc>
       <attributes_hac/>
     </action>
@@ -180,7 +180,7 @@
       <successbooleancondition>false</successbooleancondition>
       <successwhenvarset>N</successwhenvarset>
       <parallel>N</parallel>
-      <xloc>816</xloc>
+      <xloc>912</xloc>
       <yloc>144</yloc>
       <attributes_hac/>
     </action>
@@ -190,7 +190,7 @@
       <type>SUCCESS</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>1088</xloc>
+      <xloc>1184</xloc>
       <yloc>144</yloc>
       <attributes_hac/>
     </action>
@@ -205,7 +205,7 @@ v_lock_present: ${v_lock_present}</logmessage>
       <loglevel>Basic</loglevel>
       <logsubject/>
       <parallel>N</parallel>
-      <xloc>960</xloc>
+      <xloc>1056</xloc>
       <yloc>144</yloc>
       <attributes_hac/>
     </action>
@@ -234,7 +234,7 @@ v_lock_present: ${v_lock_present}</logmessage>
         <pass_all_parameters>Y</pass_all_parameters>
       </parameters>
       <parallel>N</parallel>
-      <xloc>816</xloc>
+      <xloc>912</xloc>
       <yloc>240</yloc>
       <attributes_hac/>
     </action>
@@ -252,7 +252,7 @@ v_lock_present: ${v_lock_present}
       <loglevel>Basic</loglevel>
       <logsubject/>
       <parallel>N</parallel>
-      <xloc>816</xloc>
+      <xloc>912</xloc>
       <yloc>320</yloc>
       <attributes_hac/>
     </action>
@@ -281,7 +281,7 @@ v_lock_present: ${v_lock_present}
       </parameters>
       <set_append_logfile>N</set_append_logfile>
       <parallel>N</parallel>
-      <xloc>656</xloc>
+      <xloc>752</xloc>
       <yloc>48</yloc>
       <attributes_hac/>
     </action>
@@ -310,7 +310,7 @@ v_lock_present: ${v_lock_present}
         <pass_all_parameters>Y</pass_all_parameters>
       </parameters>
       <parallel>N</parallel>
-      <xloc>496</xloc>
+      <xloc>640</xloc>
       <yloc>48</yloc>
       <attributes_hac/>
     </action>
@@ -338,7 +338,7 @@ Delete this last message and add here your own application instance variable's d
       <loglevel>Basic</loglevel>
       <logsubject/>
       <parallel>N</parallel>
-      <xloc>816</xloc>
+      <xloc>912</xloc>
       <yloc>512</yloc>
       <attributes_hac/>
     </action>
@@ -360,6 +360,35 @@ Delete this last message and add here your own application instance variable's d
       <parallel>N</parallel>
       <xloc>240</xloc>
       <yloc>160</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Create new process instance</name>
+      <description/>
+      <type>PIPELINE</type>
+      <attributes/>
+      <filename>${inte${Internal.Entry.Current.Folder}/init/create_new_pdi_process_instance.hpl</filename>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <run_configuration>local</run_configuration>
+      <parameters>
+        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>
+      <parallel>N</parallel>
+      <xloc>496</xloc>
+      <yloc>48</yloc>
       <attributes_hac/>
     </action>
   </actions>
@@ -484,18 +513,25 @@ Delete this last message and add here your own application instance variable's d
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Check p_base_process_name exists</from>
-      <to>Init sys variables</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
       <from>Init Global Vars</from>
       <to>Check p_base_process_name exists</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Check p_base_process_name exists</from>
+      <to>Create new process instance</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Create new process instance</from>
+      <to>Init sys variables</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
     </hop>
   </hops>
   <notepads>

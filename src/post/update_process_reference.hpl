@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pipeline>
+  <info>
+    <name>Update Hop Process Reference</name>
+    <name_sync_with_filename>N</name_sync_with_filename>
+    <description/>
+    <extended_description/>
+    <pipeline_version/>
+    <pipeline_type>Normal</pipeline_type>
+    <pipeline_status>0</pipeline_status>
+    <parameters>
+    </parameters>
+    <capture_transform_performance>N</capture_transform_performance>
+    <transform_performance_capturing_delay>1000</transform_performance_capturing_delay>
+    <transform_performance_capturing_size_limit/>
+    <created_user>-</created_user>
+    <created_date>2020/01/07 10:56:30.129</created_date>
+    <modified_user>-</modified_user>
+    <modified_date>2020/01/07 10:56:30.129</modified_date>
+    <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA=</key_for_session_key>
+    <is_key_private>N</is_key_private>
+  </info>
+  <notepads>
+    <notepad>
+      <note>Process Termination Codes Legenda
+
+T -> Terminated Successfully
+E -> Terminated with Errors (Hard Exceptions)
+X -> Terminated with ONLY functional errors (Soft Exceptions)
+O -> Terminated because another instance of same process is running</note>
+      <xloc>224</xloc>
+      <yloc>368</yloc>
+      <width>470</width>
+      <heigth>130</heigth>
+      <fontname>Segoe UI</fontname>
+      <fontsize>9</fontsize>
+      <fontbold>N</fontbold>
+      <fontitalic>N</fontitalic>
+      <fontcolorred>0</fontcolorred>
+      <fontcolorgreen>0</fontcolorgreen>
+      <fontcolorblue>0</fontcolorblue>
+      <backgroundcolorred>255</backgroundcolorred>
+      <backgroundcolorgreen>205</backgroundcolorgreen>
+      <backgroundcolorblue>112</backgroundcolorblue>
+      <bordercolorred>100</bordercolorred>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorblue>100</bordercolorblue>
+    </notepad>
+  </notepads>
+  <order>
+    <hop>
+      <from>Start</from>
+      <to>Get audit fields</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get audit fields</from>
+      <to>Get system info</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get system info</from>
+      <to>User defined Java expression</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>User defined Java expression</from>
+      <to>Update Hop process log</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+  <transform>
+    <name>Get audit fields</name>
+    <type>GetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>process_id</name>
+        <variable>${v_process_id}</variable>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
+      <field>
+        <name>terminated_successfully</name>
+        <variable>${terminated.successfully}</variable>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>records_in_error</name>
+        <variable>${v_err_items_num}</variable>
+        <type>Integer</type>
+        <format>#</format>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
+      <field>
+        <name>date_start</name>
+        <variable>${v_job_run_timestamp}</variable>
+        <type>Date</type>
+        <format>yyyyMMddHHmmss</format>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>325</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Get system info</name>
+    <type>SystemInfo</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>now</name>
+        <type>system date (fixed)</type>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>490</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Start</name>
+    <type>RowGenerator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+</fields>
+    <interval_in_ms>5000</interval_in_ms>
+    <last_time_field>FiveSecondsAgo</last_time_field>
+    <never_ending>N</never_ending>
+    <limit>1</limit>
+    <row_time_field>now</row_time_field>
+    <attributes/>
+    <GUI>
+      <xloc>160</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Update Hop process log</name>
+    <type>Update</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>integrations_schema</connection>
+    <skip_lookup>Y</skip_lookup>
+    <commit>100</commit>
+    <use_batch>N</use_batch>
+    <error_ignored>N</error_ignored>
+    <ignore_flag_field/>
+    <lookup>
+      <schema>${integrations_sys_log_schema}</schema>
+      <table>integrations_logs</table>
+      <key>
+        <name>process_id</name>
+        <field>id</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>date_finished</name>
+        <rename>now</rename>
+      </value>
+      <value>
+        <name>proc_status</name>
+        <rename>status</rename>
+      </value>
+      <value>
+        <name>max_gravity</name>
+        <rename>gravity</rename>
+      </value>
+    </lookup>
+    <attributes/>
+    <GUI>
+      <xloc>800</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>User defined Java expression</name>
+    <type>Janino</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <formula>
+      <field_name>status</field_name>
+      <formula_string>(terminated_successfully.equals("0") ? "E" : (( terminated_successfully.equals("1") &amp;&amp; records_in_error > 0 ) ? "X" : (terminated_successfully.equals("2") ? "O" : "T")))</formula_string>
+      <value_type>String</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <replace_field/>
+    </formula>
+    <formula>
+      <field_name>gravity</field_name>
+      <formula_string>terminated_successfully.equals("0") ? 1 : 0</formula_string>
+      <value_type>Integer</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <replace_field/>
+    </formula>
+    <formula>
+      <field_name>exec_stage</field_name>
+      <formula_string>"THE_EXEC_STAGE"</formula_string>
+      <value_type>String</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <replace_field/>
+    </formula>
+    <attributes/>
+    <GUI>
+      <xloc>655</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform_error_handling>
+  </transform_error_handling>
+  <attributes/>
+</pipeline>

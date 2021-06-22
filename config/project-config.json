@@ -30,7 +30,7 @@
       "value" : "<changeme>"
     }, {
       "name" : "integrations.sys.db.type",
-      "value" : "<changeme>"
+      "value" : "PostgreSQL"
     }, {
       "name" : "integrations.sys.db.name",
       "value" : "integrations_sys"
