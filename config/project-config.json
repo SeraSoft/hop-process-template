@@ -3,12 +3,13 @@
   "unitTestsBasePath" : "${PROJECT_HOME}",
   "dataSetsCsvFolder" : "${PROJECT_HOME}/datasets",
   "enforcingExecutionInHome" : true,
-  "parentProjectName" : "default",
   "config" : {
     "variables" : [ {
-      "name" : "base.tmp.dir"
+      "name" : "base.tmp.dir",
+      "value" : "c:\\temp"
     }, {
-      "name" : "lock.dir"
+      "name" : "lock.dir",
+      "value" : "${base.tmp.dir}\\hop"
     }, {
       "name" : "pdi.user",
       "value" : "hopuser"
