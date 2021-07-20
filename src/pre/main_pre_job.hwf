@@ -367,7 +367,7 @@ Delete this last message and add here your own application instance variable's d
       <description/>
       <type>PIPELINE</type>
       <attributes/>
-      <filename>${inte${Internal.Entry.Current.Folder}/init/create_new_pdi_process_instance.hpl</filename>
+      <filename>${Internal.Entry.Current.Folder}/init/create_new_pdi_process_instance.hpl</filename>
       <params_from_previous>N</params_from_previous>
       <exec_per_row>N</exec_per_row>
       <clear_rows>N</clear_rows>
@@ -543,6 +543,9 @@ Delete this last message and add here your own application instance variable's d
         <key>Default Run Configuration</key>
         <value>{"namespace":"pentaho","id":"Default Run Configuration","name":"Default Run Configuration","description":"Defines a default run configuration","metaStoreName":null}</value>
       </attribute>
+    </group>
+    <group>
+      <name>debug_plugin</name>
     </group>
     <group>
       <name>{"_":"Embedded MetaStore Elements","namespace":"pentaho","type":"Default Run Configuration"}</name>

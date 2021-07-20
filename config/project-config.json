@@ -29,20 +29,23 @@
       "name" : "integrations.sys.db.host",
       "value" : "<changeme>"
     }, {
-      "name" : "integrations.sys.db.type",
+      "name" : "db.type",
       "value" : "PostgreSQL"
+    }, {
+      "name" : "integrations.sys.connection.name",
+      "value" : "integrations_schema"
     }, {
       "name" : "integrations.sys.db.name",
       "value" : "integrations_sys"
     }, {
       "name" : "integrations.sys.db.port",
-      "value" : "<changeme>"
+      "value" : "5432"
     }, {
       "name" : "integrations.sys.db.user",
-      "value" : "hop_user"
+      "value" : "<changeme>"
     }, {
       "name" : "integrations.sys.db.pwd",
-      "value" : "password"
+      "value" : "<changeme>"
     }, {
       "name" : "email.success.feedback.enabled",
       "value" : "0"
