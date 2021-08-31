@@ -191,7 +191,7 @@
       <schema_name/>
     </partitioning>
     <commit>1000</commit>
-    <connection>integrations_schema</connection>
+    <connection>${integrations.sys.connection.name}</connection>
     <fields>
       <field>
         <column_name>id</column_name>
@@ -290,7 +290,7 @@
     </fields>
     <attributes/>
     <GUI>
-      <xloc>944</xloc>
+      <xloc>960</xloc>
       <yloc>144</yloc>
     </GUI>
   </transform>

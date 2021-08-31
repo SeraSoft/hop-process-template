@@ -31,20 +31,12 @@
       <attributes_hac/>
     </action>
     <action>
-      <name>DUMMY</name>
+      <name>Dummy</name>
       <description/>
-      <type>SPECIAL</type>
+      <type>DUMMY</type>
       <attributes/>
-      <repeat>N</repeat>
-      <schedulerType>0</schedulerType>
-      <intervalSeconds>0</intervalSeconds>
-      <intervalMinutes>60</intervalMinutes>
-      <hour>12</hour>
-      <minutes>0</minutes>
-      <weekDay>1</weekDay>
-      <DayOfMonth>1</DayOfMonth>
       <parallel>N</parallel>
-      <xloc>352</xloc>
+      <xloc>432</xloc>
       <yloc>144</yloc>
       <attributes_hac/>
     </action>
@@ -52,7 +44,7 @@
   <hops>
     <hop>
       <from>START</from>
-      <to>DUMMY</to>
+      <to>Dummy</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>Y</unconditional>

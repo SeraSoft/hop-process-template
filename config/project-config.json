@@ -27,7 +27,7 @@
       "value" : "log"
     }, {
       "name" : "integrations.sys.db.host",
-      "value" : "<changeme>"
+      "value" : "localhost"
     }, {
       "name" : "db.type",
       "value" : "PostgreSQL"
@@ -42,10 +42,10 @@
       "value" : "5432"
     }, {
       "name" : "integrations.sys.db.user",
-      "value" : "<changeme>"
+      "value" : "postgres"
     }, {
       "name" : "integrations.sys.db.pwd",
-      "value" : "<changeme>"
+      "value" : "password"
     }, {
       "name" : "email.success.feedback.enabled",
       "value" : "0"
@@ -64,7 +64,8 @@
       "name" : "smtp.mail.port",
       "value" : "25"
     }, {
-      "name" : "smtp.mail.user"
+      "name" : "smtp.mail.user",
+      "value" : "user1"
     }, {
       "name" : "smtp.mail.psw"
     }, {

@@ -28,25 +28,7 @@
       <DayOfMonth>1</DayOfMonth>
       <parallel>N</parallel>
       <xloc>64</xloc>
-      <yloc>160</yloc>
-      <attributes_hac/>
-    </action>
-    <action>
-      <name>DUMMY 2</name>
-      <description/>
-      <type>SPECIAL</type>
-      <attributes/>
-      <repeat>N</repeat>
-      <schedulerType>0</schedulerType>
-      <intervalSeconds>0</intervalSeconds>
-      <intervalMinutes>60</intervalMinutes>
-      <hour>12</hour>
-      <minutes>0</minutes>
-      <weekDay>1</weekDay>
-      <DayOfMonth>1</DayOfMonth>
-      <parallel>N</parallel>
-      <xloc>752</xloc>
-      <yloc>288</yloc>
+      <yloc>192</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -55,8 +37,8 @@
       <type>ABORT</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>752</xloc>
-      <yloc>432</yloc>
+      <xloc>720</xloc>
+      <yloc>368</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -66,7 +48,7 @@
       <attributes/>
       <parallel>N</parallel>
       <xloc>912</xloc>
-      <yloc>592</yloc>
+      <yloc>640</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -95,7 +77,7 @@
       <set_append_logfile>N</set_append_logfile>
       <parallel>N</parallel>
       <xloc>912</xloc>
-      <yloc>416</yloc>
+      <yloc>464</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -117,7 +99,7 @@
       <successwhenvarset>N</successwhenvarset>
       <parallel>N</parallel>
       <xloc>400</xloc>
-      <yloc>160</yloc>
+      <yloc>192</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -129,8 +111,8 @@
       <loglevel>Basic</loglevel>
       <logsubject/>
       <parallel>N</parallel>
-      <xloc>496</xloc>
-      <yloc>288</yloc>
+      <xloc>560</xloc>
+      <yloc>192</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -181,7 +163,7 @@
       <successwhenvarset>N</successwhenvarset>
       <parallel>N</parallel>
       <xloc>912</xloc>
-      <yloc>144</yloc>
+      <yloc>192</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -191,7 +173,7 @@
       <attributes/>
       <parallel>N</parallel>
       <xloc>1184</xloc>
-      <yloc>144</yloc>
+      <yloc>192</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -206,7 +188,7 @@ v_lock_present: ${v_lock_present}</logmessage>
       <logsubject/>
       <parallel>N</parallel>
       <xloc>1056</xloc>
-      <yloc>144</yloc>
+      <yloc>192</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -235,7 +217,7 @@ v_lock_present: ${v_lock_present}</logmessage>
       </parameters>
       <parallel>N</parallel>
       <xloc>912</xloc>
-      <yloc>240</yloc>
+      <yloc>288</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -253,7 +235,7 @@ v_lock_present: ${v_lock_present}
       <logsubject/>
       <parallel>N</parallel>
       <xloc>912</xloc>
-      <yloc>320</yloc>
+      <yloc>368</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -339,7 +321,7 @@ Delete this last message and add here your own application instance variable's d
       <logsubject/>
       <parallel>N</parallel>
       <xloc>912</xloc>
-      <yloc>512</yloc>
+      <yloc>560</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -359,7 +341,7 @@ Delete this last message and add here your own application instance variable's d
       </fields>
       <parallel>N</parallel>
       <xloc>240</xloc>
-      <yloc>160</yloc>
+      <yloc>192</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -391,15 +373,18 @@ Delete this last message and add here your own application instance variable's d
       <yloc>48</yloc>
       <attributes_hac/>
     </action>
+    <action>
+      <name>Dummy</name>
+      <description/>
+      <type>DUMMY</type>
+      <attributes/>
+      <parallel>N</parallel>
+      <xloc>720</xloc>
+      <yloc>192</yloc>
+      <attributes_hac/>
+    </action>
   </actions>
   <hops>
-    <hop>
-      <from>DUMMY 2</from>
-      <to>Interrompi job</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
     <hop>
       <from>Check p_base_process_name exists</from>
       <to>Log Info 2</to>
@@ -412,20 +397,6 @@ Delete this last message and add here your own application instance variable's d
       <to>Evaluate synchro lock is present</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Log Info 2</from>
-      <to>DUMMY 2</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Init App Environment - Post Phase</from>
-      <to>DUMMY 2</to>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
       <unconditional>N</unconditional>
     </hop>
     <hop>
@@ -451,23 +422,9 @@ Delete this last message and add here your own application instance variable's d
     </hop>
     <hop>
       <from>Create lock variable</from>
-      <to>DUMMY 2</to>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Create lock variable</from>
       <to>Log Info 3</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Init App Environment - Pre Phase</from>
-      <to>DUMMY 2</to>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
       <unconditional>N</unconditional>
     </hop>
     <hop>
@@ -529,6 +486,62 @@ Delete this last message and add here your own application instance variable's d
     <hop>
       <from>Create new process instance</from>
       <to>Init sys variables</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Create new process instance</from>
+      <to>Dummy</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Init sys variables</from>
+      <to>Dummy</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Init App Environment - Pre Phase</from>
+      <to>Dummy</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Check Process is already running</from>
+      <to>Dummy</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Create lock variable</from>
+      <to>Dummy</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Init App Environment - Post Phase</from>
+      <to>Dummy</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Log Info 2</from>
+      <to>Dummy</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Dummy</from>
+      <to>Interrompi job</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>Y</unconditional>
