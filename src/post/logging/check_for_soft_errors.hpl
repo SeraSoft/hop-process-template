@@ -1,431 +1,18 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><pipeline>
+<?xml version="1.0" encoding="UTF-8"?>
+<pipeline>
   <info>
     <name>check_for_soft_errors</name>
+    <name_sync_with_filename>N</name_sync_with_filename>
     <description/>
     <extended_description/>
-    <trans_version/>
+    <pipeline_version/>
     <pipeline_type>Normal</pipeline_type>
     <pipeline_status>0</pipeline_status>
-    <directory>/</directory>
     <parameters>
     </parameters>
-    <log>
-      <trans-log-table>
-        <connection/>
-        <schema/>
-        <table/>
-        <size_limit_lines/>
-        <interval/>
-        <timeout_days/>
-        <field>
-          <id>ID_BATCH</id>
-          <enabled>Y</enabled>
-          <name>ID_BATCH</name>
-        </field>
-        <field>
-          <id>CHANNEL_ID</id>
-          <enabled>Y</enabled>
-          <name>CHANNEL_ID</name>
-        </field>
-        <field>
-          <id>TRANSNAME</id>
-          <enabled>Y</enabled>
-          <name>TRANSNAME</name>
-        </field>
-        <field>
-          <id>STATUS</id>
-          <enabled>Y</enabled>
-          <name>STATUS</name>
-        </field>
-        <field>
-          <id>LINES_READ</id>
-          <enabled>Y</enabled>
-          <name>LINES_READ</name>
-          <subject/>
-        </field>
-        <field>
-          <id>LINES_WRITTEN</id>
-          <enabled>Y</enabled>
-          <name>LINES_WRITTEN</name>
-          <subject/>
-        </field>
-        <field>
-          <id>LINES_UPDATED</id>
-          <enabled>Y</enabled>
-          <name>LINES_UPDATED</name>
-          <subject/>
-        </field>
-        <field>
-          <id>LINES_INPUT</id>
-          <enabled>Y</enabled>
-          <name>LINES_INPUT</name>
-          <subject/>
-        </field>
-        <field>
-          <id>LINES_OUTPUT</id>
-          <enabled>Y</enabled>
-          <name>LINES_OUTPUT</name>
-          <subject/>
-        </field>
-        <field>
-          <id>LINES_REJECTED</id>
-          <enabled>Y</enabled>
-          <name>LINES_REJECTED</name>
-          <subject/>
-        </field>
-        <field>
-          <id>ERRORS</id>
-          <enabled>Y</enabled>
-          <name>ERRORS</name>
-        </field>
-        <field>
-          <id>STARTDATE</id>
-          <enabled>Y</enabled>
-          <name>STARTDATE</name>
-        </field>
-        <field>
-          <id>ENDDATE</id>
-          <enabled>Y</enabled>
-          <name>ENDDATE</name>
-        </field>
-        <field>
-          <id>LOGDATE</id>
-          <enabled>Y</enabled>
-          <name>LOGDATE</name>
-        </field>
-        <field>
-          <id>DEPDATE</id>
-          <enabled>Y</enabled>
-          <name>DEPDATE</name>
-        </field>
-        <field>
-          <id>REPLAYDATE</id>
-          <enabled>Y</enabled>
-          <name>REPLAYDATE</name>
-        </field>
-        <field>
-          <id>LOG_FIELD</id>
-          <enabled>Y</enabled>
-          <name>LOG_FIELD</name>
-        </field>
-        <field>
-          <id>EXECUTING_SERVER</id>
-          <enabled>N</enabled>
-          <name>EXECUTING_SERVER</name>
-        </field>
-        <field>
-          <id>EXECUTING_USER</id>
-          <enabled>N</enabled>
-          <name>EXECUTING_USER</name>
-        </field>
-        <field>
-          <id>CLIENT</id>
-          <enabled>N</enabled>
-          <name>CLIENT</name>
-        </field>
-      </trans-log-table>
-      <perf-log-table>
-        <connection/>
-        <schema/>
-        <table/>
-        <interval/>
-        <timeout_days/>
-        <field>
-          <id>ID_BATCH</id>
-          <enabled>Y</enabled>
-          <name>ID_BATCH</name>
-        </field>
-        <field>
-          <id>SEQ_NR</id>
-          <enabled>Y</enabled>
-          <name>SEQ_NR</name>
-        </field>
-        <field>
-          <id>LOGDATE</id>
-          <enabled>Y</enabled>
-          <name>LOGDATE</name>
-        </field>
-        <field>
-          <id>TRANSNAME</id>
-          <enabled>Y</enabled>
-          <name>TRANSNAME</name>
-        </field>
-        <field>
-          <id>STEPNAME</id>
-          <enabled>Y</enabled>
-          <name>STEPNAME</name>
-        </field>
-        <field>
-          <id>STEP_COPY</id>
-          <enabled>Y</enabled>
-          <name>STEP_COPY</name>
-        </field>
-        <field>
-          <id>LINES_READ</id>
-          <enabled>Y</enabled>
-          <name>LINES_READ</name>
-        </field>
-        <field>
-          <id>LINES_WRITTEN</id>
-          <enabled>Y</enabled>
-          <name>LINES_WRITTEN</name>
-        </field>
-        <field>
-          <id>LINES_UPDATED</id>
-          <enabled>Y</enabled>
-          <name>LINES_UPDATED</name>
-        </field>
-        <field>
-          <id>LINES_INPUT</id>
-          <enabled>Y</enabled>
-          <name>LINES_INPUT</name>
-        </field>
-        <field>
-          <id>LINES_OUTPUT</id>
-          <enabled>Y</enabled>
-          <name>LINES_OUTPUT</name>
-        </field>
-        <field>
-          <id>LINES_REJECTED</id>
-          <enabled>Y</enabled>
-          <name>LINES_REJECTED</name>
-        </field>
-        <field>
-          <id>ERRORS</id>
-          <enabled>Y</enabled>
-          <name>ERRORS</name>
-        </field>
-        <field>
-          <id>INPUT_BUFFER_ROWS</id>
-          <enabled>Y</enabled>
-          <name>INPUT_BUFFER_ROWS</name>
-        </field>
-        <field>
-          <id>OUTPUT_BUFFER_ROWS</id>
-          <enabled>Y</enabled>
-          <name>OUTPUT_BUFFER_ROWS</name>
-        </field>
-      </perf-log-table>
-      <channel-log-table>
-        <connection/>
-        <schema/>
-        <table/>
-        <timeout_days/>
-        <field>
-          <id>ID_BATCH</id>
-          <enabled>Y</enabled>
-          <name>ID_BATCH</name>
-        </field>
-        <field>
-          <id>CHANNEL_ID</id>
-          <enabled>Y</enabled>
-          <name>CHANNEL_ID</name>
-        </field>
-        <field>
-          <id>LOG_DATE</id>
-          <enabled>Y</enabled>
-          <name>LOG_DATE</name>
-        </field>
-        <field>
-          <id>LOGGING_OBJECT_TYPE</id>
-          <enabled>Y</enabled>
-          <name>LOGGING_OBJECT_TYPE</name>
-        </field>
-        <field>
-          <id>OBJECT_NAME</id>
-          <enabled>Y</enabled>
-          <name>OBJECT_NAME</name>
-        </field>
-        <field>
-          <id>OBJECT_COPY</id>
-          <enabled>Y</enabled>
-          <name>OBJECT_COPY</name>
-        </field>
-        <field>
-          <id>REPOSITORY_DIRECTORY</id>
-          <enabled>Y</enabled>
-          <name>REPOSITORY_DIRECTORY</name>
-        </field>
-        <field>
-          <id>FILENAME</id>
-          <enabled>Y</enabled>
-          <name>FILENAME</name>
-        </field>
-        <field>
-          <id>OBJECT_ID</id>
-          <enabled>Y</enabled>
-          <name>OBJECT_ID</name>
-        </field>
-        <field>
-          <id>OBJECT_REVISION</id>
-          <enabled>Y</enabled>
-          <name>OBJECT_REVISION</name>
-        </field>
-        <field>
-          <id>PARENT_CHANNEL_ID</id>
-          <enabled>Y</enabled>
-          <name>PARENT_CHANNEL_ID</name>
-        </field>
-        <field>
-          <id>ROOT_CHANNEL_ID</id>
-          <enabled>Y</enabled>
-          <name>ROOT_CHANNEL_ID</name>
-        </field>
-      </channel-log-table>
-      <step-log-table>
-        <connection/>
-        <schema/>
-        <table/>
-        <timeout_days/>
-        <field>
-          <id>ID_BATCH</id>
-          <enabled>Y</enabled>
-          <name>ID_BATCH</name>
-        </field>
-        <field>
-          <id>CHANNEL_ID</id>
-          <enabled>Y</enabled>
-          <name>CHANNEL_ID</name>
-        </field>
-        <field>
-          <id>LOG_DATE</id>
-          <enabled>Y</enabled>
-          <name>LOG_DATE</name>
-        </field>
-        <field>
-          <id>TRANSNAME</id>
-          <enabled>Y</enabled>
-          <name>TRANSNAME</name>
-        </field>
-        <field>
-          <id>STEPNAME</id>
-          <enabled>Y</enabled>
-          <name>STEPNAME</name>
-        </field>
-        <field>
-          <id>STEP_COPY</id>
-          <enabled>Y</enabled>
-          <name>STEP_COPY</name>
-        </field>
-        <field>
-          <id>LINES_READ</id>
-          <enabled>Y</enabled>
-          <name>LINES_READ</name>
-        </field>
-        <field>
-          <id>LINES_WRITTEN</id>
-          <enabled>Y</enabled>
-          <name>LINES_WRITTEN</name>
-        </field>
-        <field>
-          <id>LINES_UPDATED</id>
-          <enabled>Y</enabled>
-          <name>LINES_UPDATED</name>
-        </field>
-        <field>
-          <id>LINES_INPUT</id>
-          <enabled>Y</enabled>
-          <name>LINES_INPUT</name>
-        </field>
-        <field>
-          <id>LINES_OUTPUT</id>
-          <enabled>Y</enabled>
-          <name>LINES_OUTPUT</name>
-        </field>
-        <field>
-          <id>LINES_REJECTED</id>
-          <enabled>Y</enabled>
-          <name>LINES_REJECTED</name>
-        </field>
-        <field>
-          <id>ERRORS</id>
-          <enabled>Y</enabled>
-          <name>ERRORS</name>
-        </field>
-        <field>
-          <id>LOG_FIELD</id>
-          <enabled>N</enabled>
-          <name>LOG_FIELD</name>
-        </field>
-      </step-log-table>
-      <metrics-log-table>
-        <connection/>
-        <schema/>
-        <table/>
-        <timeout_days/>
-        <field>
-          <id>ID_BATCH</id>
-          <enabled>Y</enabled>
-          <name>ID_BATCH</name>
-        </field>
-        <field>
-          <id>CHANNEL_ID</id>
-          <enabled>Y</enabled>
-          <name>CHANNEL_ID</name>
-        </field>
-        <field>
-          <id>LOG_DATE</id>
-          <enabled>Y</enabled>
-          <name>LOG_DATE</name>
-        </field>
-        <field>
-          <id>METRICS_DATE</id>
-          <enabled>Y</enabled>
-          <name>METRICS_DATE</name>
-        </field>
-        <field>
-          <id>METRICS_CODE</id>
-          <enabled>Y</enabled>
-          <name>METRICS_CODE</name>
-        </field>
-        <field>
-          <id>METRICS_DESCRIPTION</id>
-          <enabled>Y</enabled>
-          <name>METRICS_DESCRIPTION</name>
-        </field>
-        <field>
-          <id>METRICS_SUBJECT</id>
-          <enabled>Y</enabled>
-          <name>METRICS_SUBJECT</name>
-        </field>
-        <field>
-          <id>METRICS_TYPE</id>
-          <enabled>Y</enabled>
-          <name>METRICS_TYPE</name>
-        </field>
-        <field>
-          <id>METRICS_VALUE</id>
-          <enabled>Y</enabled>
-          <name>METRICS_VALUE</name>
-        </field>
-      </metrics-log-table>
-    </log>
-    <maxdate>
-      <connection/>
-      <table/>
-      <field/>
-      <offset>0.0</offset>
-      <maxdiff>0.0</maxdiff>
-    </maxdate>
-    <size_rowset>10000</size_rowset>
-    <sleep_time_empty>50</sleep_time_empty>
-    <sleep_time_full>50</sleep_time_full>
-    <unique_connections>N</unique_connections>
-    <feedback_shown>Y</feedback_shown>
-    <feedback_size>50000</feedback_size>
-    <using_thread_priorities>Y</using_thread_priorities>
-    <shared_objects_file/>
-    <capture_step_performance>N</capture_step_performance>
-    <step_performance_capturing_delay>1000</step_performance_capturing_delay>
-    <step_performance_capturing_size_limit>100</step_performance_capturing_size_limit>
-    <dependencies>
-    </dependencies>
-    <partitionschemas>
-    </partitionschemas>
-    <slaveservers>
-    </slaveservers>
-    <clusterschemas>
-    </clusterschemas>
+    <capture_transform_performance>N</capture_transform_performance>
+    <transform_performance_capturing_delay>1000</transform_performance_capturing_delay>
+    <transform_performance_capturing_size_limit/>
     <created_user>-</created_user>
     <created_date>2020/01/07 10:56:30.129</created_date>
     <modified_user>-</modified_user>
@@ -435,7 +22,6 @@
   </info>
   <notepads>
   </notepads>
-  
   <order>
     <hop>
       <from>Get count logging_details</from>
@@ -554,17 +140,9 @@
       </condition>
     </compare>
     <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
     <GUI>
       <xloc>742</xloc>
       <yloc>468</yloc>
-      <draw>Y</draw>
     </GUI>
   </transform>
   <transform>
@@ -579,17 +157,9 @@
       <schema_name/>
     </partitioning>
     <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
     <GUI>
       <xloc>112</xloc>
       <yloc>252</yloc>
-      <draw>Y</draw>
     </GUI>
   </transform>
   <transform>
@@ -604,17 +174,9 @@
       <schema_name/>
     </partitioning>
     <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
     <GUI>
       <xloc>742</xloc>
       <yloc>360</yloc>
-      <draw>Y</draw>
     </GUI>
   </transform>
   <transform>
@@ -669,17 +231,9 @@
       </condition>
     </compare>
     <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
     <GUI>
       <xloc>742</xloc>
       <yloc>144</yloc>
-      <draw>Y</draw>
     </GUI>
   </transform>
   <transform>
@@ -695,30 +249,18 @@
     </partitioning>
     <fields>
       <field>
-        <name>gravity_on_abort</name>
-        <type>Integer</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif>10</nullif>
-        <length>-1</length>
-        <precision>-1</precision>
         <set_empty_string>N</set_empty_string>
+        <length>-1</length>
+        <name>gravity_on_abort</name>
+        <precision>-1</precision>
+        <type>Integer</type>
+        <nullif>10</nullif>
       </field>
     </fields>
     <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
     <GUI>
       <xloc>742</xloc>
       <yloc>252</yloc>
-      <draw>Y</draw>
     </GUI>
   </transform>
   <transform>
@@ -732,32 +274,23 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>integrations_sys</connection>
+    <connection>integrations_schema</connection>
     <sql>select ile.event_type 
 , ile.gravity
 , count(*) as num_err 
- from ${integrations_sys_log_schema}.integrations_log_details ild 
-inner join ${integrations_sys_log_schema}.integrations_logs il on il.id = ild.integrations_logs_id
-inner join ${integrations_sys_config_schema}.integrations_log_events ile on ile.id = ild.integrations_log_events_id 
+ from ${integrations.sys.log.schema}.integrations_log_details ild 
+inner join ${integrations.sys.log.schema}}.integrations_logs il on il.id = ild.integrations_logs_id
+inner join ${integrations.sys.log.schema}.integrations_log_events ile on ile.id = ild.integrations_log_events_id 
 where il.id = '${v_process_id}'
 group by ile.event_type, ile.gravity</sql>
     <limit>0</limit>
     <lookup/>
     <execute_each_row>N</execute_each_row>
     <variables_active>Y</variables_active>
-    <lazy_conversion_active>N</lazy_conversion_active>
     <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
     <GUI>
       <xloc>112</xloc>
       <yloc>144</yloc>
-      <draw>Y</draw>
     </GUI>
   </transform>
   <transform>
@@ -786,17 +319,9 @@ group by ile.event_type, ile.gravity</sql>
       </field>
     </fields>
     <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
     <GUI>
       <xloc>952</xloc>
       <yloc>576</yloc>
-      <draw>Y</draw>
     </GUI>
   </transform>
   <transform>
@@ -861,17 +386,9 @@ group by ile.event_type, ile.gravity</sql>
       </field>
     </fields>
     <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
     <GUI>
       <xloc>322</xloc>
       <yloc>144</yloc>
-      <draw>Y</draw>
     </GUI>
   </transform>
   <transform>
@@ -919,17 +436,9 @@ group by ile.event_type, ile.gravity</sql>
       </field>
     </fields>
     <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
     <GUI>
       <xloc>532</xloc>
       <yloc>144</yloc>
-      <draw>Y</draw>
     </GUI>
   </transform>
   <transform>
@@ -950,17 +459,9 @@ group by ile.event_type, ile.gravity</sql>
       </field>
     </fields>
     <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
     <GUI>
       <xloc>742</xloc>
       <yloc>576</yloc>
-      <draw>Y</draw>
     </GUI>
   </transform>
   <transform>
@@ -974,23 +475,8 @@ group by ile.event_type, ile.gravity</sql>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>integrations_sys</connection>
-    <schema>${integrations_sys_log_schema}</schema>
-    <table>integrations_log_details</table>
     <commit>1000</commit>
-    <truncate>N</truncate>
-    <ignore_errors>N</ignore_errors>
-    <use_batch>Y</use_batch>
-    <specify_fields>Y</specify_fields>
-    <partitioning_enabled>N</partitioning_enabled>
-    <partitioning_field/>
-    <partitioning_daily>N</partitioning_daily>
-    <partitioning_monthly>Y</partitioning_monthly>
-    <tablename_in_field>N</tablename_in_field>
-    <tablename_field/>
-    <tablename_in_table>Y</tablename_in_table>
-    <return_keys>N</return_keys>
-    <return_field/>
+    <connection>integrations_schema</connection>
     <fields>
       <field>
         <column_name>id</column_name>
@@ -1005,18 +491,25 @@ group by ile.event_type, ile.gravity</sql>
         <stream_name>integrations_log_events_id</stream_name>
       </field>
     </fields>
+    <return_field/>
+    <ignore_errors>N</ignore_errors>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <return_keys>N</return_keys>
+    <schema>${integrations.sys.log.schema}</schema>
+    <specify_fields>Y</specify_fields>
+    <table>integrations_log_details</table>
+    <tablename_field/>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_in_table>Y</tablename_in_table>
+    <truncate>N</truncate>
+    <use_batch>Y</use_batch>
     <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
     <GUI>
       <xloc>1162</xloc>
       <yloc>576</yloc>
-      <draw>Y</draw>
     </GUI>
   </transform>
   <transform>
@@ -1050,17 +543,9 @@ group by ile.event_type, ile.gravity</sql>
       </field>
     </fields>
     <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
     <GUI>
       <xloc>1372</xloc>
       <yloc>144</yloc>
-      <draw>Y</draw>
     </GUI>
   </transform>
   <transform>
@@ -1085,17 +570,9 @@ group by ile.event_type, ile.gravity</sql>
       </field>
     </fields>
     <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
     <GUI>
       <xloc>1162</xloc>
       <yloc>360</yloc>
-      <draw>Y</draw>
     </GUI>
   </transform>
   <transform>
@@ -1111,30 +588,18 @@ group by ile.event_type, ile.gravity</sql>
     </partitioning>
     <fields>
       <field>
-        <name>override</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif>1</nullif>
-        <length>-1</length>
-        <precision>-1</precision>
         <set_empty_string>N</set_empty_string>
+        <length>-1</length>
+        <name>override</name>
+        <precision>-1</precision>
+        <type>String</type>
+        <nullif>1</nullif>
       </field>
     </fields>
     <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
     <GUI>
       <xloc>952</xloc>
       <yloc>144</yloc>
-      <draw>Y</draw>
     </GUI>
   </transform>
   <transform>
@@ -1152,29 +617,21 @@ group by ile.event_type, ile.gravity</sql>
       <field>
         <field_name>num_err</field_name>
         <variable_name>v_err_items_num</variable_name>
-        <variable_type>ROOT_JOB</variable_type>
+        <variable_type>JVM</variable_type>
         <default_value/>
       </field>
       <field>
         <field_name>gravity_on_abort</field_name>
         <variable_name>v_gravity</variable_name>
-        <variable_type>ROOT_JOB</variable_type>
+        <variable_type>JVM</variable_type>
         <default_value/>
       </field>
     </fields>
     <use_formatting>Y</use_formatting>
     <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
     <GUI>
       <xloc>952</xloc>
       <yloc>360</yloc>
-      <draw>Y</draw>
     </GUI>
   </transform>
   <transform>
@@ -1192,47 +649,39 @@ group by ile.event_type, ile.gravity</sql>
       <field>
         <field_name>num_err</field_name>
         <variable_name>v_err_items_num</variable_name>
-        <variable_type>ROOT_JOB</variable_type>
+        <variable_type>JVM</variable_type>
         <default_value/>
       </field>
       <field>
         <field_name>override</field_name>
         <variable_name>email.success.feedback.enabled</variable_name>
-        <variable_type>ROOT_JOB</variable_type>
+        <variable_type>JVM</variable_type>
         <default_value/>
       </field>
       <field>
         <field_name>override</field_name>
         <variable_name>email.fail.feedback.enabled</variable_name>
-        <variable_type>ROOT_JOB</variable_type>
+        <variable_type>JVM</variable_type>
         <default_value/>
       </field>
       <field>
         <field_name>event_type</field_name>
         <variable_name>v_event_type</variable_name>
-        <variable_type>ROOT_JOB</variable_type>
+        <variable_type>JVM</variable_type>
         <default_value/>
       </field>
       <field>
         <field_name>gravity</field_name>
         <variable_name>v_gravity</variable_name>
-        <variable_type>ROOT_JOB</variable_type>
+        <variable_type>JVM</variable_type>
         <default_value/>
       </field>
     </fields>
     <use_formatting>Y</use_formatting>
     <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
     <GUI>
       <xloc>1162</xloc>
       <yloc>144</yloc>
-      <draw>Y</draw>
     </GUI>
   </transform>
   <transform>
@@ -1256,23 +705,12 @@ group by ile.event_type, ile.gravity</sql>
       </field>
     </fields>
     <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
     <GUI>
       <xloc>322</xloc>
       <yloc>252</yloc>
-      <draw>Y</draw>
     </GUI>
   </transform>
   <transform_error_handling>
   </transform_error_handling>
-  <slave-step-copy-partition-distribution>
-  </slave-step-copy-partition-distribution>
-  <slave_transformation>N</slave_transformation>
   <attributes/>
 </pipeline>

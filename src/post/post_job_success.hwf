@@ -182,7 +182,7 @@
       <from>Clear lock only if is set by this instance</from>
       <to>Check for any errors in integrations_log_details</to>
       <enabled>Y</enabled>
-      <evaluation>N</evaluation>
+      <evaluation>Y</evaluation>
       <unconditional>N</unconditional>
     </hop>
     <hop>
@@ -196,7 +196,7 @@
       <from>Clear lock only if is set by this instance</from>
       <to>Dummy</to>
       <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
+      <evaluation>N</evaluation>
       <unconditional>N</unconditional>
     </hop>
     <hop>

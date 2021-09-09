@@ -229,7 +229,7 @@
     <partitioning_field/>
     <partitioning_monthly>Y</partitioning_monthly>
     <return_keys>N</return_keys>
-    <schema>${integrations_sys_log_schema}</schema>
+    <schema>${integrations.sys.log.schema}</schema>
     <specify_fields>Y</specify_fields>
     <table>integrations_logs</table>
     <tablename_field/>

@@ -201,7 +201,7 @@ O -> Terminated because another instance of same process is running</note>
     <error_ignored>N</error_ignored>
     <ignore_flag_field/>
     <lookup>
-      <schema>${integrations_sys_log_schema}</schema>
+      <schema>${integrations.sys.log.schema}</schema>
       <table>integrations_logs</table>
       <key>
         <name>process_id</name>

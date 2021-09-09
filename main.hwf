@@ -21,6 +21,11 @@
       <default_value/>
       <description>Log filename automatically assigned by the runner</description>
     </parameter>
+    <parameter>
+      <name>p_process_code</name>
+      <default_value/>
+      <description>Process code as set in integrations_processes table</description>
+    </parameter>
   </parameters>
   <actions>
     <action>
