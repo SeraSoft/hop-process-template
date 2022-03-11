@@ -279,8 +279,8 @@
 , ile.gravity
 , count(*) as num_err 
  from ${integrations.sys.log.schema}.integrations_log_details ild 
-inner join ${integrations.sys.log.schema}}.integrations_logs il on il.id = ild.integrations_logs_id
-inner join ${integrations.sys.log.schema}.integrations_log_events ile on ile.id = ild.integrations_log_events_id 
+inner join ${integrations.sys.log.schema}.integrations_logs il on il.id = ild.integrations_logs_id
+inner join ${integrations.sys.config.schema}.integrations_log_events ile on ile.id = ild.integrations_log_events_id 
 where il.id = '${v_process_id}'
 group by ile.event_type, ile.gravity</sql>
     <limit>0</limit>
@@ -491,17 +491,14 @@ group by ile.event_type, ile.gravity</sql>
         <stream_name>integrations_log_events_id</stream_name>
       </field>
     </fields>
-    <return_field/>
     <ignore_errors>N</ignore_errors>
     <partitioning_daily>N</partitioning_daily>
     <partitioning_enabled>N</partitioning_enabled>
-    <partitioning_field/>
     <partitioning_monthly>Y</partitioning_monthly>
     <return_keys>N</return_keys>
     <schema>${integrations.sys.log.schema}</schema>
     <specify_fields>Y</specify_fields>
     <table>integrations_log_details</table>
-    <tablename_field/>
     <tablename_in_field>N</tablename_in_field>
     <tablename_in_table>Y</tablename_in_table>
     <truncate>N</truncate>
@@ -617,13 +614,13 @@ group by ile.event_type, ile.gravity</sql>
       <field>
         <field_name>num_err</field_name>
         <variable_name>v_err_items_num</variable_name>
-        <variable_type>JVM</variable_type>
+        <variable_type>ROOT_WORKFLOW</variable_type>
         <default_value/>
       </field>
       <field>
         <field_name>gravity_on_abort</field_name>
         <variable_name>v_gravity</variable_name>
-        <variable_type>JVM</variable_type>
+        <variable_type>ROOT_WORKFLOW</variable_type>
         <default_value/>
       </field>
     </fields>
@@ -649,31 +646,31 @@ group by ile.event_type, ile.gravity</sql>
       <field>
         <field_name>num_err</field_name>
         <variable_name>v_err_items_num</variable_name>
-        <variable_type>JVM</variable_type>
+        <variable_type>ROOT_WORKFLOW</variable_type>
         <default_value/>
       </field>
       <field>
         <field_name>override</field_name>
         <variable_name>email.success.feedback.enabled</variable_name>
-        <variable_type>JVM</variable_type>
+        <variable_type>ROOT_WORKFLOW</variable_type>
         <default_value/>
       </field>
       <field>
         <field_name>override</field_name>
         <variable_name>email.fail.feedback.enabled</variable_name>
-        <variable_type>JVM</variable_type>
+        <variable_type>ROOT_WORKFLOW</variable_type>
         <default_value/>
       </field>
       <field>
         <field_name>event_type</field_name>
         <variable_name>v_event_type</variable_name>
-        <variable_type>JVM</variable_type>
+        <variable_type>ROOT_WORKFLOW</variable_type>
         <default_value/>
       </field>
       <field>
         <field_name>gravity</field_name>
         <variable_name>v_gravity</variable_name>
-        <variable_type>JVM</variable_type>
+        <variable_type>ROOT_WORKFLOW</variable_type>
         <default_value/>
       </field>
     </fields>

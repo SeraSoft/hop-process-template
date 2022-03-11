@@ -13,7 +13,7 @@
   <parameters>
     <parameter>
       <name>p_base_process_name</name>
-      <default_value/>
+      <default_value>template</default_value>
       <description>Base process name to use wherever/whenever required in the process</description>
     </parameter>
     <parameter>

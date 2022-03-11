@@ -42,7 +42,7 @@
         <field>
           <variable_name>terminated.successfully</variable_name>
           <variable_value>0</variable_value>
-          <variable_type>JVM</variable_type>
+          <variable_type>ROOT_WORKFLOW</variable_type>
         </field>
       </fields>
       <parallel>N</parallel>
