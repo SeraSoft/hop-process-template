@@ -274,7 +274,9 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>integrations_schema</connection>
+    <connection>${integrations.sys.connection.name}</connection>
+    <execute_each_row>N</execute_each_row>
+    <limit>0</limit>
     <sql>select ile.event_type 
 , ile.gravity
 , count(*) as num_err 
@@ -283,9 +285,6 @@ inner join ${integrations.sys.log.schema}.integrations_logs il on il.id = ild.in
 inner join ${integrations.sys.config.schema}.integrations_log_events ile on ile.id = ild.integrations_log_events_id 
 where il.id = '${v_process_id}'
 group by ile.event_type, ile.gravity</sql>
-    <limit>0</limit>
-    <lookup/>
-    <execute_each_row>N</execute_each_row>
     <variables_active>Y</variables_active>
     <attributes/>
     <GUI>
@@ -402,14 +401,22 @@ group by ile.event_type, ile.gravity</sql>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <all_rows>N</all_rows>
-    <ignore_aggregate>N</ignore_aggregate>
-    <field_ignore/>
-    <directory>%%java.io.tmpdir%%</directory>
-    <prefix>grp</prefix>
     <add_linenr>N</add_linenr>
-    <linenr_fieldname/>
+    <ignore_aggregate>N</ignore_aggregate>
+    <fields>
+      <field>
+        <aggregate>num_err</aggregate>
+        <subject>num_err</subject>
+        <type>SUM</type>
+      </field>
+      <field>
+        <aggregate>gravity</aggregate>
+        <subject>gravity</subject>
+        <type>MAX</type>
+      </field>
+    </fields>
     <give_back_row>N</give_back_row>
+    <directory>%%java.io.tmpdir%%</directory>
     <group>
       <field>
         <name>process_id</name>
@@ -421,20 +428,8 @@ group by ile.event_type, ile.gravity</sql>
         <name>terminated.successfully</name>
       </field>
     </group>
-    <fields>
-      <field>
-        <aggregate>num_err</aggregate>
-        <subject>num_err</subject>
-        <type>SUM</type>
-        <valuefield/>
-      </field>
-      <field>
-        <aggregate>gravity</aggregate>
-        <subject>gravity</subject>
-        <type>MAX</type>
-        <valuefield/>
-      </field>
-    </fields>
+    <all_rows>N</all_rows>
+    <prefix>grp</prefix>
     <attributes/>
     <GUI>
       <xloc>532</xloc>
@@ -476,7 +471,7 @@ group by ile.event_type, ile.gravity</sql>
       <schema_name/>
     </partitioning>
     <commit>1000</commit>
-    <connection>integrations_schema</connection>
+    <connection>${integrations.sys.connection.name}</connection>
     <fields>
       <field>
         <column_name>id</column_name>

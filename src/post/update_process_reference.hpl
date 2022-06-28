@@ -194,21 +194,19 @@ O -> Terminated because another instance of same process is running</note>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>integrations_schema</connection>
-    <skip_lookup>Y</skip_lookup>
     <commit>100</commit>
-    <use_batch>N</use_batch>
+    <connection>${integrations.sys.connection.name}</connection>
     <error_ignored>N</error_ignored>
     <ignore_flag_field/>
     <lookup>
-      <schema>${integrations.sys.log.schema}</schema>
-      <table>integrations_logs</table>
       <key>
-        <name>process_id</name>
-        <field>id</field>
         <condition>=</condition>
+        <field>id</field>
+        <name>process_id</name>
         <name2/>
       </key>
+      <schema>${integrations.sys.log.schema}</schema>
+      <table>integrations_logs</table>
       <value>
         <name>date_finished</name>
         <rename>now</rename>
@@ -222,6 +220,8 @@ O -> Terminated because another instance of same process is running</note>
         <rename>gravity</rename>
       </value>
     </lookup>
+    <skip_lookup>Y</skip_lookup>
+    <use_batch>N</use_batch>
     <attributes/>
     <GUI>
       <xloc>800</xloc>
