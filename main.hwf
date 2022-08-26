@@ -514,7 +514,7 @@ PROCESS EXITS!
 Base Process Parameters:
 =================================================================
 - p_base_process_name: Uniquely identify the process while running (Mandatory)
-- p_log_filename: Log filename (set by pdi_runner.sh)
+- p_log_filename: Log filename (set by hop_runner.sh)
 
 Base Instance Variables:
 =================================================================
@@ -528,8 +528,8 @@ Base Variables from Config:
 =================================================================
 - base.dir: Root path to a convenient folder to store processes related things (Mandatory)
 - lock.dir: Path to a folder where the process will put locks' files (Mandatory)
-- pdi.user: Associates a user to a running Hop instance
-- pdi.program.name: Associates a name to a running Hop instance</note>
+- hop.user: Associates a user to a running Hop instance
+- hop.program.name: Associates a name to a running Hop instance</note>
       <xloc>816</xloc>
       <yloc>368</yloc>
       <width>614</width>

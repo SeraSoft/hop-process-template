@@ -21,9 +21,9 @@ CREATE TABLE config.integrations_processes (
 );
 -- Column comments
 
-COMMENT ON COLUMN config.integrations_processes.id IS 'This is the process code we use to start PDI processes. Passed with p_program_name.';
+COMMENT ON COLUMN config.integrations_processes.id IS 'This is the process code we use to start HOP processes. Passed with p_program_name.';
 COMMENT ON COLUMN config.integrations_processes.short_name IS 'Self explanatory, short, description of the process';
-COMMENT ON COLUMN config.integrations_processes.project IS 'Project''s code reference for this process. Must be present in configuration file as pdi.project.code';
+COMMENT ON COLUMN config.integrations_processes.project IS 'Project''s code reference for this process. Must be present in configuration file as hop.project.code';
 COMMENT ON COLUMN config.integrations_processes.is_active IS 'Indicate if the process is active or not. Values: Y, N';
 
 CREATE TABLE config.integrations_log_events (

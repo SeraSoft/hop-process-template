@@ -312,8 +312,8 @@ v_job_run_timestamp  -> ${v_job_run_timestamp}
 v_hostname           -> ${v_hostname}
 v_host_ip            -> ${v_host_ip}
 lock.dir             -> ${lock.dir}
-pdi.user             -> ${pdi.user} 
-pdi.program.name     -> ${pdi.program.name}
+hop.user             -> ${hop.user} 
+hop.program.name     -> ${hop.program.name}
 =======================================================================================
 
 Delete this last message and add here your own application instance variable's dump \o/ </logmessage>
@@ -349,7 +349,7 @@ Delete this last message and add here your own application instance variable's d
       <description/>
       <type>PIPELINE</type>
       <attributes/>
-      <filename>${Internal.Entry.Current.Folder}/init/create_new_pdi_process_instance.hpl</filename>
+      <filename>${Internal.Entry.Current.Folder}/init/create_new_hop_process_instance.hpl</filename>
       <params_from_previous>N</params_from_previous>
       <exec_per_row>N</exec_per_row>
       <clear_rows>N</clear_rows>

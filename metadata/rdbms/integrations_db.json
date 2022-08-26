@@ -22,5 +22,5 @@
       "username": "${integrations.sys.db.user}"
     }
   },
-  "name": "integrations_db"
+  "name": "integrations-db"
 }

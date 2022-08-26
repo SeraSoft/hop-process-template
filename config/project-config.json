@@ -11,10 +11,10 @@
       "name" : "lock.dir",
       "value" : "${base.tmp.dir}\\hop"
     }, {
-      "name" : "pdi.user",
+      "name" : "hop.user",
       "value" : "hopuser"
     }, {
-      "name" : "pdi.program.name",
+      "name" : "hop.program.name",
       "value" : "hop"
     }, {
       "name" : "sys.unhandled.exception",
@@ -33,10 +33,10 @@
       "value" : "PostgreSQL"
     }, {
       "name" : "integrations.sys.connection.name",
-      "value" : "integrations_db"
+      "value" : "integrations-db"
     }, {
       "name" : "integrations.sys.db.name",
-      "value" : "integrations_db"
+      "value" : "integrations-db"
     }, {
       "name" : "integrations.sys.db.port",
       "value" : "5432"
