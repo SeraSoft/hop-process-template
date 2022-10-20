@@ -6,10 +6,10 @@
   "config" : {
     "variables" : [ {
       "name" : "base.tmp.dir",
-      "value" : "c:\\temp"
+      "value" : "<set_according_to_your_needs>"
     }, {
       "name" : "lock.dir",
-      "value" : "${base.tmp.dir}\\hop"
+      "value" : "${base.tmp.dir}/.lock"
     }, {
       "name" : "hop.user",
       "value" : "hopuser"
