@@ -33,7 +33,7 @@
       "value" : "PostgreSQL"
     }, {
       "name" : "integrations.sys.connection.name",
-      "value" : "integrations-db"
+      "value" : "integrations_db"
     }, {
       "name" : "integrations.sys.db.name",
       "value" : "integrations_db"
