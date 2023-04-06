@@ -14,7 +14,7 @@
     <parameter>
       <name>p_base_process_name</name>
       <default_value>template</default_value>
-      <description>Base process name to use wherever/whenever required in the process</description>
+      <description>Base process name to use wherever/whenever required in the process.</description>
     </parameter>
     <parameter>
       <name>p_logfile_name</name>
