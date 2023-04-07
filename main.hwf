@@ -33,14 +33,14 @@
       <description/>
       <type>SPECIAL</type>
       <attributes/>
+      <DayOfMonth>1</DayOfMonth>
+      <hour>12</hour>
+      <intervalMinutes>60</intervalMinutes>
+      <intervalSeconds>0</intervalSeconds>
+      <minutes>0</minutes>
       <repeat>N</repeat>
       <schedulerType>0</schedulerType>
-      <intervalSeconds>0</intervalSeconds>
-      <intervalMinutes>60</intervalMinutes>
-      <hour>12</hour>
-      <minutes>0</minutes>
       <weekDay>1</weekDay>
-      <DayOfMonth>1</DayOfMonth>
       <parallel>N</parallel>
       <xloc>160</xloc>
       <yloc>256</yloc>
@@ -105,6 +105,7 @@
       <description/>
       <type>ABORT</type>
       <attributes/>
+      <always_log_rows>N</always_log_rows>
       <parallel>N</parallel>
       <xloc>576</xloc>
       <yloc>688</yloc>
@@ -279,7 +280,7 @@
 
 Previous instance for base process name ${p_base_process_name} started at ${v_last_job_run_timestamp} seems executing.
 However, maybe previous instance exited abnormally and lock file wasn't cleared.
-Please check locks temporary directory ${lock.tmp.dir} and eventually uncleand lock file.
+Please check locks temporary directory ${lock.dir} and eventually uncleand lock file.
 
 PROCESS EXITS!
 
@@ -509,6 +510,22 @@ PROCESS EXITS!
   </hops>
   <notepads>
     <notepad>
+      <backgroundcolorblue>112</backgroundcolorblue>
+      <backgroundcolorgreen>205</backgroundcolorgreen>
+      <backgroundcolorred>255</backgroundcolorred>
+      <bordercolorblue>100</bordercolorblue>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorred>100</bordercolorred>
+      <fontbold>N</fontbold>
+      <fontcolorblue>0</fontcolorblue>
+      <fontcolorgreen>0</fontcolorgreen>
+      <fontcolorred>0</fontcolorred>
+      <fontitalic>N</fontitalic>
+      <fontname>Verdana</fontname>
+      <fontsize>10</fontsize>
+      <height>346</height>
+      <xloc>816</xloc>
+      <yloc>368</yloc>
       <note>Base template for Hop Processes
 
 Base Process Parameters:
@@ -530,23 +547,7 @@ Base Variables from Config:
 - lock.dir: Path to a folder where the process will put locks' files (Mandatory)
 - hop.user: Associates a user to a running Hop instance
 - hop.program.name: Associates a name to a running Hop instance</note>
-      <xloc>816</xloc>
-      <yloc>368</yloc>
       <width>614</width>
-      <heigth>346</heigth>
-      <fontname>Verdana</fontname>
-      <fontsize>10</fontsize>
-      <fontbold>N</fontbold>
-      <fontitalic>N</fontitalic>
-      <fontcolorred>0</fontcolorred>
-      <fontcolorgreen>0</fontcolorgreen>
-      <fontcolorblue>0</fontcolorblue>
-      <backgroundcolorred>255</backgroundcolorred>
-      <backgroundcolorgreen>205</backgroundcolorgreen>
-      <backgroundcolorblue>112</backgroundcolorblue>
-      <bordercolorred>100</bordercolorred>
-      <bordercolorgreen>100</bordercolorgreen>
-      <bordercolorblue>100</bordercolorblue>
     </notepad>
   </notepads>
   <attributes>

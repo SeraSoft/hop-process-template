@@ -52,14 +52,14 @@
       <description/>
       <type>SPECIAL</type>
       <attributes/>
+      <DayOfMonth>1</DayOfMonth>
+      <hour>12</hour>
+      <intervalMinutes>60</intervalMinutes>
+      <intervalSeconds>0</intervalSeconds>
+      <minutes>0</minutes>
       <repeat>N</repeat>
       <schedulerType>0</schedulerType>
-      <intervalSeconds>0</intervalSeconds>
-      <intervalMinutes>60</intervalMinutes>
-      <hour>12</hour>
-      <minutes>0</minutes>
       <weekDay>1</weekDay>
-      <DayOfMonth>1</DayOfMonth>
       <parallel>N</parallel>
       <xloc>112</xloc>
       <yloc>64</yloc>
@@ -70,6 +70,7 @@
       <description/>
       <type>ABORT</type>
       <attributes/>
+      <always_log_rows>N</always_log_rows>
       <parallel>N</parallel>
       <xloc>544</xloc>
       <yloc>336</yloc>
@@ -108,7 +109,7 @@
       <description/>
       <type>WORKFLOW</type>
       <attributes/>
-      <run_configuration/>
+      <run_configuration>local</run_configuration>
       <filename>${Internal.Workflow.Filename.Folder}/mail_sender.hwf</filename>
       <params_from_previous>N</params_from_previous>
       <exec_per_row>N</exec_per_row>
@@ -120,7 +121,7 @@
       <loglevel>Nothing</loglevel>
       <wait_until_finished>Y</wait_until_finished>
       <create_parent_folder>N</create_parent_folder>
-      <run_configuration/>
+      <run_configuration>local</run_configuration>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
       </parameters>
