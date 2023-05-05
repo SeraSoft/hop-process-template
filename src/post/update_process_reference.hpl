@@ -195,7 +195,7 @@ O -> Terminated because another instance of same process is running</note>
       <schema_name/>
     </partitioning>
     <commit>100</commit>
-    <connection>${integrations.sys.connection.name}</connection>
+    <connection>${integrations.db.connection.name}</connection>
     <error_ignored>N</error_ignored>
     <ignore_flag_field/>
     <lookup>
@@ -205,7 +205,7 @@ O -> Terminated because another instance of same process is running</note>
         <name>process_id</name>
         <name2/>
       </key>
-      <schema>${integrations.sys.log.schema}</schema>
+      <schema>${integrations.db.log.schema}</schema>
       <table>integrations_logs</table>
       <value>
         <name>date_finished</name>

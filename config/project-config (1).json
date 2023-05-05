@@ -6,7 +6,7 @@
   "config" : {
     "variables" : [ {
       "name" : "base.tmp.dir",
-      "value" : "/home/sramazzina"
+      "value" : "<set_according_to_your_needs>"
     }, {
       "name" : "lock.dir",
       "value" : "${base.tmp.dir}/.lock"
@@ -17,11 +17,8 @@
       "name" : "hop.program.name",
       "value" : "hop"
     }, {
-      "name" : "db.type",
-      "value" : "PostgreSQL"
-    }, {
-      "name" : "sys.unhandled.exception.subcategory.generic",
-      "value" : "SYSGE001"
+      "name" : "sys.unhandled.exception",
+      "value" : "SYS001"
     }, {
       "name" : "integrations.db.config.schema",
       "value" : "config"
@@ -31,6 +28,9 @@
     }, {
       "name" : "integrations.db.db.host",
       "value" : "localhost"
+    }, {
+      "name" : "db.type",
+      "value" : "PostgreSQL"
     }, {
       "name" : "integrations.db.connection.name",
       "value" : "integrations_db"
