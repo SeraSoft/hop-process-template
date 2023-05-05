@@ -28,7 +28,7 @@
       <weekDay>1</weekDay>
       <parallel>N</parallel>
       <xloc>64</xloc>
-      <yloc>192</yloc>
+      <yloc>256</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -38,8 +38,8 @@
       <attributes/>
       <always_log_rows>N</always_log_rows>
       <parallel>N</parallel>
-      <xloc>720</xloc>
-      <yloc>368</yloc>
+      <xloc>816</xloc>
+      <yloc>432</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -48,8 +48,8 @@
       <type>SUCCESS</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>912</xloc>
-      <yloc>640</yloc>
+      <xloc>1008</xloc>
+      <yloc>704</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -72,8 +72,8 @@
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>912</xloc>
-      <yloc>464</yloc>
+      <xloc>1008</xloc>
+      <yloc>528</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -95,7 +95,7 @@
       <successwhenvarset>N</successwhenvarset>
       <parallel>N</parallel>
       <xloc>400</xloc>
-      <yloc>192</yloc>
+      <yloc>256</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -108,7 +108,7 @@
       <logsubject/>
       <parallel>N</parallel>
       <xloc>560</xloc>
-      <yloc>192</yloc>
+      <yloc>256</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -133,7 +133,7 @@
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>912</xloc>
+      <xloc>1072</xloc>
       <yloc>48</yloc>
       <attributes_hac/>
     </action>
@@ -155,8 +155,8 @@
       <successbooleancondition>false</successbooleancondition>
       <successwhenvarset>N</successwhenvarset>
       <parallel>N</parallel>
-      <xloc>912</xloc>
-      <yloc>192</yloc>
+      <xloc>1008</xloc>
+      <yloc>256</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -165,8 +165,8 @@
       <type>SUCCESS</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>1184</xloc>
-      <yloc>192</yloc>
+      <xloc>1280</xloc>
+      <yloc>256</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -180,8 +180,8 @@ v_lock_present: ${v_lock_present}</logmessage>
       <loglevel>Basic</loglevel>
       <logsubject/>
       <parallel>N</parallel>
-      <xloc>1056</xloc>
-      <yloc>192</yloc>
+      <xloc>1152</xloc>
+      <yloc>256</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -206,8 +206,8 @@ v_lock_present: ${v_lock_present}</logmessage>
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>912</xloc>
-      <yloc>288</yloc>
+      <xloc>1008</xloc>
+      <yloc>352</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -224,8 +224,8 @@ v_lock_present: ${v_lock_present}
       <loglevel>Basic</loglevel>
       <logsubject/>
       <parallel>N</parallel>
-      <xloc>912</xloc>
-      <yloc>368</yloc>
+      <xloc>1008</xloc>
+      <yloc>432</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -248,7 +248,7 @@ v_lock_present: ${v_lock_present}
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>752</xloc>
+      <xloc>912</xloc>
       <yloc>48</yloc>
       <attributes_hac/>
     </action>
@@ -274,7 +274,7 @@ v_lock_present: ${v_lock_present}
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>480</xloc>
+      <xloc>416</xloc>
       <yloc>48</yloc>
       <attributes_hac/>
     </action>
@@ -294,6 +294,7 @@ v_job_run_timestamp  -> ${v_job_run_timestamp}
 v_hostname           -> ${v_hostname}
 v_host_ip            -> ${v_host_ip}
 lock.dir             -> ${lock.dir}
+base.tmp.dir             -> ${base.tmp.dir}
 hop.user             -> ${hop.user} 
 hop.program.name     -> ${hop.program.name}
 =======================================================================================
@@ -302,8 +303,8 @@ Delete this last message and add here your own application instance variable's d
       <loglevel>Basic</loglevel>
       <logsubject/>
       <parallel>N</parallel>
-      <xloc>912</xloc>
-      <yloc>560</yloc>
+      <xloc>1008</xloc>
+      <yloc>624</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -323,7 +324,7 @@ Delete this last message and add here your own application instance variable's d
       </fields>
       <parallel>N</parallel>
       <xloc>240</xloc>
-      <yloc>192</yloc>
+      <yloc>256</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -348,7 +349,7 @@ Delete this last message and add here your own application instance variable's d
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>608</xloc>
+      <xloc>800</xloc>
       <yloc>48</yloc>
       <attributes_hac/>
     </action>
@@ -358,8 +359,64 @@ Delete this last message and add here your own application instance variable's d
       <type>DUMMY</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>720</xloc>
-      <yloc>192</yloc>
+      <xloc>816</xloc>
+      <yloc>256</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Log Error</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage>
+=============
+Reference for process  [${p_base_process_name}] not found on integrations_processes table. EXIT!
+=============
+</logmessage>
+      <loglevel>Basic</loglevel>
+      <logsubject>PROCESS REFERENCE IS MISSING</logsubject>
+      <parallel>N</parallel>
+      <xloc>672</xloc>
+      <yloc>128</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Valutazione semplice</name>
+      <description/>
+      <type>SIMPLE_EVAL</type>
+      <attributes/>
+      <valuetype>variable</valuetype>
+      <fieldname/>
+      <variablename>${v_integrations_process_id}</variablename>
+      <fieldtype>string</fieldtype>
+      <mask/>
+      <comparevalue>-1</comparevalue>
+      <minvalue/>
+      <maxvalue/>
+      <successcondition>different</successcondition>
+      <successnumbercondition>equal</successnumbercondition>
+      <successbooleancondition>false</successbooleancondition>
+      <successwhenvarset>N</successwhenvarset>
+      <parallel>N</parallel>
+      <xloc>576</xloc>
+      <yloc>48</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Log Info 4</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage>
+=============
+Process found in integrations_processes table. integrations_process_id -> ${v_integrations_process_id}
+=============
+</logmessage>
+      <loglevel>Basic</loglevel>
+      <logsubject>PROCESS REFERENCE PRESENT</logsubject>
+      <parallel>N</parallel>
+      <xloc>688</xloc>
+      <yloc>48</yloc>
       <attributes_hac/>
     </action>
   </actions>
@@ -513,16 +570,44 @@ Delete this last message and add here your own application instance variable's d
     </hop>
     <hop>
       <from>Init sys variables</from>
-      <to>Create new process instance</to>
+      <to>Dummy</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Init sys variables</from>
+      <to>Valutazione semplice</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Init sys variables</from>
-      <to>Dummy</to>
+      <from>Valutazione semplice</from>
+      <to>Log Error</to>
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Log Error</from>
+      <to>Dummy</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Valutazione semplice</from>
+      <to>Log Info 4</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Log Info 4</from>
+      <to>Create new process instance</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
       <unconditional>N</unconditional>
     </hop>
   </hops>

@@ -20,31 +20,31 @@
       "name" : "sys.unhandled.exception",
       "value" : "SYS001"
     }, {
-      "name" : "integrations.sys.config.schema",
+      "name" : "integrations.db.config.schema",
       "value" : "config"
     }, {
-      "name" : "integrations.sys.log.schema",
-      "value" : "log"
+      "name" : "integrations.db.log.schema",
+      "value" : "logs"
     }, {
-      "name" : "integrations.sys.db.host",
+      "name" : "integrations.db.db.host",
       "value" : "localhost"
     }, {
       "name" : "db.type",
       "value" : "PostgreSQL"
     }, {
-      "name" : "integrations.sys.connection.name",
+      "name" : "integrations.db.connection.name",
       "value" : "integrations_db"
     }, {
-      "name" : "integrations.sys.db.name",
+      "name" : "integrations.db.db.name",
       "value" : "integrations_db"
     }, {
-      "name" : "integrations.sys.db.port",
+      "name" : "integrations.db.db.port",
       "value" : "5432"
     }, {
-      "name" : "integrations.sys.db.user",
+      "name" : "integrations.db.db.user",
       "value" : "postgres"
     }, {
-      "name" : "integrations.sys.db.pwd",
+      "name" : "integrations.db.db.pwd",
       "value" : "password"
     }, {
       "name" : "email.success.feedback.enabled",

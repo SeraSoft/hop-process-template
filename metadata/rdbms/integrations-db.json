@@ -1,0 +1,26 @@
+{
+  "rdbms": {
+    "POSTGRESQL": {
+      "databaseName": "${integrations.db.db.name}",
+      "pluginId": "POSTGRESQL",
+      "accessType": 0,
+      "hostname": "${integrations.db.db.host}",
+      "password": "${integrations.db.db.pwd}",
+      "pluginName": "PostgreSQL",
+      "port": "${integrations.db.db.port}",
+      "attributes": {
+        "SUPPORTS_TIMESTAMP_DATA_TYPE": "Y",
+        "QUOTE_ALL_FIELDS": "N",
+        "SUPPORTS_BOOLEAN_DATA_TYPE": "Y",
+        "FORCE_IDENTIFIERS_TO_LOWERCASE": "N",
+        "PRESERVE_RESERVED_WORD_CASE": "Y",
+        "SQL_CONNECT": "",
+        "FORCE_IDENTIFIERS_TO_UPPERCASE": "N",
+        "PREFERRED_SCHEMA_NAME": ""
+      },
+      "manualUrl": "",
+      "username": "${integrations.db.db.user}"
+    }
+  },
+  "name": "integrations-db"
+}
