@@ -33,10 +33,10 @@
       "value" : "PostgreSQL"
     }, {
       "name" : "integrations.sys.connection.name",
-      "value" : "integrations-db"
+      "value" : "integrations_db"
     }, {
       "name" : "integrations.sys.db.name",
-      "value" : "integrations-db"
+      "value" : "integrations_db"
     }, {
       "name" : "integrations.sys.db.port",
       "value" : "5432"

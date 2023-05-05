@@ -17,8 +17,6 @@
     <created_date>2020/01/07 10:56:30.129</created_date>
     <modified_user>-</modified_user>
     <modified_date>2020/01/07 10:56:30.129</modified_date>
-    <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA=</key_for_session_key>
-    <is_key_private>N</is_key_private>
   </info>
   <notepads>
   </notepads>
@@ -120,22 +118,21 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to/>
-    <send_false_to/>
     <compare>
       <condition>
-        <negated>N</negated>
-        <leftvalue>terminated.successfully</leftvalue>
+        <conditions>
+</conditions>
         <function>=</function>
-        <rightvalue/>
+        <leftvalue>terminated.successfully</leftvalue>
+        <negated>N</negated>
+        <operator>-</operator>
         <value>
-          <name>constant</name>
-          <type>String</type>
-          <text>0</text>
-          <length>-1</length>
-          <precision>-1</precision>
           <isnull>N</isnull>
-          <mask/>
+          <length>-1</length>
+          <name>constant</name>
+          <precision>-1</precision>
+          <text>0</text>
+          <type>String</type>
         </value>
       </condition>
     </compare>
@@ -190,46 +187,50 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>Override to force email send</send_true_to>
-    <send_false_to>Force gravity = 10 on aborts</send_false_to>
     <compare>
       <condition>
-        <negated>N</negated>
         <conditions>
           <condition>
-            <negated>N</negated>
-            <leftvalue>num_err</leftvalue>
+            <conditions>
+</conditions>
             <function>&gt;</function>
-            <rightvalue/>
+            <leftvalue>num_err</leftvalue>
+            <negated>N</negated>
+            <operator>-</operator>
             <value>
-              <name>constant</name>
-              <type>Integer</type>
-              <text>0</text>
-              <length>-1</length>
-              <precision>0</precision>
               <isnull>N</isnull>
+              <length>-1</length>
               <mask>####0;-####0</mask>
+              <name>constant</name>
+              <precision>0</precision>
+              <text>0</text>
+              <type>Integer</type>
             </value>
           </condition>
           <condition>
+            <conditions>
+</conditions>
+            <function>&gt;</function>
+            <leftvalue>terminated.successfully</leftvalue>
             <negated>N</negated>
             <operator>AND</operator>
-            <leftvalue>terminated.successfully</leftvalue>
-            <function>&gt;</function>
-            <rightvalue/>
             <value>
-              <name>constant</name>
-              <type>String</type>
-              <text>0</text>
-              <length>-1</length>
-              <precision>-1</precision>
               <isnull>N</isnull>
-              <mask/>
+              <length>-1</length>
+              <name>constant</name>
+              <precision>-1</precision>
+              <text>0</text>
+              <type>String</type>
             </value>
           </condition>
         </conditions>
+        <function>=</function>
+        <negated>N</negated>
+        <operator>-</operator>
       </condition>
     </compare>
+    <send_false_to>Force gravity = 10 on aborts</send_false_to>
+    <send_true_to>Override to force email send</send_true_to>
     <attributes/>
     <GUI>
       <xloc>742</xloc>
@@ -249,12 +250,12 @@
     </partitioning>
     <fields>
       <field>
-        <set_empty_string>N</set_empty_string>
         <length>-1</length>
         <name>gravity_on_abort</name>
-        <precision>-1</precision>
-        <type>Integer</type>
         <nullif>10</nullif>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+        <type>Integer</type>
       </field>
     </fields>
     <attributes/>
@@ -277,14 +278,15 @@
     <connection>${integrations.sys.connection.name}</connection>
     <execute_each_row>N</execute_each_row>
     <limit>0</limit>
-    <sql>select ile.event_type 
+    <sql>select ec.name event_type
 , ile.gravity
 , count(*) as num_err 
- from ${integrations.sys.log.schema}.integrations_log_details ild 
-inner join ${integrations.sys.log.schema}.integrations_logs il on il.id = ild.integrations_logs_id
-inner join ${integrations.sys.config.schema}.integrations_log_events ile on ile.id = ild.integrations_log_events_id 
+ from ${integrations.db.log.schema}.integrations_log_events ile 
+left outer join ${integrations.db.config.schema}.event_subcategory esc on ile.event_subcategory_id = esc.id
+left outer join ${integrations.db.config.schema}.event_category ec on esc.event_category_id = ec.id
+inner join ${integrations.db.log.schema}.integrations_logs il on il.id = ile.integrations_logs_id
 where il.id = '${v_process_id}'
-group by ile.event_type, ile.gravity</sql>
+group by ec.name, ile.gravity</sql>
     <variables_active>Y</variables_active>
     <attributes/>
     <GUI>
@@ -305,16 +307,12 @@ group by ile.event_type, ile.gravity</sql>
     </partitioning>
     <fields>
       <field>
-        <name>integrations_log_events_id</name>
-        <variable>${sys.unhandled.exception}</variable>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
         <length>-1</length>
+        <name>integrations_log_events_id</name>
         <precision>-1</precision>
         <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${sys.unhandled.exception}</variable>
       </field>
     </fields>
     <attributes/>
@@ -336,52 +334,36 @@ group by ile.event_type, ile.gravity</sql>
     </partitioning>
     <fields>
       <field>
+        <length>-1</length>
         <name>status</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
         <variable>${status}</variable>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
       </field>
       <field>
+        <length>-1</length>
         <name>process_id</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
         <variable>${v_process_id}</variable>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
       </field>
       <field>
+        <length>-1</length>
         <name>comes_from_error_path</name>
-        <variable>${v_comes_from_error_path}</variable>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <length>-1</length>
         <precision>-1</precision>
         <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${v_comes_from_error_path}</variable>
       </field>
       <field>
-        <name>terminated.successfully</name>
-        <variable>${terminated.successfully}</variable>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
         <length>-1</length>
+        <name>terminated.successfully</name>
         <precision>-1</precision>
         <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${terminated.successfully}</variable>
       </field>
     </fields>
     <attributes/>
@@ -402,7 +384,8 @@ group by ile.event_type, ile.gravity</sql>
       <schema_name/>
     </partitioning>
     <add_linenr>N</add_linenr>
-    <ignore_aggregate>N</ignore_aggregate>
+    <all_rows>N</all_rows>
+    <directory>%%java.io.tmpdir%%</directory>
     <fields>
       <field>
         <aggregate>num_err</aggregate>
@@ -416,7 +399,6 @@ group by ile.event_type, ile.gravity</sql>
       </field>
     </fields>
     <give_back_row>N</give_back_row>
-    <directory>%%java.io.tmpdir%%</directory>
     <group>
       <field>
         <name>process_id</name>
@@ -428,7 +410,7 @@ group by ile.event_type, ile.gravity</sql>
         <name>terminated.successfully</name>
       </field>
     </group>
-    <all_rows>N</all_rows>
+    <ignore_aggregate>N</ignore_aggregate>
     <prefix>grp</prefix>
     <attributes/>
     <GUI>
@@ -487,6 +469,7 @@ group by ile.event_type, ile.gravity</sql>
       </field>
     </fields>
     <ignore_errors>N</ignore_errors>
+    <only_when_have_rows>N</only_when_have_rows>
     <partitioning_daily>N</partitioning_daily>
     <partitioning_enabled>N</partitioning_enabled>
     <partitioning_monthly>Y</partitioning_monthly>
@@ -580,12 +563,12 @@ group by ile.event_type, ile.gravity</sql>
     </partitioning>
     <fields>
       <field>
-        <set_empty_string>N</set_empty_string>
         <length>-1</length>
         <name>override</name>
-        <precision>-1</precision>
-        <type>String</type>
         <nullif>1</nullif>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+        <type>String</type>
       </field>
     </fields>
     <attributes/>
@@ -610,13 +593,11 @@ group by ile.event_type, ile.gravity</sql>
         <field_name>num_err</field_name>
         <variable_name>v_err_items_num</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
-        <default_value/>
       </field>
       <field>
         <field_name>gravity_on_abort</field_name>
         <variable_name>v_gravity</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
-        <default_value/>
       </field>
     </fields>
     <use_formatting>Y</use_formatting>
@@ -642,31 +623,26 @@ group by ile.event_type, ile.gravity</sql>
         <field_name>num_err</field_name>
         <variable_name>v_err_items_num</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
-        <default_value/>
       </field>
       <field>
         <field_name>override</field_name>
         <variable_name>email.success.feedback.enabled</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
-        <default_value/>
       </field>
       <field>
         <field_name>override</field_name>
         <variable_name>email.fail.feedback.enabled</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
-        <default_value/>
       </field>
       <field>
         <field_name>event_type</field_name>
         <variable_name>v_event_type</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
-        <default_value/>
       </field>
       <field>
         <field_name>gravity</field_name>
         <variable_name>v_gravity</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
-        <default_value/>
       </field>
     </fields>
     <use_formatting>Y</use_formatting>

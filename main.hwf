@@ -33,14 +33,14 @@
       <description/>
       <type>SPECIAL</type>
       <attributes/>
+      <DayOfMonth>1</DayOfMonth>
+      <hour>12</hour>
+      <intervalMinutes>60</intervalMinutes>
+      <intervalSeconds>0</intervalSeconds>
+      <minutes>0</minutes>
       <repeat>N</repeat>
       <schedulerType>0</schedulerType>
-      <intervalSeconds>0</intervalSeconds>
-      <intervalMinutes>60</intervalMinutes>
-      <hour>12</hour>
-      <minutes>0</minutes>
       <weekDay>1</weekDay>
-      <DayOfMonth>1</DayOfMonth>
       <parallel>N</parallel>
       <xloc>160</xloc>
       <yloc>256</yloc>
@@ -51,23 +51,20 @@
       <description/>
       <type>WORKFLOW</type>
       <attributes/>
-      <run_configuration>local</run_configuration>
-      <filename>${Internal.Entry.Current.Folder}/src/pre/main_pre_job.hwf</filename>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
       <add_date>N</add_date>
       <add_time>N</add_time>
-      <loglevel>Nothing</loglevel>
-      <wait_until_finished>Y</wait_until_finished>
       <create_parent_folder>N</create_parent_folder>
-      <run_configuration>local</run_configuration>
+      <exec_per_row>N</exec_per_row>
+      <filename>${Internal.Entry.Current.Folder}/src/pre/main_pre_job.hwf</filename>
+      <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
       </parameters>
+      <params_from_previous>N</params_from_previous>
+      <run_configuration>local</run_configuration>
       <set_append_logfile>N</set_append_logfile>
+      <set_logfile>N</set_logfile>
+      <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
       <xloc>304</xloc>
       <yloc>256</yloc>
@@ -78,23 +75,20 @@
       <description/>
       <type>WORKFLOW</type>
       <attributes/>
-      <run_configuration>local</run_configuration>
-      <filename>${Internal.Entry.Current.Folder}/src/post/post_job_success.hwf</filename>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
       <add_date>N</add_date>
       <add_time>N</add_time>
-      <loglevel>Nothing</loglevel>
-      <wait_until_finished>Y</wait_until_finished>
       <create_parent_folder>N</create_parent_folder>
-      <run_configuration>local</run_configuration>
+      <exec_per_row>N</exec_per_row>
+      <filename>${Internal.Entry.Current.Folder}/src/post/post_job_success.hwf</filename>
+      <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
       </parameters>
+      <params_from_previous>N</params_from_previous>
+      <run_configuration>local</run_configuration>
       <set_append_logfile>N</set_append_logfile>
+      <set_logfile>N</set_logfile>
+      <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
       <xloc>800</xloc>
       <yloc>256</yloc>
@@ -105,6 +99,7 @@
       <description/>
       <type>ABORT</type>
       <attributes/>
+      <always_log_rows>N</always_log_rows>
       <parallel>N</parallel>
       <xloc>576</xloc>
       <yloc>688</yloc>
@@ -115,23 +110,20 @@
       <description/>
       <type>WORKFLOW</type>
       <attributes/>
-      <run_configuration>local</run_configuration>
-      <filename>${Internal.Entry.Current.Folder}/src/main/starter_job.hwf</filename>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
       <add_date>N</add_date>
       <add_time>N</add_time>
-      <loglevel>Nothing</loglevel>
-      <wait_until_finished>Y</wait_until_finished>
       <create_parent_folder>N</create_parent_folder>
-      <run_configuration>local</run_configuration>
+      <exec_per_row>N</exec_per_row>
+      <filename>${Internal.Entry.Current.Folder}/src/main/starter_job.hwf</filename>
+      <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
       </parameters>
+      <params_from_previous>N</params_from_previous>
+      <run_configuration>local</run_configuration>
       <set_append_logfile>N</set_append_logfile>
+      <set_logfile>N</set_logfile>
+      <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
       <xloc>576</xloc>
       <yloc>256</yloc>
@@ -164,23 +156,20 @@
       <description/>
       <type>WORKFLOW</type>
       <attributes/>
-      <run_configuration>local</run_configuration>
-      <filename>${Internal.Entry.Current.Folder}/src/commons/tools/send_feeback_mail.hwf</filename>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
       <add_date>N</add_date>
       <add_time>N</add_time>
-      <loglevel>Nothing</loglevel>
-      <wait_until_finished>Y</wait_until_finished>
       <create_parent_folder>N</create_parent_folder>
-      <run_configuration>local</run_configuration>
+      <exec_per_row>N</exec_per_row>
+      <filename>${Internal.Entry.Current.Folder}/src/commons/tools/send_feeback_mail.hwf</filename>
+      <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
       </parameters>
+      <params_from_previous>N</params_from_previous>
+      <run_configuration>local</run_configuration>
       <set_append_logfile>N</set_append_logfile>
+      <set_logfile>N</set_logfile>
+      <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
       <xloc>480</xloc>
       <yloc>608</yloc>
@@ -191,30 +180,27 @@
       <description/>
       <type>WORKFLOW</type>
       <attributes/>
-      <run_configuration>local</run_configuration>
-      <filename>${Internal.Entry.Current.Folder}/src/commons/tools/send_feeback_mail.hwf</filename>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
       <add_date>N</add_date>
       <add_time>N</add_time>
-      <loglevel>Nothing</loglevel>
-      <wait_until_finished>Y</wait_until_finished>
       <create_parent_folder>N</create_parent_folder>
-      <run_configuration>local</run_configuration>
+      <exec_per_row>N</exec_per_row>
+      <filename>${Internal.Entry.Current.Folder}/src/commons/tools/send_feeback_mail.hwf</filename>
+      <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
       </parameters>
+      <params_from_previous>N</params_from_previous>
+      <run_configuration>local</run_configuration>
       <set_append_logfile>N</set_append_logfile>
+      <set_logfile>N</set_logfile>
+      <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
       <xloc>896</xloc>
       <yloc>48</yloc>
       <attributes_hac/>
     </action>
     <action>
-      <name>Seccess feedback enabled?</name>
+      <name>Success feedback enabled?</name>
       <description/>
       <type>SIMPLE_EVAL</type>
       <attributes/>
@@ -279,7 +265,7 @@
 
 Previous instance for base process name ${p_base_process_name} started at ${v_last_job_run_timestamp} seems executing.
 However, maybe previous instance exited abnormally and lock file wasn't cleared.
-Please check locks temporary directory ${lock.tmp.dir} and eventually uncleand lock file.
+Please check locks temporary directory ${lock.dir} and eventually uncleand lock file.
 
 PROCESS EXITS!
 
@@ -322,23 +308,20 @@ PROCESS EXITS!
       <description/>
       <type>WORKFLOW</type>
       <attributes/>
-      <run_configuration>local</run_configuration>
-      <filename>${Internal.Entry.Current.Folder}/src/post/post_job_error.hwf</filename>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
       <add_date>N</add_date>
       <add_time>N</add_time>
-      <loglevel>Nothing</loglevel>
-      <wait_until_finished>Y</wait_until_finished>
       <create_parent_folder>N</create_parent_folder>
-      <run_configuration>local</run_configuration>
+      <exec_per_row>N</exec_per_row>
+      <filename>${Internal.Entry.Current.Folder}/src/post/post_job_error.hwf</filename>
+      <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
       </parameters>
+      <params_from_previous>N</params_from_previous>
+      <run_configuration>local</run_configuration>
       <set_append_logfile>N</set_append_logfile>
+      <set_logfile>N</set_logfile>
+      <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
       <xloc>576</xloc>
       <yloc>448</yloc>
@@ -388,7 +371,7 @@ PROCESS EXITS!
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Seccess feedback enabled?</from>
+      <from>Success feedback enabled?</from>
       <to>Send Feedback on Success</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
@@ -410,7 +393,7 @@ PROCESS EXITS!
     </hop>
     <hop>
       <from>Post Phase Success</from>
-      <to>Seccess feedback enabled?</to>
+      <to>Success feedback enabled?</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>N</unconditional>
@@ -458,7 +441,7 @@ PROCESS EXITS!
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Seccess feedback enabled?</from>
+      <from>Success feedback enabled?</from>
       <to>Dummy 2</to>
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
@@ -509,6 +492,22 @@ PROCESS EXITS!
   </hops>
   <notepads>
     <notepad>
+      <backgroundcolorblue>112</backgroundcolorblue>
+      <backgroundcolorgreen>205</backgroundcolorgreen>
+      <backgroundcolorred>255</backgroundcolorred>
+      <bordercolorblue>100</bordercolorblue>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorred>100</bordercolorred>
+      <fontbold>N</fontbold>
+      <fontcolorblue>0</fontcolorblue>
+      <fontcolorgreen>0</fontcolorgreen>
+      <fontcolorred>0</fontcolorred>
+      <fontitalic>N</fontitalic>
+      <fontname>Verdana</fontname>
+      <fontsize>10</fontsize>
+      <height>346</height>
+      <xloc>816</xloc>
+      <yloc>368</yloc>
       <note>Base template for Hop Processes
 
 Base Process Parameters:
@@ -530,23 +529,7 @@ Base Variables from Config:
 - lock.dir: Path to a folder where the process will put locks' files (Mandatory)
 - hop.user: Associates a user to a running Hop instance
 - hop.program.name: Associates a name to a running Hop instance</note>
-      <xloc>816</xloc>
-      <yloc>368</yloc>
       <width>614</width>
-      <heigth>346</heigth>
-      <fontname>Verdana</fontname>
-      <fontsize>10</fontsize>
-      <fontbold>N</fontbold>
-      <fontitalic>N</fontitalic>
-      <fontcolorred>0</fontcolorred>
-      <fontcolorgreen>0</fontcolorgreen>
-      <fontcolorblue>0</fontcolorblue>
-      <backgroundcolorred>255</backgroundcolorred>
-      <backgroundcolorgreen>205</backgroundcolorgreen>
-      <backgroundcolorblue>112</backgroundcolorblue>
-      <bordercolorred>100</bordercolorred>
-      <bordercolorgreen>100</bordercolorgreen>
-      <bordercolorblue>100</bordercolorblue>
     </notepad>
   </notepads>
   <attributes>
