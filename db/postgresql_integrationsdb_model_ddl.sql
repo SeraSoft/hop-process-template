@@ -97,3 +97,8 @@ COMMENT ON COLUMN config.integrations_processes.short_name IS 'Self explanatory,
 COMMENT ON COLUMN config.integrations_processes.project IS 'Project''s code reference for this process. Must be present in configuration file as hop.project.code';
 
 COMMENT ON COLUMN config.integrations_processes.is_active IS 'Indicate if the process is active or not. Values: Y, N';
+
+INSERT INTO config.event_category (id,event_type, name) VALUES
+	 ('SYS001','E','SYSTEM EXCEPTION',10);
+INSERT INTO config.event_subcategory (id, name) VALUES
+	 ('SYSGE001','GENERIC ERROR');
