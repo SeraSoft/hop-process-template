@@ -29,6 +29,15 @@ CREATE  TABLE config.event_subcategory (
 	CONSTRAINT pk_integrations_log_event_subcategory PRIMARY KEY ( id )
  );
 
+CREATE  TABLE config.integrations_log_events ( 
+	id                   varchar(48)  NOT NULL  ,
+	event_type           char(1)  NOT NULL  ,
+	category             varchar(64)  NOT NULL  ,
+	sub_category         varchar(64)    ,
+	gravity              integer DEFAULT 0 NOT NULL  ,
+	CONSTRAINT integrations_log_events_pk PRIMARY KEY ( id )
+ );
+
 CREATE  TABLE config.integrations_processes ( 
 	id                   varchar(48)  NOT NULL  ,
 	short_name           varchar(32)  NOT NULL  ,
@@ -36,6 +45,14 @@ CREATE  TABLE config.integrations_processes (
 	project              varchar(64)  NOT NULL  ,
 	is_active            char(1) DEFAULT 'Y'::bpchar NOT NULL  ,
 	CONSTRAINT integrations_processes_pk PRIMARY KEY ( id )
+ );
+
+CREATE  TABLE config.integrations_log_event_messages ( 
+	id                   varchar(48)  NOT NULL  ,
+	lang                 char(5) DEFAULT 'it_IT'::bpchar NOT NULL  ,
+	integrations_log_events_id varchar(48)  NOT NULL  ,
+	"message_text"       text    ,
+	CONSTRAINT integrations_log_event_messages_pk PRIMARY KEY ( id )
  );
 
 CREATE  TABLE logs.integrations_logs ( 
@@ -54,7 +71,6 @@ CREATE  TABLE logs.integrations_logs (
 CREATE  TABLE logs.integrations_log_events ( 
 	id                   varchar(48)  NOT NULL  ,
 	integrations_logs_id varchar(48)  NOT NULL  ,
-	date_event           date DEFAULT CURRENT_DATE NOT NULL  ,
 	source_sys_code      varchar(32)    ,
 	source_sys_row_ref   varchar(50)    ,
 	event_subcategory_id varchar(32)  NOT NULL  ,
@@ -65,6 +81,8 @@ CREATE  TABLE logs.integrations_log_events (
  );
 
 ALTER TABLE config.event_subcategory ADD CONSTRAINT fk_event_category FOREIGN KEY ( event_category_id ) REFERENCES config.event_category( id );
+
+ALTER TABLE config.integrations_log_event_messages ADD CONSTRAINT integrations_log_event_messages_integrations_log_events_id_fkey FOREIGN KEY ( integrations_log_events_id ) REFERENCES config.integrations_log_events( id );
 
 ALTER TABLE logs.integrations_log_events ADD CONSTRAINT integrations_log_details_integrations_logs_id_fkey FOREIGN KEY ( integrations_logs_id ) REFERENCES logs.integrations_logs( id );
 
@@ -80,9 +98,7 @@ COMMENT ON COLUMN config.integrations_processes.project IS 'Project''s code refe
 
 COMMENT ON COLUMN config.integrations_processes.is_active IS 'Indicate if the process is active or not. Values: Y, N';
 
-COMMENT ON COLUMN logs.integrations_logs.integrations_processes_id IS 'Reference to the started process.';
-
 INSERT INTO config.event_category (id,event_type, name) VALUES
-	 ('SYS001','E','SYSTEM EXCEPTION');
+	 ('SYS001','E','SYSTEM EXCEPTION',10);
 INSERT INTO config.event_subcategory (id, name) VALUES
 	 ('SYSGE001','GENERIC ERROR');
