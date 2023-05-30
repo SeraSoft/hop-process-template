@@ -86,6 +86,7 @@ CREATE  TABLE config.integrations_processes (
 	project_subfolder    varchar(128)    ,
 	main_worflow         varchar(128)    ,
 	process_lock         char(1) DEFAULT 'N' NOT NULL  ,
+	previous_instance_started_at timestamp  ,
 	max_rows             integer    ,
 	is_active            char(1) DEFAULT 'Y' NOT NULL  ,
 	created_at           timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL  ,
@@ -226,5 +227,5 @@ COMMENT ON COLUMN logs.integrations_log_events.event_data IS 'Support data relat
 
 INSERT INTO config.event_category (id,event_type, name) VALUES
 	 ('SYS001','E','SYSTEM EXCEPTION');
-INSERT INTO config.event_subcategory (id, name) VALUES
-	 ('SYSGE001','GENERIC ERROR');
+INSERT INTO config.event_subcategory (id, name, event_category_id) VALUES
+	 ('SYSGE001','GENERIC ERROR', 'SYS001');

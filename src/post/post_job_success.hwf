@@ -47,7 +47,7 @@
       <attributes/>
       <always_log_rows>N</always_log_rows>
       <parallel>N</parallel>
-      <xloc>720</xloc>
+      <xloc>688</xloc>
       <yloc>464</yloc>
       <attributes_hac/>
     </action>
@@ -73,7 +73,7 @@
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>624</xloc>
+      <xloc>560</xloc>
       <yloc>256</yloc>
       <attributes_hac/>
     </action>
@@ -83,7 +83,7 @@
       <type>DUMMY</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>720</xloc>
+      <xloc>688</xloc>
       <yloc>352</yloc>
       <attributes_hac/>
     </action>
@@ -172,32 +172,12 @@
       <attributes_hac/>
     </action>
     <action>
-      <name>Set Terminated In Error</name>
-      <description/>
-      <type>SET_VARIABLES</type>
-      <attributes/>
-      <replacevars>Y</replacevars>
-      <filename/>
-      <file_variable_type>JVM</file_variable_type>
-      <fields>
-        <field>
-          <variable_name>terminated.successfully</variable_name>
-          <variable_value>1</variable_value>
-          <variable_type>ROOT_WORKFLOW</variable_type>
-        </field>
-      </fields>
-      <parallel>N</parallel>
-      <xloc>464</xloc>
-      <yloc>256</yloc>
-      <attributes_hac/>
-    </action>
-    <action>
       <name>Log.Info</name>
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
-      <logmessage>Is lock present: ${v_lock_present}</logmessage>
       <loglevel>Basic</loglevel>
+      <logmessage>Is lock present: ${v_lock_present}</logmessage>
       <logsubject/>
       <parallel>N</parallel>
       <xloc>896</xloc>
@@ -263,20 +243,6 @@
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>START</from>
-      <to>Set Terminated In Error</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Set Terminated In Error</from>
-      <to>Check for any errors in integrations_log_details</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
       <from>Set process termination</from>
       <to>Log.Info</to>
       <enabled>Y</enabled>
@@ -289,6 +255,13 @@
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>START</from>
+      <to>Check for any errors in integrations_log_details</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
     </hop>
   </hops>
   <notepads>

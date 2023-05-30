@@ -305,7 +305,7 @@
 left outer join ${integrations.db.config.schema}.event_subcategory esc on ile.event_subcategory_id = esc.id
 left outer join ${integrations.db.config.schema}.event_category ec on esc.event_category_id = ec.id
 inner join ${integrations.db.log.schema}.integrations_logs il on il.id = ile.integrations_logs_id
-where il.id = '${v_process_id}'
+where il.id = '${v_process_instance_id}'
 group by ec.name, ile.gravity</sql>
     <variables_active>Y</variables_active>
     <attributes/>
@@ -363,11 +363,11 @@ group by ec.name, ile.gravity</sql>
       </field>
       <field>
         <length>-1</length>
-        <name>process_id</name>
+        <name>process_instance_id</name>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${v_process_id}</variable>
+        <variable>${v_process_instance_id}</variable>
       </field>
       <field>
         <length>-1</length>
@@ -421,7 +421,7 @@ group by ec.name, ile.gravity</sql>
     <give_back_row>N</give_back_row>
     <group>
       <field>
-        <name>process_id</name>
+        <name>process_instance_id</name>
       </field>
       <field>
         <name>event_type</name>
@@ -481,7 +481,7 @@ group by ec.name, ile.gravity</sql>
       </field>
       <field>
         <column_name>integrations_logs_id</column_name>
-        <stream_name>process_id</stream_name>
+        <stream_name>process_instance_id</stream_name>
       </field>
       <field>
         <column_name>event_subcategory_id</column_name>
@@ -529,7 +529,7 @@ group by ec.name, ile.gravity</sql>
     <logmessage>Logged errors in integrations_log_details</logmessage>
     <fields>
       <field>
-        <name>process_id</name>
+        <name>process_instance_id</name>
       </field>
       <field>
         <name>event_type</name>
@@ -565,7 +565,7 @@ group by ec.name, ile.gravity</sql>
     <logmessage>No errors logged in integrations_log_events</logmessage>
     <fields>
       <field>
-        <name>process_id</name>
+        <name>process_instance_id</name>
       </field>
     </fields>
     <attributes/>
@@ -774,7 +774,7 @@ group by ec.name, ile.gravity</sql>
       <key>
         <condition>=</condition>
         <field>id</field>
-        <name>process_id</name>
+        <name>process_instance_id</name>
         <name2/>
       </key>
       <orderby/>

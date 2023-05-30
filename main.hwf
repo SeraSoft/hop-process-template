@@ -18,13 +18,8 @@
     </parameter>
     <parameter>
       <name>p_logfile_dir</name>
-      <default_value>/home/sramazzina/tmp</default_value>
-      <description/>
-    </parameter>
-    <parameter>
-      <name>p_logfile_name</name>
-      <default_value>/tmp/template.log</default_value>
-      <description>Log filename automatically assigned by the runner</description>
+      <default_value/>
+      <description>Directory that will contain the log files. If not specified it will be defaulted to LMS</description>
     </parameter>
     <parameter>
       <name>p_process_code</name>
@@ -269,7 +264,7 @@
 
 =================================================================================================================
 
-Previous instance for base process name ${p_base_process_name} seems executing.
+Previous instance for base process name ${p_base_process_name} seems executing and it was started at ${v_previous_instance_start_timestamp}.
 However, maybe previous instance exited abnormally and lock wasn't cleared.
 Please check integration_processes table and eventually uncleand lock.
 
@@ -497,9 +492,9 @@ PROCESS EXITS!
   </hops>
   <notepads>
     <notepad>
-      <backgroundcolorblue>112</backgroundcolorblue>
-      <backgroundcolorgreen>205</backgroundcolorgreen>
-      <backgroundcolorred>255</backgroundcolorred>
+      <backgroundcolorblue>105</backgroundcolorblue>
+      <backgroundcolorgreen>162</backgroundcolorgreen>
+      <backgroundcolorred>38</backgroundcolorred>
       <bordercolorblue>100</bordercolorblue>
       <bordercolorgreen>100</bordercolorgreen>
       <bordercolorred>100</bordercolorred>
@@ -510,15 +505,19 @@ PROCESS EXITS!
       <fontitalic>N</fontitalic>
       <fontname>Verdana</fontname>
       <fontsize>10</fontsize>
-      <height>346</height>
-      <xloc>816</xloc>
-      <yloc>368</yloc>
+      <height>490</height>
+      <xloc>896</xloc>
+      <yloc>304</yloc>
       <note>Base template for Hop Processes
 
 Base Process Parameters:
 =================================================================
-- p_base_process_name: Uniquely identify the process while running (Mandatory)
-- p_log_filename: Log filename (set by hop_runner.sh)
+- p_base_process_name: Base process name to uniquely identify the process while 
+						   running (Mandatory). It must be declared as an entry of 
+                                                   integrations_processes table
+- p_log_filedir:                      Log file directory. The value is set by the custom 
+                                                  FileLoggingEventLister. Set to 'LMS' in case Hop logs will be 
+                                                  targeted toward an LMS system
 
 Base Instance Variables:
 =================================================================
@@ -526,15 +525,20 @@ Base Instance Variables:
 - v_job_run_timestamp: Date when the job was started in format yyyyMMddHHmmss
 - v_hostname: Hop server's hostname
 - v_host_ip: Hop server's host ip address
-- v_process_id: UUID to identify currently running process (36 chars string) 
+- v_process_instance_id: UUID to identify currently running process (36 chars string) 
+- v_integration_process_id: Targets the row in integrations_process table referenced to 
+                                                       this p_base_process_name instance
 
 Base Variables from Config:
 =================================================================
 - base.dir: Root path to a convenient folder to store processes related things (Mandatory)
 - lock.dir: Path to a folder where the process will put locks' files (Mandatory)
 - hop.user: Associates a user to a running Hop instance
-- hop.program.name: Associates a name to a running Hop instance</note>
-      <width>614</width>
+- hop.program.name: Associates a name to a running Hop instance
+
+
+</note>
+      <width>465</width>
     </notepad>
   </notepads>
   <attributes>

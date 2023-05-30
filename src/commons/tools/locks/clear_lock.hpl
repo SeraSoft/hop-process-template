@@ -86,6 +86,14 @@
         <type>String</type>
         <variable>${v_integrations_process_id}</variable>
       </field>
+      <field>
+        <length>-1</length>
+        <name>process_instance_id</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${v_process_instance_id}</variable>
+      </field>
     </fields>
     <attributes/>
     <GUI>
@@ -166,7 +174,7 @@
       <key>
         <condition>=</condition>
         <field>id</field>
-        <name>integration_process_id</name>
+        <name>integrations_process_id</name>
         <name2/>
       </key>
       <schema>${integrations.db.config.schema}</schema>

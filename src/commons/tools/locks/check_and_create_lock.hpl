@@ -32,18 +32,8 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Dummy (do nothing)</from>
-      <to>Set v_lock_present</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Get process data</from>
       <to>Is process active</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Is process active</from>
-      <to>Is process running</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -71,6 +61,26 @@
       <to>Update integrations_processes</to>
       <enabled>Y</enabled>
     </hop>
+    <hop>
+      <from>Is process active</from>
+      <to>Get audit fields</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get audit fields</from>
+      <to>Is process running</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy (do nothing)</from>
+      <to>Calculate previous_instance_started_at timestamp</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Calculate previous_instance_started_at timestamp</from>
+      <to>Set v_lock_present</to>
+      <enabled>Y</enabled>
+    </hop>
   </order>
   <transform>
     <name>Dummy (do nothing)</name>
@@ -86,7 +96,35 @@
     <attributes/>
     <GUI>
       <xloc>1024</xloc>
-      <yloc>336</yloc>
+      <yloc>384</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Get audit fields</name>
+    <type>GetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <format>yyyyMMddHHmmss</format>
+        <length>-1</length>
+        <name>date_start</name>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <type>Date</type>
+        <variable>${v_job_run_timestamp}</variable>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>576</xloc>
+      <yloc>272</yloc>
     </GUI>
   </transform>
   <transform>
@@ -107,13 +145,14 @@
 , short_name
 , is_active
 , process_lock
+, previous_instance_started_at
 , max_rows
  from ${integrations.db.config.schema}.integrations_processes
 where short_name = '${p_base_process_name}'</sql>
     <variables_active>Y</variables_active>
     <attributes/>
     <GUI>
-      <xloc>352</xloc>
+      <xloc>304</xloc>
       <yloc>272</yloc>
     </GUI>
   </transform>
@@ -147,10 +186,10 @@ where short_name = '${p_base_process_name}'</sql>
       </condition>
     </compare>
     <send_false_to>Manage process paused</send_false_to>
-    <send_true_to>Is process running</send_true_to>
+    <send_true_to>Get audit fields</send_true_to>
     <attributes/>
     <GUI>
-      <xloc>496</xloc>
+      <xloc>448</xloc>
       <yloc>272</yloc>
     </GUI>
   </transform>
@@ -204,7 +243,7 @@ where short_name = '${p_base_process_name}'</sql>
     </partitioning>
     <attributes/>
     <GUI>
-      <xloc>496</xloc>
+      <xloc>448</xloc>
       <yloc>448</yloc>
     </GUI>
   </transform>
@@ -232,7 +271,7 @@ where short_name = '${p_base_process_name}'</sql>
     <attributes/>
     <GUI>
       <xloc>912</xloc>
-      <yloc>448</yloc>
+      <yloc>496</yloc>
     </GUI>
   </transform>
   <transform>
@@ -286,7 +325,7 @@ where short_name = '${p_base_process_name}'</sql>
     <attributes/>
     <GUI>
       <xloc>688</xloc>
-      <yloc>352</yloc>
+      <yloc>384</yloc>
     </GUI>
   </transform>
   <transform>
@@ -302,16 +341,29 @@ where short_name = '${p_base_process_name}'</sql>
     </partitioning>
     <fields>
       <field>
+        <default_value/>
         <field_name>lock_present</field_name>
         <variable_name>v_lock_present</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+      <field>
+        <default_value/>
+        <field_name>integration_process_id</field_name>
+        <variable_name>v_integration_process_id</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+      <field>
+        <default_value/>
+        <field_name>previous_instance_started_at_timestamp</field_name>
+        <variable_name>v_previous_instance_start_timestamp</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
     </fields>
     <use_formatting>Y</use_formatting>
     <attributes/>
     <GUI>
-      <xloc>1200</xloc>
-      <yloc>336</yloc>
+      <xloc>1424</xloc>
+      <yloc>384</yloc>
     </GUI>
   </transform>
   <transform>
@@ -328,13 +380,11 @@ where short_name = '${p_base_process_name}'</sql>
     <commit>100</commit>
     <connection>integrations_db</connection>
     <error_ignored>N</error_ignored>
-    <ignore_flag_field/>
     <lookup>
       <key>
         <condition>=</condition>
         <field>id</field>
         <name>integration_process_id</name>
-        <name2/>
       </key>
       <schema>${integrations.db.config.schema}</schema>
       <table>integrations_processes</table>
@@ -342,13 +392,50 @@ where short_name = '${p_base_process_name}'</sql>
         <name>process_lock</name>
         <rename>status</rename>
       </value>
+      <value>
+        <name>previous_instance_started_at</name>
+        <rename>date_start</rename>
+      </value>
     </lookup>
     <skip_lookup>N</skip_lookup>
     <use_batch>N</use_batch>
     <attributes/>
     <GUI>
       <xloc>688</xloc>
-      <yloc>448</yloc>
+      <yloc>496</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Calculate previous_instance_started_at timestamp</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <calculation>
+      <calc_type>COPY_FIELD</calc_type>
+      <conversion_mask>dd/MM/yyyy HH:mm:ss</conversion_mask>
+      <currency_symbol/>
+      <decimal_symbol/>
+      <field_a>previous_instance_started_at</field_a>
+      <field_b/>
+      <field_c/>
+      <field_name>previous_instance_started_at_timestamp</field_name>
+      <grouping_symbol/>
+      <remove>N</remove>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <value_type>String</value_type>
+    </calculation>
+    <failIfNoFile>N</failIfNoFile>
+    <attributes/>
+    <GUI>
+      <xloc>1248</xloc>
+      <yloc>384</yloc>
     </GUI>
   </transform>
   <transform_error_handling>

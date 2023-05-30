@@ -46,7 +46,7 @@
         </field>
       </fields>
       <parallel>N</parallel>
-      <xloc>288</xloc>
+      <xloc>256</xloc>
       <yloc>192</yloc>
       <attributes_hac/>
     </action>
@@ -196,8 +196,8 @@
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
-      <logmessage>Is lock present: ${v_lock_present}</logmessage>
       <loglevel>Basic</loglevel>
+      <logmessage>Is lock present: ${v_lock_present}</logmessage>
       <logsubject/>
       <parallel>N</parallel>
       <xloc>800</xloc>

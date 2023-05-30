@@ -38,11 +38,11 @@
     </hop>
     <hop>
       <from>Get integration_process_id ref</from>
-      <to>Generate process_id</to>
+      <to>Generate process_instance_id</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Generate process_id</from>
+      <from>Generate process_instance_id</from>
       <to>Set Variables</to>
       <enabled>Y</enabled>
     </hop>
@@ -86,7 +86,7 @@
     </GUI>
   </transform>
   <transform>
-    <name>Generate process_id</name>
+    <name>Generate process_instance_id</name>
     <type>RandomValue</type>
     <description/>
     <distribute>Y</distribute>
@@ -98,7 +98,7 @@
     </partitioning>
     <fields>
       <field>
-        <name>process_id</name>
+        <name>process_instance_id</name>
         <type>random uuid</type>
       </field>
     </fields>
@@ -218,31 +218,37 @@
     </partitioning>
     <fields>
       <field>
+        <default_value/>
         <field_name>job_run_date</field_name>
         <variable_name>v_job_run_date</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
+        <default_value/>
         <field_name>job_run_timestamp</field_name>
         <variable_name>v_job_run_timestamp</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
+        <default_value/>
         <field_name>hostname</field_name>
         <variable_name>v_hostname</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
+        <default_value/>
         <field_name>host_ip</field_name>
         <variable_name>v_host_ip</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
-        <field_name>process_id</field_name>
-        <variable_name>v_process_id</variable_name>
+        <default_value/>
+        <field_name>process_instance_id</field_name>
+        <variable_name>v_process_instance_id</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
+        <default_value/>
         <field_name>integration_process_id</field_name>
         <variable_name>v_integrations_process_id</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
