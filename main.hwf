@@ -17,8 +17,13 @@
       <description>Base process name to use wherever/whenever required in the process.</description>
     </parameter>
     <parameter>
+      <name>p_logfile_dir</name>
+      <default_value>/home/sramazzina/tmp</default_value>
+      <description/>
+    </parameter>
+    <parameter>
       <name>p_logfile_name</name>
-      <default_value/>
+      <default_value>/tmp/template.log</default_value>
       <description>Log filename automatically assigned by the runner</description>
     </parameter>
     <parameter>
@@ -42,7 +47,7 @@
       <schedulerType>0</schedulerType>
       <weekDay>1</weekDay>
       <parallel>N</parallel>
-      <xloc>160</xloc>
+      <xloc>176</xloc>
       <yloc>256</yloc>
       <attributes_hac/>
     </action>
@@ -90,7 +95,7 @@
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>800</xloc>
+      <xloc>768</xloc>
       <yloc>256</yloc>
       <attributes_hac/>
     </action>
@@ -195,7 +200,7 @@
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>896</xloc>
+      <xloc>864</xloc>
       <yloc>48</yloc>
       <attributes_hac/>
     </action>
@@ -217,7 +222,7 @@
       <successbooleancondition>false</successbooleancondition>
       <successwhenvarset>N</successwhenvarset>
       <parallel>N</parallel>
-      <xloc>800</xloc>
+      <xloc>768</xloc>
       <yloc>128</yloc>
       <attributes_hac/>
     </action>
@@ -249,7 +254,7 @@
       <type>SUCCESS</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>1136</xloc>
+      <xloc>1104</xloc>
       <yloc>128</yloc>
       <attributes_hac/>
     </action>
@@ -258,20 +263,20 @@
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
+      <loglevel>Basic</loglevel>
       <logmessage>
 
 
 =================================================================================================================
 
-Previous instance for base process name ${p_base_process_name} started at ${v_last_job_run_timestamp} seems executing.
-However, maybe previous instance exited abnormally and lock file wasn't cleared.
-Please check locks temporary directory ${lock.dir} and eventually uncleand lock file.
+Previous instance for base process name ${p_base_process_name} seems executing.
+However, maybe previous instance exited abnormally and lock wasn't cleared.
+Please check integration_processes table and eventually uncleand lock.
 
 PROCESS EXITS!
 
 =================================================================================================================
 </logmessage>
-      <loglevel>Basic</loglevel>
       <logsubject/>
       <parallel>N</parallel>
       <xloc>496</xloc>
@@ -333,7 +338,7 @@ PROCESS EXITS!
       <type>DUMMY</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>960</xloc>
+      <xloc>928</xloc>
       <yloc>128</yloc>
       <attributes_hac/>
     </action>
