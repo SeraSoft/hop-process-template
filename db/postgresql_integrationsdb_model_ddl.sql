@@ -146,7 +146,7 @@ CREATE  TABLE logs.integrations_log_events (
 	date_event           date DEFAULT CURRENT_DATE NOT NULL  ,
 	integrations_logs_id varchar(48)  NOT NULL  ,
 	source_sys_code      varchar(32)    ,
-	event_subcategory_id varchar(32)  NOT NULL  ,
+	event_subcategory_id varchar(48)  NOT NULL  ,
 	gravity              integer DEFAULT 0 NOT NULL  ,
 	event_text           text  NOT NULL  ,
 	event_data           text    ,
