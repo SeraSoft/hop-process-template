@@ -84,5 +84,5 @@ COMMENT ON COLUMN logs.integrations_logs.integrations_processes_id IS 'Reference
 
 INSERT INTO config.event_category (id,event_type, name) VALUES
 	 ('SYS001','E','SYSTEM EXCEPTION');
-INSERT INTO config.event_subcategory (id, name) VALUES
-	 ('SYSGE001','GENERIC ERROR');
+INSERT INTO config.event_subcategory (id, name, event_category_id) VALUES
+	 ('SYSGE001','GENERIC ERROR', 'SYS001');
