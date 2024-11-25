@@ -106,13 +106,13 @@
       "value" : "${default.mail.destination.addresses}"
     }, {
       "name" : "success.mail.text",
-      "value" : "<html><head></head><body>The process ${p_base_process_name} running on server ${v_macchina_hostname} was terminated successfully.<p>Execution's log file available at: ${p_logfile_name}.<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>"
+      "value" : "<html><head></head><body>The process ${p_base_process_name} running on server ${v_hostname} was terminated successfully.<p>Execution's log file available at: ${p_logfile_name}.<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>"
     }, {
       "name" : "error.mail.text",
       "value" : "<html><head></head><body>The process was terminated abnormally because of an Exception.<p>Execution's log file available at: ${p_logfile_name}.<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>"
     }, {
       "name" : "lock.mail.text",
-      "value" : "<html><head></head><body>The process ${p_base_process_name} running on server ${v_macchina_hostname} can't be started because <strong>same process started at ${v_last_job_run_timestamp} is not yet terminated.</strong><p>Execution's log file available at: ${p_logfile_name}<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>"
+      "value" : "<html><head></head><body>The process ${p_base_process_name} running on server ${v_hostname} can't be started because <strong>same process started at ${v_last_job_run_timestamp} is not yet terminated.</strong><p>Execution's log file available at: ${p_logfile_name}<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>"
     }, {
       "name" : "application.error.mail.text",
       "value" : "<html><head></head><body>During process's execution we collected some exceptions on integrations_log_details. The detailed list of exception is in the attachment to this email.<p>If needed, execution's log file is available at: ${p_logfile_name}<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>"
