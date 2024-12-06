@@ -62,7 +62,9 @@
       <clear_rows>N</clear_rows>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${Internal.Entry.Current.Folder}/logging/check_for_soft_errors.hpl</filename>
+      <filename>${PROJECT_HOME}/src/post/logging/check_for_soft_errors.hpl</filename>
+      <logext/>
+      <logfile/>
       <loglevel>Basic</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -98,7 +100,9 @@
       <clear_rows>N</clear_rows>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${Internal.Entry.Current.Folder}/update_process_reference.hpl</filename>
+      <filename>${PROJECT_HOME}/src/post/update_process_reference.hpl</filename>
+      <logext/>
+      <logfile/>
       <loglevel>Basic</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -118,18 +122,14 @@
       <description/>
       <type>SIMPLE_EVAL</type>
       <attributes/>
-      <valuetype>variable</valuetype>
-      <fieldname/>
-      <variablename>v_lock_present</variablename>
-      <fieldtype>string</fieldtype>
-      <mask/>
       <comparevalue>1</comparevalue>
-      <minvalue/>
-      <maxvalue/>
+      <fieldtype>string</fieldtype>
+      <successbooleancondition>false</successbooleancondition>
       <successcondition>different</successcondition>
       <successnumbercondition>equal</successnumbercondition>
-      <successbooleancondition>false</successbooleancondition>
       <successwhenvarset>N</successwhenvarset>
+      <valuetype>variable</valuetype>
+      <variablename>v_lock_present</variablename>
       <parallel>N</parallel>
       <xloc>992</xloc>
       <yloc>256</yloc>
@@ -157,6 +157,8 @@
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
       <filename>${PROJECT_HOME}/src/commons/tools/locks/clear_lock.hpl</filename>
+      <logext/>
+      <logfile/>
       <loglevel>Basic</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>

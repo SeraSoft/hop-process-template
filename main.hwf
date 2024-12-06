@@ -55,7 +55,7 @@
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${Internal.Entry.Current.Folder}/src/pre/main_pre_job.hwf</filename>
+      <filename>${PROJECT_HOME}/src/pre/main_pre_job.hwf</filename>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -79,7 +79,9 @@
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${Internal.Entry.Current.Folder}/src/post/post_job_success.hwf</filename>
+      <filename>${PROJECT_HOME}/src/post/post_job_success.hwf</filename>
+      <logext/>
+      <logfile/>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -134,18 +136,14 @@
       <description/>
       <type>SIMPLE_EVAL</type>
       <attributes/>
-      <valuetype>variable</valuetype>
-      <fieldname/>
-      <variablename>${email.fail.feedback.enabled}</variablename>
-      <fieldtype>string</fieldtype>
-      <mask/>
       <comparevalue>1</comparevalue>
-      <minvalue/>
-      <maxvalue/>
+      <fieldtype>string</fieldtype>
+      <successbooleancondition>false</successbooleancondition>
       <successcondition>equal</successcondition>
       <successnumbercondition>equal</successnumbercondition>
-      <successbooleancondition>false</successbooleancondition>
       <successwhenvarset>N</successwhenvarset>
+      <valuetype>variable</valuetype>
+      <variablename>${email.fail.feedback.enabled}</variablename>
       <parallel>N</parallel>
       <xloc>576</xloc>
       <yloc>544</yloc>
@@ -160,7 +158,9 @@
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${Internal.Entry.Current.Folder}/src/commons/tools/send_feeback_mail.hwf</filename>
+      <filename>${PROJECT_HOME}/src/commons/tools/send_feeback_mail.hwf</filename>
+      <logext/>
+      <logfile/>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -204,18 +204,14 @@
       <description/>
       <type>SIMPLE_EVAL</type>
       <attributes/>
-      <valuetype>variable</valuetype>
-      <fieldname/>
-      <variablename>${email.success.feedback.enabled}</variablename>
-      <fieldtype>string</fieldtype>
-      <mask/>
       <comparevalue>1</comparevalue>
-      <minvalue/>
-      <maxvalue/>
+      <fieldtype>string</fieldtype>
+      <successbooleancondition>false</successbooleancondition>
       <successcondition>equal</successcondition>
       <successnumbercondition>equal</successnumbercondition>
-      <successbooleancondition>false</successbooleancondition>
       <successwhenvarset>N</successwhenvarset>
+      <valuetype>variable</valuetype>
+      <variablename>${email.success.feedback.enabled}</variablename>
       <parallel>N</parallel>
       <xloc>768</xloc>
       <yloc>128</yloc>
@@ -226,18 +222,14 @@
       <description/>
       <type>SIMPLE_EVAL</type>
       <attributes/>
-      <valuetype>variable</valuetype>
-      <fieldname/>
-      <variablename>v_lock_present</variablename>
-      <fieldtype>string</fieldtype>
-      <mask/>
       <comparevalue>1</comparevalue>
-      <minvalue/>
-      <maxvalue/>
+      <fieldtype>string</fieldtype>
+      <successbooleancondition>false</successbooleancondition>
       <successcondition>equal</successcondition>
       <successnumbercondition>equal</successnumbercondition>
-      <successbooleancondition>false</successbooleancondition>
       <successwhenvarset>N</successwhenvarset>
+      <valuetype>variable</valuetype>
+      <variablename>v_lock_present</variablename>
       <parallel>N</parallel>
       <xloc>432</xloc>
       <yloc>256</yloc>
@@ -283,21 +275,20 @@ PROCESS EXITS!
       <description/>
       <type>SET_VARIABLES</type>
       <attributes/>
-      <replacevars>Y</replacevars>
-      <filename/>
-      <file_variable_type>JVM</file_variable_type>
       <fields>
         <field>
           <variable_name>terminated.successfully</variable_name>
-          <variable_value>2</variable_value>
           <variable_type>ROOT_WORKFLOW</variable_type>
+          <variable_value>2</variable_value>
         </field>
         <field>
           <variable_name>email.success.feedback.enabled</variable_name>
-          <variable_value>1</variable_value>
           <variable_type>ROOT_WORKFLOW</variable_type>
+          <variable_value>1</variable_value>
         </field>
       </fields>
+      <file_variable_type>JVM</file_variable_type>
+      <replacevars>Y</replacevars>
       <parallel>N</parallel>
       <xloc>672</xloc>
       <yloc>160</yloc>
@@ -312,7 +303,9 @@ PROCESS EXITS!
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${Internal.Entry.Current.Folder}/src/post/post_job_error.hwf</filename>
+      <filename>${PROJECT_HOME}/src/post/post_job_error.hwf</filename>
+      <logext/>
+      <logfile/>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -538,7 +531,7 @@ Base Variables from Config:
 
 
 </note>
-      <width>465</width>
+      <width>740</width>
     </notepad>
   </notepads>
   <attributes>
