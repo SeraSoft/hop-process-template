@@ -61,7 +61,9 @@
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${Internal.Entry.Current.Folder}/init/dummy_init_stuff.hwf</filename>
+      <filename>${PROJECT_HOME}/src/pre/init/dummy_init_stuff.hwf</filename>
+      <logext/>
+      <logfile/>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -81,18 +83,14 @@
       <description/>
       <type>SIMPLE_EVAL</type>
       <attributes/>
-      <valuetype>variable</valuetype>
-      <fieldname/>
-      <variablename>${p_base_process_name}</variablename>
-      <fieldtype>string</fieldtype>
-      <mask/>
       <comparevalue>(?!$|\s+).*</comparevalue>
-      <minvalue/>
-      <maxvalue/>
+      <fieldtype>string</fieldtype>
+      <successbooleancondition>false</successbooleancondition>
       <successcondition>regexp</successcondition>
       <successnumbercondition>equal</successnumbercondition>
-      <successbooleancondition>false</successbooleancondition>
       <successwhenvarset>N</successwhenvarset>
+      <valuetype>variable</valuetype>
+      <variablename>${p_base_process_name}</variablename>
       <parallel>N</parallel>
       <xloc>400</xloc>
       <yloc>256</yloc>
@@ -103,8 +101,8 @@
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
-      <logmessage>BASE PROCESS NAME NOT SET. EXIT!</logmessage>
       <loglevel>Basic</loglevel>
+      <logmessage>BASE PROCESS NAME NOT SET. EXIT!</logmessage>
       <logsubject/>
       <parallel>N</parallel>
       <xloc>560</xloc>
@@ -122,7 +120,9 @@
       <clear_rows>N</clear_rows>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${Internal.Entry.Current.Folder}/../commons/tools/locks/check_lock_variable.hpl</filename>
+      <filename>${PROJECT_HOME}/src/commons/tools/locks/check_lock_variable.hpl</filename>
+      <logext/>
+      <logfile/>
       <loglevel>Basic</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -142,18 +142,15 @@
       <description/>
       <type>SIMPLE_EVAL</type>
       <attributes/>
-      <valuetype>variable</valuetype>
-      <fieldname>sync_var_value</fieldname>
-      <variablename>v_lock_present</variablename>
-      <fieldtype>string</fieldtype>
-      <mask/>
       <comparevalue>1</comparevalue>
-      <minvalue/>
-      <maxvalue/>
+      <fieldname>sync_var_value</fieldname>
+      <fieldtype>string</fieldtype>
+      <successbooleancondition>false</successbooleancondition>
       <successcondition>equal</successcondition>
       <successnumbercondition>equal</successnumbercondition>
-      <successbooleancondition>false</successbooleancondition>
       <successwhenvarset>N</successwhenvarset>
+      <valuetype>variable</valuetype>
+      <variablename>v_lock_present</variablename>
       <parallel>N</parallel>
       <xloc>1008</xloc>
       <yloc>256</yloc>
@@ -174,10 +171,10 @@
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
+      <loglevel>Basic</loglevel>
       <logmessage>Active instances running. Going to exit....
 p_base_process_name: ${p_base_process_name}
 v_lock_present: ${v_lock_present}</logmessage>
-      <loglevel>Basic</loglevel>
       <logsubject/>
       <parallel>N</parallel>
       <xloc>1152</xloc>
@@ -195,7 +192,9 @@ v_lock_present: ${v_lock_present}</logmessage>
       <clear_rows>N</clear_rows>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${Internal.Entry.Current.Folder}/../commons/tools/locks/create_lock_variable.hpl</filename>
+      <filename>${PROJECT_HOME}/src/commons/tools/locks/create_lock_variable.hpl</filename>
+      <logext/>
+      <logfile/>
       <loglevel>Basic</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -215,13 +214,13 @@ v_lock_present: ${v_lock_present}</logmessage>
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
+      <loglevel>Basic</loglevel>
       <logmessage>
 =====================================================================
 LOCK FILE CREATED AT ${lock.dir}/${p_base_process_name}
 v_lock_present: ${v_lock_present}
 =====================================================================
 </logmessage>
-      <loglevel>Basic</loglevel>
       <logsubject/>
       <parallel>N</parallel>
       <xloc>1008</xloc>
@@ -237,7 +236,9 @@ v_lock_present: ${v_lock_present}
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${Internal.Entry.Current.Folder}/init/dummy_init_stuff.hwf</filename>
+      <filename>${PROJECT_HOME}/src/pre/init/dummy_init_stuff.hwf</filename>
+      <logext/>
+      <logfile/>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -263,7 +264,9 @@ v_lock_present: ${v_lock_present}
       <clear_rows>N</clear_rows>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${Internal.Entry.Current.Folder}/init/init_sys_variables.hpl</filename>
+      <filename>${PROJECT_HOME}/src/pre/init/init_sys_variables.hpl</filename>
+      <logext/>
+      <logfile/>
       <loglevel>Basic</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -283,6 +286,7 @@ v_lock_present: ${v_lock_present}
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
+      <loglevel>Basic</loglevel>
       <logmessage>
 Dump Application Variables - ${p_base_process_name}
 ---------------------------------------------------------------------------------------
@@ -300,7 +304,6 @@ hop.program.name     -> ${hop.program.name}
 =======================================================================================
 
 Delete this last message and add here your own application instance variable's dump \o/ </logmessage>
-      <loglevel>Basic</loglevel>
       <logsubject/>
       <parallel>N</parallel>
       <xloc>1008</xloc>
@@ -312,16 +315,15 @@ Delete this last message and add here your own application instance variable's d
       <description/>
       <type>SET_VARIABLES</type>
       <attributes/>
-      <replacevars>Y</replacevars>
-      <filename/>
-      <file_variable_type>JVM</file_variable_type>
       <fields>
         <field>
           <variable_name>terminated.successfully</variable_name>
-          <variable_value>1</variable_value>
           <variable_type>ROOT_WORKFLOW</variable_type>
+          <variable_value>1</variable_value>
         </field>
       </fields>
+      <file_variable_type>JVM</file_variable_type>
+      <replacevars>Y</replacevars>
       <parallel>N</parallel>
       <xloc>240</xloc>
       <yloc>256</yloc>
@@ -338,7 +340,9 @@ Delete this last message and add here your own application instance variable's d
       <clear_rows>N</clear_rows>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${Internal.Entry.Current.Folder}/init/create_new_hop_process_instance.hpl</filename>
+      <filename>${PROJECT_HOME}/src/pre/init/create_new_hop_process_instance.hpl</filename>
+      <logext/>
+      <logfile/>
       <loglevel>Basic</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -368,12 +372,12 @@ Delete this last message and add here your own application instance variable's d
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
+      <loglevel>Basic</loglevel>
       <logmessage>
 =============
 Reference for process  [${p_base_process_name}] not found on integrations_processes table. EXIT!
 =============
 </logmessage>
-      <loglevel>Basic</loglevel>
       <logsubject>PROCESS REFERENCE IS MISSING</logsubject>
       <parallel>N</parallel>
       <xloc>672</xloc>
@@ -385,18 +389,14 @@ Reference for process  [${p_base_process_name}] not found on integrations_proces
       <description/>
       <type>SIMPLE_EVAL</type>
       <attributes/>
-      <valuetype>variable</valuetype>
-      <fieldname/>
-      <variablename>${v_integrations_process_id}</variablename>
-      <fieldtype>string</fieldtype>
-      <mask/>
       <comparevalue>-1</comparevalue>
-      <minvalue/>
-      <maxvalue/>
+      <fieldtype>string</fieldtype>
+      <successbooleancondition>false</successbooleancondition>
       <successcondition>different</successcondition>
       <successnumbercondition>equal</successnumbercondition>
-      <successbooleancondition>false</successbooleancondition>
       <successwhenvarset>N</successwhenvarset>
+      <valuetype>variable</valuetype>
+      <variablename>${v_integrations_process_id}</variablename>
       <parallel>N</parallel>
       <xloc>576</xloc>
       <yloc>48</yloc>
@@ -407,12 +407,12 @@ Reference for process  [${p_base_process_name}] not found on integrations_proces
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
+      <loglevel>Basic</loglevel>
       <logmessage>
 =============
 Process found in integrations_processes table. integrations_process_id -> ${v_integrations_process_id}
 =============
 </logmessage>
-      <loglevel>Basic</loglevel>
       <logsubject>PROCESS REFERENCE PRESENT</logsubject>
       <parallel>N</parallel>
       <xloc>688</xloc>

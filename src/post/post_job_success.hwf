@@ -17,14 +17,14 @@
       <description/>
       <type>SPECIAL</type>
       <attributes/>
+      <DayOfMonth>1</DayOfMonth>
+      <hour>12</hour>
+      <intervalMinutes>60</intervalMinutes>
+      <intervalSeconds>0</intervalSeconds>
+      <minutes>0</minutes>
       <repeat>N</repeat>
       <schedulerType>0</schedulerType>
-      <intervalSeconds>0</intervalSeconds>
-      <intervalMinutes>60</intervalMinutes>
-      <hour>12</hour>
-      <minutes>0</minutes>
       <weekDay>1</weekDay>
-      <DayOfMonth>1</DayOfMonth>
       <parallel>N</parallel>
       <xloc>336</xloc>
       <yloc>256</yloc>
@@ -35,18 +35,14 @@
       <description/>
       <type>SIMPLE_EVAL</type>
       <attributes/>
-      <valuetype>variable</valuetype>
-      <fieldname/>
-      <variablename>terminated.successfully</variablename>
-      <fieldtype>string</fieldtype>
-      <mask/>
       <comparevalue>1</comparevalue>
-      <minvalue/>
-      <maxvalue/>
+      <fieldtype>string</fieldtype>
+      <successbooleancondition>false</successbooleancondition>
       <successcondition>equal</successcondition>
       <successnumbercondition>equal</successnumbercondition>
-      <successbooleancondition>false</successbooleancondition>
       <successwhenvarset>N</successwhenvarset>
+      <valuetype>variable</valuetype>
+      <variablename>terminated.successfully</variablename>
       <parallel>N</parallel>
       <xloc>508</xloc>
       <yloc>256</yloc>
@@ -57,23 +53,22 @@
       <description/>
       <type>WORKFLOW</type>
       <attributes/>
-      <run_configuration>local</run_configuration>
-      <filename>${Internal.Entry.Current.Folder}/../commons/tools/locks/clear_synchro_lock.hwf</filename>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
       <add_date>N</add_date>
       <add_time>N</add_time>
-      <loglevel>Nothing</loglevel>
-      <wait_until_finished>Y</wait_until_finished>
       <create_parent_folder>N</create_parent_folder>
-      <run_configuration>local</run_configuration>
+      <exec_per_row>N</exec_per_row>
+      <filename>${PROJECT_HOME}/src/commons/tools/locks/clear_synchro_lock.hwf</filename>
+      <logext/>
+      <logfile/>
+      <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
       </parameters>
+      <params_from_previous>N</params_from_previous>
+      <run_configuration>local</run_configuration>
       <set_append_logfile>N</set_append_logfile>
+      <set_logfile>N</set_logfile>
+      <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
       <xloc>1184</xloc>
       <yloc>256</yloc>
@@ -94,6 +89,7 @@
       <description/>
       <type>ABORT</type>
       <attributes/>
+      <always_log_rows>N</always_log_rows>
       <parallel>N</parallel>
       <xloc>672</xloc>
       <yloc>496</yloc>
@@ -104,24 +100,24 @@
       <description/>
       <type>PIPELINE</type>
       <attributes/>
-      <filename>${Internal.Entry.Current.Folder}/logging/check_for_soft_errors.hpl</filename>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <clear_rows>N</clear_rows>
-      <clear_files>N</clear_files>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
       <add_date>N</add_date>
       <add_time>N</add_time>
-      <loglevel>Basic</loglevel>
-      <set_append_logfile>N</set_append_logfile>
-      <wait_until_finished>Y</wait_until_finished>
+      <clear_files>N</clear_files>
+      <clear_rows>N</clear_rows>
       <create_parent_folder>N</create_parent_folder>
-      <run_configuration>local</run_configuration>
+      <exec_per_row>N</exec_per_row>
+      <filename>${PROJECT_HOME}/src/post/logging/check_for_soft_errors.hpl</filename>
+      <logext/>
+      <logfile/>
+      <loglevel>Basic</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
       </parameters>
+      <params_from_previous>N</params_from_previous>
+      <run_configuration>local</run_configuration>
+      <set_append_logfile>N</set_append_logfile>
+      <set_logfile>N</set_logfile>
+      <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
       <xloc>688</xloc>
       <yloc>256</yloc>
@@ -132,24 +128,24 @@
       <description/>
       <type>PIPELINE</type>
       <attributes/>
-      <filename>${Internal.Entry.Current.Folder}/update_process_reference.hpl</filename>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <clear_rows>N</clear_rows>
-      <clear_files>N</clear_files>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
       <add_date>N</add_date>
       <add_time>N</add_time>
-      <loglevel>Basic</loglevel>
-      <set_append_logfile>N</set_append_logfile>
-      <wait_until_finished>Y</wait_until_finished>
+      <clear_files>N</clear_files>
+      <clear_rows>N</clear_rows>
       <create_parent_folder>N</create_parent_folder>
-      <run_configuration>local</run_configuration>
+      <exec_per_row>N</exec_per_row>
+      <filename>${PROJECT_HOME}/src/post/update_process_reference.hpl</filename>
+      <logext/>
+      <logfile/>
+      <loglevel>Basic</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
       </parameters>
+      <params_from_previous>N</params_from_previous>
+      <run_configuration>local</run_configuration>
+      <set_append_logfile>N</set_append_logfile>
+      <set_logfile>N</set_logfile>
+      <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
       <xloc>852</xloc>
       <yloc>256</yloc>
@@ -170,18 +166,14 @@
       <description/>
       <type>SIMPLE_EVAL</type>
       <attributes/>
-      <valuetype>variable</valuetype>
-      <fieldname/>
-      <variablename>v_lock_present</variablename>
-      <fieldtype>string</fieldtype>
-      <mask/>
       <comparevalue>1</comparevalue>
-      <minvalue/>
-      <maxvalue/>
+      <fieldtype>string</fieldtype>
+      <successbooleancondition>false</successbooleancondition>
       <successcondition>different</successcondition>
       <successnumbercondition>equal</successnumbercondition>
-      <successbooleancondition>false</successbooleancondition>
       <successwhenvarset>N</successwhenvarset>
+      <valuetype>variable</valuetype>
+      <variablename>v_lock_present</variablename>
       <parallel>N</parallel>
       <xloc>992</xloc>
       <yloc>256</yloc>
