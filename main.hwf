@@ -13,18 +13,13 @@
   <parameters>
     <parameter>
       <name>p_base_process_name</name>
-      <default_value>template</default_value>
+      <default_value>default</default_value>
       <description>Base process name to use wherever/whenever required in the process.</description>
     </parameter>
     <parameter>
       <name>p_logfile_dir</name>
       <default_value/>
       <description>Directory that will contain the log files. If not specified it will be defaulted to LMS</description>
-    </parameter>
-    <parameter>
-      <name>p_process_code</name>
-      <default_value/>
-      <description>Process code as set in integrations_processes table</description>
     </parameter>
   </parameters>
   <actions>
@@ -42,8 +37,8 @@
       <schedulerType>0</schedulerType>
       <weekDay>1</weekDay>
       <parallel>N</parallel>
-      <xloc>176</xloc>
-      <yloc>256</yloc>
+      <xloc>64</xloc>
+      <yloc>320</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -55,7 +50,7 @@
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${PROJECT_HOME}/src/pre/main_pre_job.hwf</filename>
+      <filename>${PROJECT_HOME}/src/template/pre/main_pre_job.hwf</filename>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -66,8 +61,8 @@
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>304</xloc>
-      <yloc>256</yloc>
+      <xloc>192</xloc>
+      <yloc>320</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -79,9 +74,7 @@
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${PROJECT_HOME}/src/post/post_job_success.hwf</filename>
-      <logext/>
-      <logfile/>
+      <filename>${PROJECT_HOME}/src/template/post/post_job_success.hwf</filename>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -92,8 +85,8 @@
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>768</xloc>
-      <yloc>256</yloc>
+      <xloc>864</xloc>
+      <yloc>320</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -103,8 +96,8 @@
       <attributes/>
       <always_log_rows>N</always_log_rows>
       <parallel>N</parallel>
-      <xloc>576</xloc>
-      <yloc>688</yloc>
+      <xloc>528</xloc>
+      <yloc>848</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -116,7 +109,7 @@
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${Internal.Entry.Current.Folder}/src/main/starter_job.hwf</filename>
+      <filename>${project.link.ref}/start.hwf</filename>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -127,8 +120,8 @@
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>576</xloc>
-      <yloc>256</yloc>
+      <xloc>528</xloc>
+      <yloc>320</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -145,8 +138,8 @@
       <valuetype>variable</valuetype>
       <variablename>${email.fail.feedback.enabled}</variablename>
       <parallel>N</parallel>
-      <xloc>576</xloc>
-      <yloc>544</yloc>
+      <xloc>528</xloc>
+      <yloc>608</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -158,9 +151,7 @@
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${PROJECT_HOME}/src/commons/tools/send_feeback_mail.hwf</filename>
-      <logext/>
-      <logfile/>
+      <filename>${PROJECT_HOME}/src/template/commons/tools/send_feeback_mail.hwf</filename>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -171,8 +162,8 @@
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>480</xloc>
-      <yloc>608</yloc>
+      <xloc>432</xloc>
+      <yloc>672</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -184,7 +175,7 @@
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${Internal.Entry.Current.Folder}/src/commons/tools/send_feeback_mail.hwf</filename>
+      <filename>${PROJECT_HOME}/src/template/commons/tools/send_feeback_mail.hwf</filename>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -195,8 +186,8 @@
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>864</xloc>
-      <yloc>48</yloc>
+      <xloc>960</xloc>
+      <yloc>112</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -213,8 +204,8 @@
       <valuetype>variable</valuetype>
       <variablename>${email.success.feedback.enabled}</variablename>
       <parallel>N</parallel>
-      <xloc>768</xloc>
-      <yloc>128</yloc>
+      <xloc>864</xloc>
+      <yloc>192</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -231,8 +222,8 @@
       <valuetype>variable</valuetype>
       <variablename>v_lock_present</variablename>
       <parallel>N</parallel>
-      <xloc>432</xloc>
-      <yloc>256</yloc>
+      <xloc>384</xloc>
+      <yloc>320</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -241,12 +232,12 @@
       <type>SUCCESS</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>1104</xloc>
-      <yloc>128</yloc>
+      <xloc>1200</xloc>
+      <yloc>192</yloc>
       <attributes_hac/>
     </action>
     <action>
-      <name>Log Warning</name>
+      <name>Log warning lock is set</name>
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
@@ -256,7 +247,7 @@
 
 =================================================================================================================
 
-Previous instance for base process name ${p_base_process_name} seems executing and it was started at ${v_previous_instance_start_timestamp}.
+Previous instance for base process name ${p_base_process_name} seems executing and it was started at ${v_last_instance_start_timestamp}.
 However, maybe previous instance exited abnormally and lock wasn't cleared.
 Please check integration_processes table and eventually uncleand lock.
 
@@ -266,12 +257,12 @@ PROCESS EXITS!
 </logmessage>
       <logsubject/>
       <parallel>N</parallel>
-      <xloc>496</xloc>
-      <yloc>160</yloc>
+      <xloc>448</xloc>
+      <yloc>224</yloc>
       <attributes_hac/>
     </action>
     <action>
-      <name>Set Terminated for Lock Set </name>
+      <name>Set terminated because lock set </name>
       <description/>
       <type>SET_VARIABLES</type>
       <attributes/>
@@ -288,10 +279,11 @@ PROCESS EXITS!
         </field>
       </fields>
       <file_variable_type>JVM</file_variable_type>
+      <filename/>
       <replacevars>Y</replacevars>
       <parallel>N</parallel>
-      <xloc>672</xloc>
-      <yloc>160</yloc>
+      <xloc>624</xloc>
+      <yloc>224</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -303,9 +295,7 @@ PROCESS EXITS!
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${PROJECT_HOME}/src/post/post_job_error.hwf</filename>
-      <logext/>
-      <logfile/>
+      <filename>${PROJECT_HOME}/src/template/post/post_job_error.hwf</filename>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -316,8 +306,8 @@ PROCESS EXITS!
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>576</xloc>
-      <yloc>448</yloc>
+      <xloc>528</xloc>
+      <yloc>512</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -326,29 +316,123 @@ PROCESS EXITS!
       <type>DUMMY</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>928</xloc>
-      <yloc>128</yloc>
+      <xloc>1024</xloc>
+      <yloc>192</yloc>
       <attributes_hac/>
     </action>
     <action>
-      <name>Dummy</name>
+      <name>Dummy 1</name>
       <description/>
       <type>DUMMY</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>576</xloc>
-      <yloc>352</yloc>
+      <xloc>528</xloc>
+      <yloc>416</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Evaluate Process active</name>
+      <description/>
+      <type>SIMPLE_EVAL</type>
+      <attributes/>
+      <comparevalue>1</comparevalue>
+      <fieldname/>
+      <fieldtype>string</fieldtype>
+      <mask/>
+      <maxvalue/>
+      <minvalue/>
+      <successbooleancondition>false</successbooleancondition>
+      <successcondition>equal</successcondition>
+      <successnumbercondition>equal</successnumbercondition>
+      <successwhenvarset>N</successwhenvarset>
+      <valuetype>variable</valuetype>
+      <variablename>v_process_active</variablename>
+      <parallel>N</parallel>
+      <xloc>288</xloc>
+      <yloc>320</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Log warning process inactive</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <loglevel>Basic</loglevel>
+      <logmessage>
+
+
+=================================================================================================================
+
+Process with base process name ${p_base_process_name} tried to start but is set to not active
+
+PROCESS EXITS!
+
+=================================================================================================================
+</logmessage>
+      <logsubject/>
+      <parallel>N</parallel>
+      <xloc>400</xloc>
+      <yloc>160</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Set terminated because not active</name>
+      <description/>
+      <type>SET_VARIABLES</type>
+      <attributes/>
+      <fields>
+        <field>
+          <variable_name>terminated.successfully</variable_name>
+          <variable_type>ROOT_WORKFLOW</variable_type>
+          <variable_value>3</variable_value>
+        </field>
+        <field>
+          <variable_name>email.success.feedback.enabled</variable_name>
+          <variable_type>ROOT_WORKFLOW</variable_type>
+          <variable_value>1</variable_value>
+        </field>
+      </fields>
+      <file_variable_type>JVM</file_variable_type>
+      <filename/>
+      <replacevars>Y</replacevars>
+      <parallel>N</parallel>
+      <xloc>624</xloc>
+      <yloc>160</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Dummy 3</name>
+      <description/>
+      <type>DUMMY</type>
+      <attributes/>
+      <parallel>N</parallel>
+      <xloc>720</xloc>
+      <yloc>320</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Error 2</name>
+      <description/>
+      <type>ABORT</type>
+      <attributes/>
+      <always_log_rows>N</always_log_rows>
+      <parallel>N</parallel>
+      <xloc>544</xloc>
+      <yloc>1200</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Dummy 4</name>
+      <description/>
+      <type>DUMMY</type>
+      <attributes/>
+      <parallel>N</parallel>
+      <xloc>528</xloc>
+      <yloc>752</yloc>
       <attributes_hac/>
     </action>
   </actions>
   <hops>
-    <hop>
-      <from>Error Feedback Enabled?</from>
-      <to>Error</to>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
     <hop>
       <from>Error Feedback Enabled?</from>
       <to>Send Feedback on Errors</to>
@@ -357,22 +441,8 @@ PROCESS EXITS!
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Send Feedback on Errors</from>
-      <to>Error</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
       <from>Success feedback enabled?</from>
       <to>Send Feedback on Success</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Pre Phase</from>
-      <to>Evaluate synchro var</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>N</unconditional>
@@ -393,21 +463,14 @@ PROCESS EXITS!
     </hop>
     <hop>
       <from>Evaluate synchro var</from>
-      <to>Log Warning</to>
+      <to>Log warning lock is set</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Log Warning</from>
-      <to>Set Terminated for Lock Set </to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Set Terminated for Lock Set </from>
-      <to>Post Phase Success</to>
+      <from>Log warning lock is set</from>
+      <to>Set terminated because lock set </to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>N</unconditional>
@@ -425,13 +488,6 @@ PROCESS EXITS!
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Run main process</from>
-      <to>Post Phase Success</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
     </hop>
     <hop>
       <from>Success feedback enabled?</from>
@@ -456,28 +512,105 @@ PROCESS EXITS!
     </hop>
     <hop>
       <from>Pre Phase</from>
-      <to>Dummy</to>
+      <to>Dummy 1</to>
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
       <unconditional>N</unconditional>
     </hop>
     <hop>
       <from>Run main process</from>
-      <to>Dummy</to>
+      <to>Dummy 1</to>
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
       <unconditional>N</unconditional>
     </hop>
     <hop>
       <from>Post Phase Success</from>
-      <to>Dummy</to>
+      <to>Dummy 1</to>
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Dummy</from>
+      <from>Dummy 1</from>
       <to>Post Phase Error</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Pre Phase</from>
+      <to>Evaluate Process active</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Evaluate Process active</from>
+      <to>Evaluate synchro var</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Evaluate Process active</from>
+      <to>Log warning process inactive</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Log warning process inactive</from>
+      <to>Set terminated because not active</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Run main process</from>
+      <to>Dummy 3</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Set terminated because lock set </from>
+      <to>Dummy 3</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Set terminated because not active</from>
+      <to>Dummy 3</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Dummy 3</from>
+      <to>Post Phase Success</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Error Feedback Enabled?</from>
+      <to>Dummy 4</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Send Feedback on Errors</from>
+      <to>Dummy 4</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Dummy 4</from>
+      <to>Error</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>Y</unconditional>
@@ -498,19 +631,17 @@ PROCESS EXITS!
       <fontitalic>N</fontitalic>
       <fontname>Verdana</fontname>
       <fontsize>10</fontsize>
-      <height>490</height>
-      <xloc>896</xloc>
-      <yloc>304</yloc>
+      <height>458</height>
+      <xloc>928</xloc>
+      <yloc>432</yloc>
       <note>Base template for Hop Processes
 
 Base Process Parameters:
 =================================================================
-- p_base_process_name: Base process name to uniquely identify the process while 
-						   running (Mandatory). It must be declared as an entry of 
-                                                   integrations_processes table
-- p_log_filedir:                      Log file directory. The value is set by the custom 
-                                                  FileLoggingEventLister. Set to 'LMS' in case Hop logs will be 
-                                                  targeted toward an LMS system
+- p_base_process_name: Process's unique identifier declared as an entry of 
+                                      integrations_processes table
+- p_log_filedir:                Full log filename 
+
 
 Base Instance Variables:
 =================================================================
@@ -531,7 +662,7 @@ Base Variables from Config:
 
 
 </note>
-      <width>740</width>
+      <width>614</width>
     </notepad>
   </notepads>
   <attributes>

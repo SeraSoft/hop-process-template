@@ -159,9 +159,11 @@
       <fail_on_multiple>N</fail_on_multiple>
       <key>
         <condition>=</condition>
-        <field>short_name</field>
+        <field>id</field>
         <name>base_process_name</name>
+        <name2/>
       </key>
+      <orderby/>
       <schema>${integrations.db.config.schema}</schema>
       <table>integrations_processes</table>
       <value>
@@ -218,37 +220,31 @@
     </partitioning>
     <fields>
       <field>
-        <default_value/>
         <field_name>job_run_date</field_name>
         <variable_name>v_job_run_date</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
-        <default_value/>
         <field_name>job_run_timestamp</field_name>
         <variable_name>v_job_run_timestamp</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
-        <default_value/>
         <field_name>hostname</field_name>
         <variable_name>v_hostname</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
-        <default_value/>
         <field_name>host_ip</field_name>
         <variable_name>v_host_ip</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
-        <default_value/>
         <field_name>process_instance_id</field_name>
         <variable_name>v_process_instance_id</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
-        <default_value/>
         <field_name>integration_process_id</field_name>
         <variable_name>v_integrations_process_id</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>

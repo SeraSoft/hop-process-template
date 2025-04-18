@@ -33,7 +33,7 @@
       <fontitalic>N</fontitalic>
       <fontname>Segoe UI</fontname>
       <fontsize>9</fontsize>
-      <height>88</height>
+      <height>121</height>
       <xloc>224</xloc>
       <yloc>368</yloc>
       <note>Process Termination Codes Legenda
@@ -41,8 +41,9 @@
 T -> Terminated Successfully
 E -> Terminated with Errors (Hard Exceptions)
 X -> Terminated with ONLY functional errors (Soft Exceptions)
-O -> Terminated because another instance of same process is running</note>
-      <width>470</width>
+L -> Terminated because another instance of same process is running
+P -> Terminated because not active (Paused)</note>
+      <width>377</width>
     </notepad>
   </notepads>
   <order>
@@ -156,7 +157,7 @@ O -> Terminated because another instance of same process is running</note>
     </partitioning>
     <formula>
       <field_name>status</field_name>
-      <formula_string>(terminated_successfully.equals("0") ? "E" : (( terminated_successfully.equals("1") &amp;&amp; records_in_error > 0 ) ? "X" : (terminated_successfully.equals("2") ? "L" : "T")))</formula_string>
+      <formula_string>(terminated_successfully.equals("0") ? "E" : (( terminated_successfully.equals("1") &amp;&amp; records_in_error > 0 ) ? "X" : (terminated_successfully.equals("2") ? "L" : (terminated_successfully.equals("3") ? "P" : "T"))))</formula_string>
       <value_type>String</value_type>
       <value_length>-1</value_length>
       <value_precision>-1</value_precision>
@@ -172,7 +173,7 @@ O -> Terminated because another instance of same process is running</note>
     </formula>
     <attributes/>
     <GUI>
-      <xloc>655</xloc>
+      <xloc>624</xloc>
       <yloc>160</yloc>
     </GUI>
   </transform>

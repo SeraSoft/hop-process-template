@@ -56,7 +56,7 @@
       <attributes/>
       <always_log_rows>N</always_log_rows>
       <parallel>N</parallel>
-      <xloc>576</xloc>
+      <xloc>608</xloc>
       <yloc>512</yloc>
       <attributes_hac/>
     </action>
@@ -71,9 +71,7 @@
       <clear_rows>N</clear_rows>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${PROJECT_HOME}/src/post/logging/check_for_soft_errors.hpl</filename>
-      <logext/>
-      <logfile/>
+      <filename>${PROJECT_HOME}/src/template/post/logging/check_for_soft_errors.hpl</filename>
       <loglevel>Basic</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -94,7 +92,7 @@
       <type>DUMMY</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>576</xloc>
+      <xloc>608</xloc>
       <yloc>304</yloc>
       <attributes_hac/>
     </action>
@@ -109,9 +107,7 @@
       <clear_rows>N</clear_rows>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${PROJECT_HOME}/src/post/update_process_reference.hpl</filename>
-      <logext/>
-      <logfile/>
+      <filename>${PROJECT_HOME}/src/template/post/update_process_reference.hpl</filename>
       <loglevel>Basic</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -122,61 +118,7 @@
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>688</xloc>
-      <yloc>192</yloc>
-      <attributes_hac/>
-    </action>
-    <action>
-      <name>Evaluate synchro var</name>
-      <description/>
-      <type>SIMPLE_EVAL</type>
-      <attributes/>
-      <comparevalue>1</comparevalue>
-      <fieldtype>string</fieldtype>
-      <successbooleancondition>false</successbooleancondition>
-      <successcondition>different</successcondition>
-      <successnumbercondition>equal</successnumbercondition>
-      <successwhenvarset>N</successwhenvarset>
-      <valuetype>variable</valuetype>
-      <variablename>v_lock_present</variablename>
-      <parallel>N</parallel>
-      <xloc>912</xloc>
-      <yloc>192</yloc>
-      <attributes_hac/>
-    </action>
-    <action>
-      <name>Dummy 2</name>
-      <description/>
-      <type>DUMMY</type>
-      <attributes/>
-      <parallel>N</parallel>
-      <xloc>1040</xloc>
-      <yloc>288</yloc>
-      <attributes_hac/>
-    </action>
-    <action>
-      <name>Clear lock</name>
-      <description/>
-      <type>PIPELINE</type>
-      <attributes/>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <clear_files>N</clear_files>
-      <clear_rows>N</clear_rows>
-      <create_parent_folder>N</create_parent_folder>
-      <exec_per_row>N</exec_per_row>
-      <filename>${PROJECT_HOME}/src/commons/tools/locks/clear_lock.hpl</filename>
-      <loglevel>Basic</loglevel>
-      <parameters>
-        <pass_all_parameters>Y</pass_all_parameters>
-      </parameters>
-      <params_from_previous>N</params_from_previous>
-      <run_configuration>local</run_configuration>
-      <set_append_logfile>N</set_append_logfile>
-      <set_logfile>N</set_logfile>
-      <wait_until_finished>Y</wait_until_finished>
-      <parallel>N</parallel>
-      <xloc>1040</xloc>
+      <xloc>736</xloc>
       <yloc>192</yloc>
       <attributes_hac/>
     </action>
@@ -186,20 +128,7 @@
       <type>SUCCESS</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>1040</xloc>
-      <yloc>400</yloc>
-      <attributes_hac/>
-    </action>
-    <action>
-      <name>Log.Info</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <loglevel>Basic</loglevel>
-      <logmessage>Is lock present: ${v_lock_present}</logmessage>
-      <logsubject/>
-      <parallel>N</parallel>
-      <xloc>800</xloc>
+      <xloc>944</xloc>
       <yloc>192</yloc>
       <attributes_hac/>
     </action>
@@ -214,7 +143,7 @@
       <clear_rows>N</clear_rows>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${PROJECT_HOME}/src/commons/tools/locks/clear_lock.hpl</filename>
+      <filename>${PROJECT_HOME}/src/template/commons/tools/locks/clear_lock.hpl</filename>
       <loglevel>Basic</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -225,7 +154,7 @@
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>576</xloc>
+      <xloc>608</xloc>
       <yloc>400</yloc>
       <attributes_hac/>
     </action>
@@ -267,48 +196,6 @@
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Evaluate synchro var</from>
-      <to>Dummy 2</to>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Evaluate synchro var</from>
-      <to>Clear lock</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Clear lock</from>
-      <to>Dummy 2</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Dummy 2</from>
-      <to>Success</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Set process termination</from>
-      <to>Log.Info</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Log.Info</from>
-      <to>Evaluate synchro var</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
       <from>Dummy</from>
       <to>Clear lock 2</to>
       <enabled>Y</enabled>
@@ -318,6 +205,13 @@
     <hop>
       <from>Clear lock 2</from>
       <to>Abort job</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Set process termination</from>
+      <to>Success</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>N</unconditional>
