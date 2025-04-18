@@ -1,0 +1,827 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pipeline>
+  <info>
+    <name>check_for_soft_errors</name>
+    <name_sync_with_filename>N</name_sync_with_filename>
+    <description/>
+    <extended_description/>
+    <pipeline_version/>
+    <pipeline_type>Normal</pipeline_type>
+    <pipeline_status>0</pipeline_status>
+    <parameters>
+    </parameters>
+    <capture_transform_performance>N</capture_transform_performance>
+    <transform_performance_capturing_delay>1000</transform_performance_capturing_delay>
+    <transform_performance_capturing_size_limit/>
+    <created_user>-</created_user>
+    <created_date>2020/01/07 10:56:30.129</created_date>
+    <modified_user>-</modified_user>
+    <modified_date>2020/01/07 10:56:30.129</modified_date>
+  </info>
+  <notepads>
+  </notepads>
+  <order>
+    <hop>
+      <from>Get count logging_details</from>
+      <to>Get vars and params</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Override to force email send</from>
+      <to>Set v_err_items_num = num_err</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get count logging_details</from>
+      <to>Detect empty stream</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Detect empty stream</from>
+      <to>num_err 0</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>num_err 0</from>
+      <to>Get vars and params</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows</from>
+      <to>Override to force email send</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Set v_err_items_num = 0</from>
+      <to>Log info 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Set v_err_items_num = num_err</from>
+      <to>Log info</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dispense</from>
+      <to>Comes from error path?</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dispense</from>
+      <to>Set v_err_items_num = 0</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows</from>
+      <to>Force gravity = 10 on aborts</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Force gravity = 10 on aborts</from>
+      <to>Dispense</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get vars and params</from>
+      <to>Group by</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get notmatch EVT</from>
+      <to>Ins integrations_log_details</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Id integrations_log_details</from>
+      <to>Set event_text for generic error</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Set event_text for generic error</from>
+      <to>Get notmatch EVT</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Group by</from>
+      <to>Write to log</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Write to log</from>
+      <to>Filter rows</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Comes from error path?</from>
+      <to>Check if there a row in integration_log</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Check if there a row in integration_log</from>
+      <to>integrations_log record is present</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>integrations_log record is present</from>
+      <to>Id integrations_log_details</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+  <transform>
+    <name>Comes from error path?</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <compare>
+      <condition>
+        <conditions>
+</conditions>
+        <function>=</function>
+        <leftvalue>terminated.successfully</leftvalue>
+        <negated>N</negated>
+        <operator>-</operator>
+        <value>
+          <isnull>N</isnull>
+          <length>-1</length>
+          <name>constant</name>
+          <precision>-1</precision>
+          <text>0</text>
+          <type>String</type>
+        </value>
+      </condition>
+    </compare>
+    <attributes/>
+    <GUI>
+      <xloc>742</xloc>
+      <yloc>468</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Detect empty stream</name>
+    <type>DetectEmptyStream</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <GUI>
+      <xloc>112</xloc>
+      <yloc>252</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Dispense</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <GUI>
+      <xloc>742</xloc>
+      <yloc>360</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Filter rows</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <compare>
+      <condition>
+        <conditions>
+          <condition>
+            <conditions>
+</conditions>
+            <function>&gt;</function>
+            <leftvalue>num_err</leftvalue>
+            <negated>N</negated>
+            <operator>-</operator>
+            <value>
+              <isnull>N</isnull>
+              <length>-1</length>
+              <mask>####0;-####0</mask>
+              <name>constant</name>
+              <precision>0</precision>
+              <text>0</text>
+              <type>Integer</type>
+            </value>
+          </condition>
+          <condition>
+            <conditions>
+</conditions>
+            <function>&gt;</function>
+            <leftvalue>terminated.successfully</leftvalue>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <value>
+              <isnull>N</isnull>
+              <length>-1</length>
+              <name>constant</name>
+              <precision>-1</precision>
+              <text>0</text>
+              <type>String</type>
+            </value>
+          </condition>
+        </conditions>
+        <function>=</function>
+        <negated>N</negated>
+        <operator>-</operator>
+      </condition>
+    </compare>
+    <send_false_to>Force gravity = 10 on aborts</send_false_to>
+    <send_true_to>Override to force email send</send_true_to>
+    <attributes/>
+    <GUI>
+      <xloc>742</xloc>
+      <yloc>144</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Force gravity = 10 on aborts</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>gravity_on_abort</name>
+        <nullif>10</nullif>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+        <type>Integer</type>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>742</xloc>
+      <yloc>252</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Get count logging_details</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>${integrations.db.connection.name}</connection>
+    <execute_each_row>N</execute_each_row>
+    <limit>0</limit>
+    <sql>select ec.name event_type
+, ile.gravity
+, count(*) as num_err 
+ from ${integrations.db.log.schema}.integrations_log_events ile 
+left outer join ${integrations.db.config.schema}.event_subcategory esc on ile.event_subcategory_id = esc.id
+left outer join ${integrations.db.config.schema}.event_category ec on esc.event_category_id = ec.id
+inner join ${integrations.db.log.schema}.integrations_logs il on il.id = ile.integrations_logs_id
+where il.id = '${v_process_instance_id}'
+group by ec.name, ile.gravity</sql>
+    <variables_active>Y</variables_active>
+    <attributes/>
+    <GUI>
+      <xloc>112</xloc>
+      <yloc>144</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Get notmatch EVT</name>
+    <type>GetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>events_subcategory_id</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${sys.unhandled.exception.subcategory.generic}</variable>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>1424</xloc>
+      <yloc>592</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Get vars and params</name>
+    <type>GetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>status</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${status}</variable>
+      </field>
+      <field>
+        <length>-1</length>
+        <name>process_instance_id</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${v_process_instance_id}</variable>
+      </field>
+      <field>
+        <length>-1</length>
+        <name>comes_from_error_path</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${v_comes_from_error_path}</variable>
+      </field>
+      <field>
+        <length>-1</length>
+        <name>terminated.successfully</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${terminated.successfully}</variable>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>322</xloc>
+      <yloc>144</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Group by</name>
+    <type>GroupBy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <add_linenr>N</add_linenr>
+    <all_rows>N</all_rows>
+    <directory>%%java.io.tmpdir%%</directory>
+    <fields>
+      <field>
+        <aggregate>num_err</aggregate>
+        <subject>num_err</subject>
+        <type>SUM</type>
+      </field>
+      <field>
+        <aggregate>gravity</aggregate>
+        <subject>gravity</subject>
+        <type>MAX</type>
+      </field>
+    </fields>
+    <give_back_row>N</give_back_row>
+    <group>
+      <field>
+        <name>process_instance_id</name>
+      </field>
+      <field>
+        <name>event_type</name>
+      </field>
+      <field>
+        <name>terminated.successfully</name>
+      </field>
+    </group>
+    <ignore_aggregate>N</ignore_aggregate>
+    <prefix>grp</prefix>
+    <attributes/>
+    <GUI>
+      <xloc>480</xloc>
+      <yloc>144</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Id integrations_log_details</name>
+    <type>RandomValue</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>id</name>
+        <type>random uuid</type>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>1040</xloc>
+      <yloc>592</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Ins integrations_log_details</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <commit>1000</commit>
+    <connection>${integrations.db.connection.name}</connection>
+    <fields>
+      <field>
+        <column_name>id</column_name>
+        <stream_name>id</stream_name>
+      </field>
+      <field>
+        <column_name>integrations_logs_id</column_name>
+        <stream_name>process_instance_id</stream_name>
+      </field>
+      <field>
+        <column_name>event_subcategory_id</column_name>
+        <stream_name>events_subcategory_id</stream_name>
+      </field>
+      <field>
+        <column_name>event_text</column_name>
+        <stream_name>event_text</stream_name>
+      </field>
+    </fields>
+    <ignore_errors>N</ignore_errors>
+    <only_when_have_rows>N</only_when_have_rows>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <return_keys>N</return_keys>
+    <schema>${integrations.db.log.schema}</schema>
+    <specify_fields>Y</specify_fields>
+    <table>integrations_log_events</table>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_in_table>Y</tablename_in_table>
+    <truncate>N</truncate>
+    <use_batch>Y</use_batch>
+    <attributes/>
+    <GUI>
+      <xloc>1616</xloc>
+      <yloc>592</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Log info</name>
+    <type>WriteToLog</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <loglevel>log_level_basic</loglevel>
+    <displayHeader>Y</displayHeader>
+    <limitRows>N</limitRows>
+    <limitRowsNumber>0</limitRowsNumber>
+    <logmessage>Logged errors in integrations_log_details</logmessage>
+    <fields>
+      <field>
+        <name>process_instance_id</name>
+      </field>
+      <field>
+        <name>event_type</name>
+      </field>
+      <field>
+        <name>num_err</name>
+      </field>
+      <field>
+        <name>gravity</name>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>1372</xloc>
+      <yloc>144</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Log info 2</name>
+    <type>WriteToLog</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <loglevel>log_level_basic</loglevel>
+    <displayHeader>Y</displayHeader>
+    <limitRows>N</limitRows>
+    <limitRowsNumber>0</limitRowsNumber>
+    <logmessage>No errors logged in integrations_log_events</logmessage>
+    <fields>
+      <field>
+        <name>process_instance_id</name>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>1162</xloc>
+      <yloc>360</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Override to force email send</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>override</name>
+        <nullif>1</nullif>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+        <type>String</type>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>952</xloc>
+      <yloc>144</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Set event_text for generic error</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>event_text</name>
+        <nullif>Unhandled error occured during process execution. Check the log for further details.</nullif>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+        <type>String</type>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>1232</xloc>
+      <yloc>592</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Set v_err_items_num = 0</name>
+    <type>SetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <field_name>num_err</field_name>
+        <variable_name>v_err_items_num</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+      <field>
+        <field_name>gravity_on_abort</field_name>
+        <variable_name>v_gravity</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+    </fields>
+    <use_formatting>Y</use_formatting>
+    <attributes/>
+    <GUI>
+      <xloc>952</xloc>
+      <yloc>360</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Set v_err_items_num = num_err</name>
+    <type>SetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <field_name>num_err</field_name>
+        <variable_name>v_err_items_num</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+      <field>
+        <field_name>override</field_name>
+        <variable_name>email.success.feedback.enabled</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+      <field>
+        <field_name>override</field_name>
+        <variable_name>email.fail.feedback.enabled</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+      <field>
+        <field_name>event_type</field_name>
+        <variable_name>v_event_type</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+      <field>
+        <field_name>gravity</field_name>
+        <variable_name>v_gravity</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+    </fields>
+    <use_formatting>Y</use_formatting>
+    <attributes/>
+    <GUI>
+      <xloc>1162</xloc>
+      <yloc>144</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Write to log</name>
+    <type>WriteToLog</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <loglevel>log_level_basic</loglevel>
+    <displayHeader>Y</displayHeader>
+    <limitRows>N</limitRows>
+    <limitRowsNumber>0</limitRowsNumber>
+    <logmessage/>
+    <fields>
+      </fields>
+    <attributes/>
+    <GUI>
+      <xloc>592</xloc>
+      <yloc>144</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>num_err 0</name>
+    <type>SetValueConstant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <usevar>N</usevar>
+    <fields>
+      <field>
+        <name>num_err</name>
+        <value>0</value>
+        <mask/>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>322</xloc>
+      <yloc>252</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Check if there a row in integration_log</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <connection>${integrations.db.connection.name}</connection>
+    <lookup>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <fail_on_multiple>N</fail_on_multiple>
+      <key>
+        <condition>=</condition>
+        <field>id</field>
+        <name>process_instance_id</name>
+        <name2/>
+      </key>
+      <orderby/>
+      <schema>${integrations.db.log.schema}</schema>
+      <table>integrations_logs</table>
+      <value>
+        <default/>
+        <name>id</name>
+        <rename>found_id</rename>
+        <trim_type>none</trim_type>
+        <type>String</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <GUI>
+      <xloc>742</xloc>
+      <yloc>592</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>integrations_log record is present</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <compare>
+      <condition>
+        <conditions>
+</conditions>
+        <function>IS NOT NULL</function>
+        <leftvalue>found_id</leftvalue>
+        <negated>N</negated>
+        <operator>-</operator>
+      </condition>
+    </compare>
+    <attributes/>
+    <GUI>
+      <xloc>912</xloc>
+      <yloc>592</yloc>
+    </GUI>
+  </transform>
+  <transform_error_handling>
+  </transform_error_handling>
+  <attributes/>
+</pipeline>

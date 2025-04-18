@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pipeline>
+  <info>
+    <name>Init sys variables</name>
+    <name_sync_with_filename>N</name_sync_with_filename>
+    <description/>
+    <extended_description/>
+    <pipeline_version/>
+    <pipeline_type>Normal</pipeline_type>
+    <pipeline_status>0</pipeline_status>
+    <parameters>
+    </parameters>
+    <capture_transform_performance>N</capture_transform_performance>
+    <transform_performance_capturing_delay>1000</transform_performance_capturing_delay>
+    <transform_performance_capturing_size_limit/>
+    <created_user>-</created_user>
+    <created_date>2011/11/28 16:15:11.937</created_date>
+    <modified_user>-</modified_user>
+    <modified_date>2011/11/28 16:15:11.937</modified_date>
+  </info>
+  <notepads>
+  </notepads>
+  <order>
+    <hop>
+      <from>Get System Info</from>
+      <to>Calculate job run_date</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Calculate job run_date</from>
+      <to>Get variables</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get variables</from>
+      <to>Get integration_process_id ref</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get integration_process_id ref</from>
+      <to>Generate process_instance_id</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Generate process_instance_id</from>
+      <to>Set Variables</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+  <transform>
+    <name>Calculate job run_date</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <calculation>
+      <calc_type>COPY_FIELD</calc_type>
+      <conversion_mask>yyyyMMdd</conversion_mask>
+      <field_a>sys_date</field_a>
+      <field_name>job_run_date</field_name>
+      <remove>N</remove>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <value_type>String</value_type>
+    </calculation>
+    <calculation>
+      <calc_type>COPY_FIELD</calc_type>
+      <conversion_mask>yyyyMMddHHmmss</conversion_mask>
+      <field_a>sys_date</field_a>
+      <field_name>job_run_timestamp</field_name>
+      <remove>N</remove>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <value_type>String</value_type>
+    </calculation>
+    <failIfNoFile>N</failIfNoFile>
+    <attributes/>
+    <GUI>
+      <xloc>226</xloc>
+      <yloc>64</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Generate process_instance_id</name>
+    <type>RandomValue</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>process_instance_id</name>
+        <type>random uuid</type>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>688</xloc>
+      <yloc>64</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Get System Info</name>
+    <type>SystemInfo</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>sys_date</name>
+        <type>system date (fixed)</type>
+      </field>
+      <field>
+        <name>host_ip</name>
+        <type>IP address</type>
+      </field>
+      <field>
+        <name>hostname</name>
+        <type>Hostname real</type>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>68</xloc>
+      <yloc>64</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Get integration_process_id ref</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <connection>${integrations.db.connection.name}</connection>
+    <lookup>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <fail_on_multiple>N</fail_on_multiple>
+      <key>
+        <condition>=</condition>
+        <field>short_name</field>
+        <name>base_process_name</name>
+      </key>
+      <schema>${integrations.db.config.schema}</schema>
+      <table>integrations_processes</table>
+      <value>
+        <default>-1</default>
+        <name>id</name>
+        <rename>integration_process_id</rename>
+        <trim_type>none</trim_type>
+        <type>String</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <GUI>
+      <xloc>512</xloc>
+      <yloc>64</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Get variables</name>
+    <type>GetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>base_process_name</name>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <type>String</type>
+        <variable>${p_base_process_name}</variable>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>368</xloc>
+      <yloc>64</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Set Variables</name>
+    <type>SetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <default_value/>
+        <field_name>job_run_date</field_name>
+        <variable_name>v_job_run_date</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+      <field>
+        <default_value/>
+        <field_name>job_run_timestamp</field_name>
+        <variable_name>v_job_run_timestamp</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+      <field>
+        <default_value/>
+        <field_name>hostname</field_name>
+        <variable_name>v_hostname</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+      <field>
+        <default_value/>
+        <field_name>host_ip</field_name>
+        <variable_name>v_host_ip</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+      <field>
+        <default_value/>
+        <field_name>process_instance_id</field_name>
+        <variable_name>v_process_instance_id</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+      <field>
+        <default_value/>
+        <field_name>integration_process_id</field_name>
+        <variable_name>v_integrations_process_id</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+    </fields>
+    <use_formatting>Y</use_formatting>
+    <attributes/>
+    <GUI>
+      <xloc>832</xloc>
+      <yloc>64</yloc>
+    </GUI>
+  </transform>
+  <transform_error_handling>
+  </transform_error_handling>
+  <attributes/>
+</pipeline>
