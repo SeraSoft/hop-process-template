@@ -13,18 +13,13 @@
   <parameters>
     <parameter>
       <name>p_base_process_name</name>
-      <default_value>template</default_value>
+      <default_value>default</default_value>
       <description>Base process name to use wherever/whenever required in the process.</description>
     </parameter>
     <parameter>
       <name>p_logfile_dir</name>
       <default_value/>
       <description>Directory that will contain the log files. If not specified it will be defaulted to LMS</description>
-    </parameter>
-    <parameter>
-      <name>p_process_code</name>
-      <default_value/>
-      <description>Process code as set in integrations_processes table</description>
     </parameter>
   </parameters>
   <actions>
@@ -42,8 +37,8 @@
       <schedulerType>0</schedulerType>
       <weekDay>1</weekDay>
       <parallel>N</parallel>
-      <xloc>176</xloc>
-      <yloc>256</yloc>
+      <xloc>48</xloc>
+      <yloc>240</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -55,7 +50,7 @@
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${PROJECT_HOME}/src/pre/main_pre_job.hwf</filename>
+      <filename>${PROJECT_HOME}/src/template/pre/main_pre_job.hwf</filename>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -66,8 +61,8 @@
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>304</xloc>
-      <yloc>256</yloc>
+      <xloc>176</xloc>
+      <yloc>240</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -79,7 +74,42 @@
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${PROJECT_HOME}/src/post/post_job_success.hwf</filename>
+      <filename>${PROJECT_HOME}/src/template/post/post_job_success.hwf</filename>
+      <loglevel>Nothing</loglevel>
+      <parameters>
+        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>
+      <params_from_previous>N</params_from_previous>
+      <run_configuration>local</run_configuration>
+      <set_append_logfile>N</set_append_logfile>
+      <set_logfile>N</set_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <parallel>N</parallel>
+      <xloc>640</xloc>
+      <yloc>240</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Error</name>
+      <description/>
+      <type>ABORT</type>
+      <attributes/>
+      <always_log_rows>N</always_log_rows>
+      <parallel>N</parallel>
+      <xloc>448</xloc>
+      <yloc>672</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Run main process</name>
+      <description/>
+      <type>WORKFLOW</type>
+      <attributes/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <create_parent_folder>N</create_parent_folder>
+      <exec_per_row>N</exec_per_row>
+      <filename>${PROJECT_HOME}/src/project/${p_base_process_name}/start.hwf</filename>
       <logext/>
       <logfile/>
       <loglevel>Nothing</loglevel>
@@ -92,43 +122,8 @@
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>768</xloc>
-      <yloc>256</yloc>
-      <attributes_hac/>
-    </action>
-    <action>
-      <name>Error</name>
-      <description/>
-      <type>ABORT</type>
-      <attributes/>
-      <always_log_rows>N</always_log_rows>
-      <parallel>N</parallel>
-      <xloc>576</xloc>
-      <yloc>688</yloc>
-      <attributes_hac/>
-    </action>
-    <action>
-      <name>Run main process</name>
-      <description/>
-      <type>WORKFLOW</type>
-      <attributes/>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <create_parent_folder>N</create_parent_folder>
-      <exec_per_row>N</exec_per_row>
-      <filename>${Internal.Entry.Current.Folder}/src/main/starter_job.hwf</filename>
-      <loglevel>Nothing</loglevel>
-      <parameters>
-        <pass_all_parameters>Y</pass_all_parameters>
-      </parameters>
-      <params_from_previous>N</params_from_previous>
-      <run_configuration>local</run_configuration>
-      <set_append_logfile>N</set_append_logfile>
-      <set_logfile>N</set_logfile>
-      <wait_until_finished>Y</wait_until_finished>
-      <parallel>N</parallel>
-      <xloc>576</xloc>
-      <yloc>256</yloc>
+      <xloc>448</xloc>
+      <yloc>240</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -145,8 +140,8 @@
       <valuetype>variable</valuetype>
       <variablename>${email.fail.feedback.enabled}</variablename>
       <parallel>N</parallel>
-      <xloc>576</xloc>
-      <yloc>544</yloc>
+      <xloc>448</xloc>
+      <yloc>528</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -158,9 +153,7 @@
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${PROJECT_HOME}/src/commons/tools/send_feeback_mail.hwf</filename>
-      <logext/>
-      <logfile/>
+      <filename>${PROJECT_HOME}/src/template/commons/tools/send_feeback_mail.hwf</filename>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -171,8 +164,8 @@
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>480</xloc>
-      <yloc>608</yloc>
+      <xloc>352</xloc>
+      <yloc>592</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -184,7 +177,7 @@
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${Internal.Entry.Current.Folder}/src/commons/tools/send_feeback_mail.hwf</filename>
+      <filename>${PROJECT_HOME}/src/template/commons/tools/send_feeback_mail.hwf</filename>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -195,8 +188,8 @@
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>864</xloc>
-      <yloc>48</yloc>
+      <xloc>736</xloc>
+      <yloc>32</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -213,8 +206,8 @@
       <valuetype>variable</valuetype>
       <variablename>${email.success.feedback.enabled}</variablename>
       <parallel>N</parallel>
-      <xloc>768</xloc>
-      <yloc>128</yloc>
+      <xloc>640</xloc>
+      <yloc>112</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -231,8 +224,8 @@
       <valuetype>variable</valuetype>
       <variablename>v_lock_present</variablename>
       <parallel>N</parallel>
-      <xloc>432</xloc>
-      <yloc>256</yloc>
+      <xloc>304</xloc>
+      <yloc>240</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -241,8 +234,8 @@
       <type>SUCCESS</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>1104</xloc>
-      <yloc>128</yloc>
+      <xloc>976</xloc>
+      <yloc>112</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -266,8 +259,8 @@ PROCESS EXITS!
 </logmessage>
       <logsubject/>
       <parallel>N</parallel>
-      <xloc>496</xloc>
-      <yloc>160</yloc>
+      <xloc>368</xloc>
+      <yloc>144</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -290,8 +283,8 @@ PROCESS EXITS!
       <file_variable_type>JVM</file_variable_type>
       <replacevars>Y</replacevars>
       <parallel>N</parallel>
-      <xloc>672</xloc>
-      <yloc>160</yloc>
+      <xloc>544</xloc>
+      <yloc>144</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -303,9 +296,7 @@ PROCESS EXITS!
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${PROJECT_HOME}/src/post/post_job_error.hwf</filename>
-      <logext/>
-      <logfile/>
+      <filename>${PROJECT_HOME}/src/template/post/post_job_error.hwf</filename>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -316,8 +307,8 @@ PROCESS EXITS!
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>576</xloc>
-      <yloc>448</yloc>
+      <xloc>448</xloc>
+      <yloc>432</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -326,8 +317,8 @@ PROCESS EXITS!
       <type>DUMMY</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>928</xloc>
-      <yloc>128</yloc>
+      <xloc>800</xloc>
+      <yloc>112</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -336,8 +327,8 @@ PROCESS EXITS!
       <type>DUMMY</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>576</xloc>
-      <yloc>352</yloc>
+      <xloc>448</xloc>
+      <yloc>336</yloc>
       <attributes_hac/>
     </action>
   </actions>
@@ -498,19 +489,17 @@ PROCESS EXITS!
       <fontitalic>N</fontitalic>
       <fontname>Verdana</fontname>
       <fontsize>10</fontsize>
-      <height>490</height>
-      <xloc>896</xloc>
-      <yloc>304</yloc>
+      <height>458</height>
+      <xloc>736</xloc>
+      <yloc>256</yloc>
       <note>Base template for Hop Processes
 
 Base Process Parameters:
 =================================================================
-- p_base_process_name: Base process name to uniquely identify the process while 
-						   running (Mandatory). It must be declared as an entry of 
-                                                   integrations_processes table
-- p_log_filedir:                      Log file directory. The value is set by the custom 
-                                                  FileLoggingEventLister. Set to 'LMS' in case Hop logs will be 
-                                                  targeted toward an LMS system
+- p_base_process_name: Process's unique identifier declared as an entry of 
+                                      integrations_processes table
+- p_log_filedir:                Full log filename 
+
 
 Base Instance Variables:
 =================================================================
@@ -531,7 +520,7 @@ Base Variables from Config:
 
 
 </note>
-      <width>740</width>
+      <width>614</width>
     </notepad>
   </notepads>
   <attributes>

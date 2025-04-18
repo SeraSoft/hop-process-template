@@ -1,13 +1,13 @@
 {
   "rdbms": {
     "POSTGRESQL": {
-      "databaseName": "${integrations.db.db.name}",
+      "databaseName": "${integrations.db.name}",
       "pluginId": "POSTGRESQL",
       "accessType": 0,
-      "hostname": "${integrations.db.db.host}",
-      "password": "${integrations.db.db.pwd}",
+      "hostname": "${integrations.db.host}",
+      "password": "${integrations.db.pwd}",
       "pluginName": "PostgreSQL",
-      "port": "${integrations.db.db.port}",
+      "port": "${integrations.db.port}",
       "attributes": {
         "SUPPORTS_TIMESTAMP_DATA_TYPE": "Y",
         "QUOTE_ALL_FIELDS": "N",
@@ -19,7 +19,7 @@
         "PREFERRED_SCHEMA_NAME": ""
       },
       "manualUrl": "",
-      "username": "${integrations.db.db.user}"
+      "username": "${integrations.db.user}"
     }
   },
   "name": "integrations_db"
