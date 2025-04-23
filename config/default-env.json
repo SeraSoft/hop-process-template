@@ -136,6 +136,10 @@
     "value" : "${default.mail.destination.addresses}",
     "description" : ""
   }, {
+    "name" : "notactive.mail.destination.addresses",
+    "value" : "${default.mail.destination.addresses}",
+    "description" : ""
+  }, {
     "name" : "application.error.mail.destination.addresses",
     "value" : "${default.mail.destination.addresses}",
     "description" : ""
@@ -154,6 +158,10 @@
   }, {
     "name" : "application.error.mail.text",
     "value" : "<html><head></head><body>During process's execution we collected some exceptions on integrations_log_details. The detailed list of exception is in the attachment to this email.<p>If needed, execution's log file is available at: ${p_logfile_name}<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>",
+    "description" : ""
+  }, {
+    "name" : "notactive.mail.text",
+    "value" : "<html><head></head><body>The process ${p_base_process_name} running on server ${v_hostname} can't be started because <strong>is set to not active..</strong><p>Execution's log file available at: ${p_logfile_name}<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>",
     "description" : ""
   } ]
 }
