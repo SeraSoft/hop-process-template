@@ -4,10 +4,6 @@
     "value" : "/home/sramazzina",
     "description" : ""
   }, {
-    "name" : "lock.dir",
-    "value" : "${project.ref.base.dir}/.lock",
-    "description" : ""
-  }, {
     "name" : "project.link.ref",
     "value" : "${PROJECT_HOME}/src/project/${p_base_process_name}",
     "description" : ""
