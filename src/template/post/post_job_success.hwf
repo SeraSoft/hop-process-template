@@ -62,7 +62,7 @@
       <clear_rows>N</clear_rows>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${PROJECT_HOME}/src/post/logging/check_for_soft_errors.hpl</filename>
+      <filename>${PROJECT_HOME}/src/template/post/logging/check_for_soft_errors.hpl</filename>
       <logext/>
       <logfile/>
       <loglevel>Basic</loglevel>
@@ -100,7 +100,7 @@
       <clear_rows>N</clear_rows>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${PROJECT_HOME}/src/post/update_process_reference.hpl</filename>
+      <filename>${PROJECT_HOME}/src/template/post/update_process_reference.hpl</filename>
       <logext/>
       <logfile/>
       <loglevel>Basic</loglevel>
@@ -156,7 +156,7 @@
       <clear_rows>N</clear_rows>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${PROJECT_HOME}/src/commons/tools/locks/clear_lock.hpl</filename>
+      <filename>${PROJECT_HOME}/src/template/commons/tools/locks/clear_lock.hpl</filename>
       <logext/>
       <logfile/>
       <loglevel>Basic</loglevel>

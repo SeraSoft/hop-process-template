@@ -141,12 +141,28 @@
     </partitioning>
     <fields>
       <field>
+        <currency/>
+        <decimal/>
+        <format/>
+        <group/>
         <length>-1</length>
         <name>status</name>
         <nullif>S</nullif>
         <precision>-1</precision>
         <set_empty_string>N</set_empty_string>
         <type>String</type>
+      </field>
+      <field>
+        <currency/>
+        <decimal/>
+        <format/>
+        <group/>
+        <length>-1</length>
+        <name>last_instance_started_at</name>
+        <nullif/>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+        <type>Timestamp</type>
       </field>
     </fields>
     <attributes/>
@@ -182,6 +198,10 @@
       <value>
         <name>process_lock</name>
         <rename>status</rename>
+      </value>
+      <value>
+        <name/>
+        <rename>last_instance_started_at</rename>
       </value>
     </lookup>
     <skip_lookup>N</skip_lookup>

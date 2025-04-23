@@ -34,7 +34,9 @@ CREATE  TABLE config.integrations_processes (
 	short_name           varchar(32)  NOT NULL  ,
 	description          varchar(1024)    ,
 	project              varchar(64)  NOT NULL  ,
-	is_active            char(1) DEFAULT 'Y'::bpchar NOT NULL  ,
+	is_active            char(1) DEFAULT 'Y'::bpchar NOT NULL,
+	process_lock       char(1) DEFAULT 'S'::bpchar NOT NULL,
+	last_instance_started_at timestamp,
 	CONSTRAINT integrations_processes_pk PRIMARY KEY ( id )
  );
 

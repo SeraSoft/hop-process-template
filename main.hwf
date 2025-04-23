@@ -109,7 +109,7 @@
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${PROJECT_HOME}/src/project/${p_base_process_name}/start.hwf</filename>
+      <filename>${project.link.ref}/start.hwf</filename>
       <logext/>
       <logfile/>
       <loglevel>Nothing</loglevel>

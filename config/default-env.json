@@ -1,11 +1,15 @@
 {
   "variables" : [ {
-    "name" : "base.tmp.dir",
+    "name" : "project.ref.base.dir",
     "value" : "/home/sramazzina",
     "description" : ""
   }, {
     "name" : "lock.dir",
-    "value" : "${base.tmp.dir}/.lock",
+    "value" : "${project.ref.base.dir}/.lock",
+    "description" : ""
+  }, {
+    "name" : "project.link.ref",
+    "value" : "${PROJECT_HOME}/src/project/${p_base_process_name}",
     "description" : ""
   }, {
     "name" : "hop.user",
@@ -81,6 +85,14 @@
     "description" : ""
   }, {
     "name" : "smtp.mail.psw",
+    "value" : "",
+    "description" : ""
+  }, {
+    "name" : "smtp.trusted.hosts",
+    "value" : "",
+    "description" : ""
+  }, {
+    "name" : "smtp.check.server.identity",
     "value" : "",
     "description" : ""
   }, {

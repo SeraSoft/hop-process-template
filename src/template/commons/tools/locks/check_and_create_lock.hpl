@@ -83,6 +83,34 @@
     </hop>
   </order>
   <transform>
+    <name>Calculate previous_instance_started_at timestamp</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <calculation>
+      <calc_type>COPY_FIELD</calc_type>
+      <conversion_mask>dd/MM/yyyy HH:mm:ss</conversion_mask>
+      <field_a>last_instance_started_at</field_a>
+      <field_name>last_instance_started_at_timestamp</field_name>
+      <remove>N</remove>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <value_type>String</value_type>
+    </calculation>
+    <failIfNoFile>N</failIfNoFile>
+    <attributes/>
+    <GUI>
+      <xloc>1248</xloc>
+      <yloc>384</yloc>
+    </GUI>
+  </transform>
+  <transform>
     <name>Dummy (do nothing)</name>
     <type>Dummy</type>
     <description/>
@@ -145,8 +173,7 @@
 , short_name
 , is_active
 , process_lock
-, previous_instance_started_at
-, max_rows
+, last_instance_started_at
  from ${integrations.db.config.schema}.integrations_processes
 where short_name = '${p_base_process_name}'</sql>
     <variables_active>Y</variables_active>
@@ -341,21 +368,18 @@ where short_name = '${p_base_process_name}'</sql>
     </partitioning>
     <fields>
       <field>
-        <default_value/>
         <field_name>lock_present</field_name>
         <variable_name>v_lock_present</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
-        <default_value/>
         <field_name>integration_process_id</field_name>
         <variable_name>v_integration_process_id</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
-        <default_value/>
-        <field_name>previous_instance_started_at_timestamp</field_name>
-        <variable_name>v_previous_instance_start_timestamp</variable_name>
+        <field_name>last_instance_started_at_timestamp</field_name>
+        <variable_name>v_last_instance_start_timestamp</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
     </fields>
@@ -393,7 +417,7 @@ where short_name = '${p_base_process_name}'</sql>
         <rename>status</rename>
       </value>
       <value>
-        <name>previous_instance_started_at</name>
+        <name>last_instance_started_at</name>
         <rename>date_start</rename>
       </value>
     </lookup>
@@ -403,39 +427,6 @@ where short_name = '${p_base_process_name}'</sql>
     <GUI>
       <xloc>688</xloc>
       <yloc>496</yloc>
-    </GUI>
-  </transform>
-  <transform>
-    <name>Calculate previous_instance_started_at timestamp</name>
-    <type>Calculator</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <calculation>
-      <calc_type>COPY_FIELD</calc_type>
-      <conversion_mask>dd/MM/yyyy HH:mm:ss</conversion_mask>
-      <currency_symbol/>
-      <decimal_symbol/>
-      <field_a>previous_instance_started_at</field_a>
-      <field_b/>
-      <field_c/>
-      <field_name>previous_instance_started_at_timestamp</field_name>
-      <grouping_symbol/>
-      <remove>N</remove>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <value_type>String</value_type>
-    </calculation>
-    <failIfNoFile>N</failIfNoFile>
-    <attributes/>
-    <GUI>
-      <xloc>1248</xloc>
-      <yloc>384</yloc>
     </GUI>
   </transform>
   <transform_error_handling>
