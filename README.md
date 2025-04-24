@@ -15,7 +15,7 @@ liquibase update \
     --url="jdbc:postgresql://localhost:5432/hop" \
     --changeLogFile="master.xml" \
     --username="hop" \
-    --password="password" \
+    --password="password"
 ```
 
 2. While, if your database already exists (existing environments):
