@@ -1,2 +1,3 @@
 config/dev-local.json
-db/liquibase/liquibase.properties
+
+./db/liquibase/liquibase.properties
