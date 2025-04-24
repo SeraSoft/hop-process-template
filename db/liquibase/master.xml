@@ -9,7 +9,7 @@
         http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
 
     <!-- Create Schemas -->
-    <changeSet id="1-create-schemas" author="serasoft">
+    <changeSet id="create-schemas" author="serasoft">
         <sql>
             CREATE SCHEMA IF NOT EXISTS config;
             CREATE SCHEMA IF NOT EXISTS logs;
@@ -17,7 +17,7 @@
     </changeSet>
 
     <!-- Create Tables -->
-    <changeSet id="2-create-config-event-category-table" author="serasoft">
+    <changeSet id="create-config-event-category-table" author="serasoft">
         <createTable schemaName="config" tableName="event_category">
             <column name="id" type="varchar(48)">
                 <constraints primaryKey="true" nullable="false"/>
@@ -31,7 +31,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="3-create-config-event-subcategory-table" author="serasoft">
+    <changeSet id="create-config-event-subcategory-table" author="serasoft">
         <createTable schemaName="config" tableName="event_subcategory">
             <column name="id" type="varchar(48)">
                 <constraints primaryKey="true" nullable="false"/>
@@ -45,7 +45,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="4-create-config-integrations-processes-table" author="serasoft">
+    <changeSet id="create-config-integrations-processes-table" author="serasoft">
         <createTable schemaName="config" tableName="integrations_processes">
             <column name="id" type="varchar(48)" remarks="This is the process code we use to start HOP processes. Passed with p_program_name.">
                 <constraints primaryKey="true" nullable="false"/>
@@ -63,7 +63,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="5-create-logs-integrations-logs-table" author="serasoft">
+    <changeSet id="create-logs-integrations-logs-table" author="serasoft">
         <createTable schemaName="logs" tableName="integrations_logs">
             <column name="id" type="varchar(48)">
                 <constraints primaryKey="true" nullable="false"/>
@@ -87,7 +87,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="6-create-logs-integrations-log-events-table" author="serasoft">
+    <changeSet id="create-logs-integrations-log-events-table" author="serasoft">
         <createTable schemaName="logs" tableName="integrations_log_events">
             <column name="id" type="varchar(48)">
                 <constraints primaryKey="true" nullable="false"/>
@@ -114,7 +114,7 @@
     </changeSet>
 
     <!-- Add Foreign Keys -->
-    <changeSet id="7-add-fk-event-category" author="serasoft">
+    <changeSet id="add-fk-event-category" author="serasoft">
         <addForeignKeyConstraint baseTableSchemaName="config" baseTableName="event_subcategory"
                                  baseColumnNames="event_category_id"
                                  constraintName="fk_event_category"
@@ -123,7 +123,7 @@
                                  referencedColumnNames="id"/>
     </changeSet>
 
-    <changeSet id="8-add-fk-integrations-log-events-logs" author="serasoft">
+    <changeSet id="add-fk-integrations-log-events-logs" author="serasoft">
         <addForeignKeyConstraint baseTableSchemaName="logs" baseTableName="integrations_log_events"
                                  baseColumnNames="integrations_logs_id"
                                  constraintName="integrations_log_details_integrations_logs_id_fkey"
@@ -132,7 +132,7 @@
                                  referencedColumnNames="id"/>
     </changeSet>
 
-    <changeSet id="9-add-fk-integrations-log-events-subcategory" author="serasoft">
+    <changeSet id="add-fk-integrations-log-events-subcategory" author="serasoft">
         <addForeignKeyConstraint baseTableSchemaName="logs" baseTableName="integrations_log_events"
                                  baseColumnNames="event_subcategory_id"
                                  constraintName="fk_integrations_log_events_event_subcategory"
@@ -141,7 +141,7 @@
                                  referencedColumnNames="id"/>
     </changeSet>
 
-    <changeSet id="10-add-fk-integrations-logs-processes" author="serasoft">
+    <changeSet id="add-fk-integrations-logs-processes" author="serasoft">
         <addForeignKeyConstraint baseTableSchemaName="logs" baseTableName="integrations_logs"
                                  baseColumnNames="integrations_processes_id"
                                  constraintName="integrations_logs_integrations_processes_id_fkey"
@@ -151,7 +151,7 @@
     </changeSet>
 
     <!-- Insert Data -->
-    <changeSet id="12-insert-initial-event-category" author="serasoft">
+    <changeSet id="insert-initial-event-category" author="serasoft">
         <insert schemaName="config" tableName="event_category">
             <column name="id" value="SYS001"/>
             <column name="event_type" value="E"/>
@@ -159,7 +159,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="13-insert-initial-event-subcategory" author="serasoft">
+    <changeSet id="insert-initial-event-subcategory" author="serasoft">
         <insert schemaName="config" tableName="event_subcategory">
             <column name="id" value="SYSGE001"/>
             <column name="name" value="GENERIC ERROR"/>
