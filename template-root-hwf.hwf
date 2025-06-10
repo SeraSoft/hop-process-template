@@ -101,7 +101,7 @@
       <attributes_hac/>
     </action>
     <action>
-      <name>Run main process</name>
+      <name>Main process</name>
       <description/>
       <type>WORKFLOW</type>
       <attributes/>
@@ -109,7 +109,9 @@
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${project.link.ref}/start.hwf</filename>
+      <filename>${PROJECT_HOME}/src/project/main/template-root-hwf/start.hwf</filename>
+      <logext/>
+      <logfile/>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -279,7 +281,6 @@ PROCESS EXITS!
         </field>
       </fields>
       <file_variable_type>JVM</file_variable_type>
-      <filename/>
       <replacevars>Y</replacevars>
       <parallel>N</parallel>
       <xloc>624</xloc>
@@ -336,11 +337,7 @@ PROCESS EXITS!
       <type>SIMPLE_EVAL</type>
       <attributes/>
       <comparevalue>1</comparevalue>
-      <fieldname/>
       <fieldtype>string</fieldtype>
-      <mask/>
-      <maxvalue/>
-      <minvalue/>
       <successbooleancondition>false</successbooleancondition>
       <successcondition>equal</successcondition>
       <successnumbercondition>equal</successnumbercondition>
@@ -393,7 +390,6 @@ PROCESS EXITS!
         </field>
       </fields>
       <file_variable_type>JVM</file_variable_type>
-      <filename/>
       <replacevars>Y</replacevars>
       <parallel>N</parallel>
       <xloc>624</xloc>
@@ -449,7 +445,7 @@ PROCESS EXITS!
     </hop>
     <hop>
       <from>Evaluate synchro var</from>
-      <to>Run main process</to>
+      <to>Main process</to>
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
       <unconditional>N</unconditional>
@@ -518,7 +514,7 @@ PROCESS EXITS!
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Run main process</from>
+      <from>Main process</from>
       <to>Dummy 1</to>
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
@@ -567,7 +563,7 @@ PROCESS EXITS!
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Run main process</from>
+      <from>Main process</from>
       <to>Dummy 3</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>

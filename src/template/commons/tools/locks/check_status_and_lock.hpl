@@ -9,6 +9,11 @@
     <pipeline_type>Normal</pipeline_type>
     <pipeline_status>0</pipeline_status>
     <parameters>
+      <parameter>
+        <name>p_base_process_name</name>
+        <default_value>default</default_value>
+        <description/>
+      </parameter>
     </parameters>
     <capture_transform_performance>N</capture_transform_performance>
     <transform_performance_capturing_delay>1000</transform_performance_capturing_delay>

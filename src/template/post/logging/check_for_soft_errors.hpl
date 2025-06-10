@@ -128,6 +128,44 @@
     </hop>
   </order>
   <transform>
+    <name>Check if there a row in integration_log</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <connection>${integrations.db.connection.name}</connection>
+    <lookup>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <fail_on_multiple>N</fail_on_multiple>
+      <key>
+        <condition>=</condition>
+        <field>id</field>
+        <name>process_instance_id</name>
+      </key>
+      <schema>${integrations.db.log.schema}</schema>
+      <table>integrations_logs</table>
+      <value>
+        <name>id</name>
+        <rename>found_id</rename>
+        <trim_type>none</trim_type>
+        <type>String</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <GUI>
+      <xloc>742</xloc>
+      <yloc>592</yloc>
+    </GUI>
+  </transform>
+  <transform>
     <name>Comes from error path?</name>
     <type>FilterRows</type>
     <description/>
@@ -434,7 +472,7 @@ group by ec.name, ile.gravity</sql>
     <prefix>grp</prefix>
     <attributes/>
     <GUI>
-      <xloc>480</xloc>
+      <xloc>464</xloc>
       <yloc>144</yloc>
     </GUI>
   </transform>
@@ -522,11 +560,7 @@ group by ec.name, ile.gravity</sql>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <loglevel>log_level_basic</loglevel>
     <displayHeader>Y</displayHeader>
-    <limitRows>N</limitRows>
-    <limitRowsNumber>0</limitRowsNumber>
-    <logmessage>Logged errors in integrations_log_details</logmessage>
     <fields>
       <field>
         <name>process_instance_id</name>
@@ -541,6 +575,10 @@ group by ec.name, ile.gravity</sql>
         <name>gravity</name>
       </field>
     </fields>
+    <limitRows>N</limitRows>
+    <limitRowsNumber>0</limitRowsNumber>
+    <loglevel>Basic</loglevel>
+    <logmessage>Logged errors in integrations_log_details</logmessage>
     <attributes/>
     <GUI>
       <xloc>1372</xloc>
@@ -558,16 +596,16 @@ group by ec.name, ile.gravity</sql>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <loglevel>log_level_basic</loglevel>
     <displayHeader>Y</displayHeader>
-    <limitRows>N</limitRows>
-    <limitRowsNumber>0</limitRowsNumber>
-    <logmessage>No errors logged in integrations_log_events</logmessage>
     <fields>
       <field>
         <name>process_instance_id</name>
       </field>
     </fields>
+    <limitRows>N</limitRows>
+    <limitRowsNumber>0</limitRowsNumber>
+    <loglevel>Basic</loglevel>
+    <logmessage>No errors logged in integrations_log_events</logmessage>
     <attributes/>
     <GUI>
       <xloc>1162</xloc>
@@ -714,84 +752,16 @@ group by ec.name, ile.gravity</sql>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <loglevel>log_level_basic</loglevel>
     <displayHeader>Y</displayHeader>
+    <fields>
+</fields>
     <limitRows>N</limitRows>
     <limitRowsNumber>0</limitRowsNumber>
-    <logmessage/>
-    <fields>
-      </fields>
+    <loglevel>Basic</loglevel>
     <attributes/>
     <GUI>
       <xloc>592</xloc>
       <yloc>144</yloc>
-    </GUI>
-  </transform>
-  <transform>
-    <name>num_err 0</name>
-    <type>SetValueConstant</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <usevar>N</usevar>
-    <fields>
-      <field>
-        <name>num_err</name>
-        <value>0</value>
-        <mask/>
-        <set_empty_string>N</set_empty_string>
-      </field>
-    </fields>
-    <attributes/>
-    <GUI>
-      <xloc>322</xloc>
-      <yloc>252</yloc>
-    </GUI>
-  </transform>
-  <transform>
-    <name>Check if there a row in integration_log</name>
-    <type>DBLookup</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <cache>N</cache>
-    <cache_load_all>N</cache_load_all>
-    <cache_size>0</cache_size>
-    <connection>${integrations.db.connection.name}</connection>
-    <lookup>
-      <eat_row_on_failure>N</eat_row_on_failure>
-      <fail_on_multiple>N</fail_on_multiple>
-      <key>
-        <condition>=</condition>
-        <field>id</field>
-        <name>process_instance_id</name>
-        <name2/>
-      </key>
-      <orderby/>
-      <schema>${integrations.db.log.schema}</schema>
-      <table>integrations_logs</table>
-      <value>
-        <default/>
-        <name>id</name>
-        <rename>found_id</rename>
-        <trim_type>none</trim_type>
-        <type>String</type>
-      </value>
-    </lookup>
-    <attributes/>
-    <GUI>
-      <xloc>742</xloc>
-      <yloc>592</yloc>
     </GUI>
   </transform>
   <transform>
@@ -819,6 +789,32 @@ group by ec.name, ile.gravity</sql>
     <GUI>
       <xloc>912</xloc>
       <yloc>592</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>num_err 0</name>
+    <type>SetValueConstant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <usevar>N</usevar>
+    <fields>
+      <field>
+        <name>num_err</name>
+        <value>0</value>
+        <mask/>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>322</xloc>
+      <yloc>252</yloc>
     </GUI>
   </transform>
   <transform_error_handling>
