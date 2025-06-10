@@ -1,0 +1,17 @@
+## Reference database (baseline/empty schema)
+#referenceUrl=jdbc:postgresql://localhost:15432/hop
+#referenceUsername=hop
+#referencePassword=password
+#referenceSchemas=config,logs
+
+changeLogFile=master.xml
+
+# Target database (schema you want to diff)
+url=jdbc:postgresql://localhost:5432/hop
+username=hop
+password=password
+driver=org.postgresql.Driver
+
+
+
+

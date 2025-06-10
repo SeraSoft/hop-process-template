@@ -1,0 +1,145 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+	<!-- Create Schemas -->
+	<changeSet id="create-schemas" author="serasoft">
+		<sql>
+			CREATE SCHEMA IF NOT EXISTS config;
+			CREATE SCHEMA IF NOT EXISTS logs;
+		</sql>
+	</changeSet>
+	<!-- Create Tables -->
+	<changeSet id="create-config-events-categories-table" author="serasoft">
+		<createTable schemaName="config" tableName="events_categories">
+			<column name="id" type="varchar(48)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="category_type" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="name" type="varchar(64)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="create-config-events-subcategories-table" author="serasoft">
+		<createTable schemaName="config" tableName="events_subcategories">
+			<column name="id" type="varchar(48)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="event_category_id" type="varchar(48)">
+				<constraints nullable="false" />
+			</column>
+			<column name="name" type="varchar(64)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<!-- changeSet id="create-config-events-severities-table" author="serasoft">
+		<createTable schemaName="config" tableName="events_severities">
+			<column name="id" type="varchar(48)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="severity" type="integer" defaultValueNumeric="5">
+				<constraints nullable="false" />
+			</column>
+			<column name="name" type="varchar(64)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet -->
+	<changeSet id="create-config-integrations-processes-table" author="serasoft">
+		<createTable schemaName="config" tableName="integrations_processes">
+			<column name="id" type="varchar(48)" remarks="This is the process code we use to start HOP processes. Passed with p_program_name.">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="short_name" type="varchar(32)" remarks="Self explanatory, short, description of the process">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(1024)" />
+			<column name="project" type="varchar(64)" remarks="Project's code reference for this process. Must be present in configuration file as hop.project.code">
+				<constraints nullable="false" />
+			</column>
+			<column name="is_active" type="char(1)" defaultValue="Y" remarks="Indicate if the process is active or not. Values: Y, N">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="create-logs-integrations-logs-table" author="serasoft">
+		<createTable schemaName="logs" tableName="integrations_logs">
+			<column name="id" type="varchar(48)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="integrations_processes_id" type="varchar(48)" remarks="Reference to the started process.">
+				<constraints nullable="false" />
+			</column>
+			<column name="proc_status" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="max_gravity" type="integer" defaultValueNumeric="0" />
+			<column name="date_started" type="timestamp">
+				<constraints nullable="false" />
+			</column>
+			<column name="date_finished" type="timestamp" />
+			<column name="log_file_ref" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="username" type="varchar(32)" />
+			<column name="host" type="varchar(64)" />
+		</createTable>
+	</changeSet>
+	<changeSet id="create-logs-integrations-log-events-table" author="serasoft">
+		<createTable schemaName="logs" tableName="integrations_log_events">
+			<column name="id" type="varchar(48)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="integrations_logs_id" type="varchar(48)">
+				<constraints nullable="false" />
+			</column>
+			<column name="event_subcategory_id" type="varchar(32)">
+				<constraints nullable="false" />
+			</column>
+			<column name="date_event" type="date" defaultValueComputed="CURRENT_DATE">
+				<constraints nullable="false" />
+			</column>
+			<column name="source_sys_code" type="varchar(32)" />
+			<column name="source_sys_row_ref" type="varchar(50)" />
+			<column name="severity" type="integer" defaultValueNumeric="5">
+				<constraints nullable="false" />
+			</column>
+			<column name="event_text" type="text">
+				<constraints nullable="false" />
+			</column>
+			<column name="event_data" type="text" />
+		</createTable>
+	</changeSet>
+	<!-- Add Foreign Keys -->
+	<changeSet id="add-fk-event-categories" author="serasoft">
+		<addForeignKeyConstraint baseTableSchemaName="config" baseTableName="event_subcategory" baseColumnNames="event_category_id" constraintName="fk_event_category" referencedTableSchemaName="config" referencedTableName="events_categories" referencedColumnNames="id" />
+	</changeSet>
+	<changeSet id="add-fk-integrations-log-events-logs" author="serasoft">
+		<addForeignKeyConstraint baseTableSchemaName="logs" baseTableName="integrations_log_events" baseColumnNames="integrations_logs_id" constraintName="integrations_log_details_integrations_logs_id_fkey" referencedTableSchemaName="logs" referencedTableName="integrations_logs" referencedColumnNames="id" />
+	</changeSet>
+	<changeSet id="add-fk-integrations-log-events-subcategories" author="serasoft">
+		<addForeignKeyConstraint baseTableSchemaName="logs" baseTableName="integrations_log_events" baseColumnNames="event_subcategory_id" constraintName="fk_integrations_log_events_event_subcategory" referencedTableSchemaName="config" referencedTableName="events_subcategories" referencedColumnNames="id" />
+	</changeSet>
+	<changeSet id="add-fk-integrations-logs-processes" author="serasoft">
+		<addForeignKeyConstraint baseTableSchemaName="logs" baseTableName="integrations_logs" baseColumnNames="integrations_processes_id" constraintName="integrations_logs_integrations_processes_id_fkey" referencedTableSchemaName="config" referencedTableName="integrations_processes" referencedColumnNames="id" />
+	</changeSet>
+	<!-- Insert Data -->
+	<changeSet id="insert-initial-events-categories" author="serasoft">
+		<insert schemaName="config" tableName="events_categories">
+			<column name="id" value="SYS001" />
+			<column name="event_type" value="E" />
+			<column name="name" value="SYSTEM EXCEPTION" />
+		</insert>
+	</changeSet>
+	<changeSet id="insert-initial-events-subcategories" author="serasoft">
+		<insert schemaName="config" tableName="events_subcategories">
+			<column name="id" value="SYSGE001" />
+			<column name="name" value="GENERIC ERROR" />
+			<column name="event_category_id" value="SYS001" />
+		</insert>
+	</changeSet>
+</databaseChangeLog>
