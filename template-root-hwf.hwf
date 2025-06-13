@@ -110,8 +110,6 @@
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
       <filename>${PROJECT_HOME}/src/project/main/template-root-hwf/start.hwf</filename>
-      <logext/>
-      <logfile/>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -407,17 +405,6 @@ PROCESS EXITS!
       <attributes_hac/>
     </action>
     <action>
-      <name>Error 2</name>
-      <description/>
-      <type>ABORT</type>
-      <attributes/>
-      <always_log_rows>N</always_log_rows>
-      <parallel>N</parallel>
-      <xloc>544</xloc>
-      <yloc>1200</yloc>
-      <attributes_hac/>
-    </action>
-    <action>
       <name>Dummy 4</name>
       <description/>
       <type>DUMMY</type>
@@ -627,7 +614,7 @@ PROCESS EXITS!
       <fontitalic>N</fontitalic>
       <fontname>Verdana</fontname>
       <fontsize>10</fontsize>
-      <height>458</height>
+      <height>927</height>
       <xloc>928</xloc>
       <yloc>432</yloc>
       <note>Base template for Hop Processes
@@ -658,7 +645,7 @@ Base Variables from Config:
 
 
 </note>
-      <width>614</width>
+      <width>1441</width>
     </notepad>
   </notepads>
   <attributes>

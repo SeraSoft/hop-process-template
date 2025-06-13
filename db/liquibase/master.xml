@@ -36,19 +36,19 @@
 			</column>
 		</createTable>
 	</changeSet>
-	<!-- changeSet id="create-config-events-severities-table" author="serasoft">
+	<changeSet id="create-config-events-severities-table" author="serasoft">
 		<createTable schemaName="config" tableName="events_severities">
 			<column name="id" type="varchar(48)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
+			<column name="code" type="varchar(32)">
+				<constraints nullable="false" />
+			</column>
 			<column name="severity" type="integer" defaultValueNumeric="5">
 				<constraints nullable="false" />
 			</column>
-			<column name="name" type="varchar(64)">
-				<constraints nullable="false" />
-			</column>
 		</createTable>
-	</changeSet -->
+	</changeSet>
 	<changeSet id="create-config-integrations-processes-table" author="serasoft">
 		<createTable schemaName="config" tableName="integrations_processes">
 			<column name="id" type="varchar(48)" remarks="This is the process code we use to start HOP processes. Passed with p_program_name.">
@@ -77,7 +77,7 @@
 			<column name="proc_status" type="char(1)">
 				<constraints nullable="false" />
 			</column>
-			<column name="max_gravity" type="integer" defaultValueNumeric="0" />
+			<column name="max_severity" type="integer" defaultValueNumeric="0" />
 			<column name="date_started" type="timestamp">
 				<constraints nullable="false" />
 			</column>
@@ -94,20 +94,20 @@
 			<column name="id" type="varchar(48)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
+			<column name="date_event" type="date" defaultValueComputed="CURRENT_DATE">
+				<constraints nullable="false" />
+			</column>
 			<column name="integrations_logs_id" type="varchar(48)">
 				<constraints nullable="false" />
 			</column>
-			<column name="event_subcategory_id" type="varchar(32)">
+			<column name="event_subcategory_id" type="varchar(48)">
 				<constraints nullable="false" />
 			</column>
-			<column name="date_event" type="date" defaultValueComputed="CURRENT_DATE">
+			<column name="event_severity_id" type="varchar(48)">
 				<constraints nullable="false" />
 			</column>
 			<column name="source_sys_code" type="varchar(32)" />
 			<column name="source_sys_row_ref" type="varchar(50)" />
-			<column name="severity" type="integer" defaultValueNumeric="5">
-				<constraints nullable="false" />
-			</column>
 			<column name="event_text" type="text">
 				<constraints nullable="false" />
 			</column>
@@ -115,23 +115,26 @@
 		</createTable>
 	</changeSet>
 	<!-- Add Foreign Keys -->
-	<changeSet id="add-fk-event-categories" author="serasoft">
-		<addForeignKeyConstraint baseTableSchemaName="config" baseTableName="event_subcategory" baseColumnNames="event_category_id" constraintName="fk_event_category" referencedTableSchemaName="config" referencedTableName="events_categories" referencedColumnNames="id" />
+	<changeSet id="add-fk-events-categories" author="serasoft">
+		<addForeignKeyConstraint baseTableSchemaName="config" baseTableName="events_subcategories" baseColumnNames="event_category_id" constraintName="fk_event_category" referencedTableSchemaName="config" referencedTableName="events_categories" referencedColumnNames="id" />
 	</changeSet>
 	<changeSet id="add-fk-integrations-log-events-logs" author="serasoft">
 		<addForeignKeyConstraint baseTableSchemaName="logs" baseTableName="integrations_log_events" baseColumnNames="integrations_logs_id" constraintName="integrations_log_details_integrations_logs_id_fkey" referencedTableSchemaName="logs" referencedTableName="integrations_logs" referencedColumnNames="id" />
 	</changeSet>
 	<changeSet id="add-fk-integrations-log-events-subcategories" author="serasoft">
-		<addForeignKeyConstraint baseTableSchemaName="logs" baseTableName="integrations_log_events" baseColumnNames="event_subcategory_id" constraintName="fk_integrations_log_events_event_subcategory" referencedTableSchemaName="config" referencedTableName="events_subcategories" referencedColumnNames="id" />
+		<addForeignKeyConstraint baseTableSchemaName="logs" baseTableName="integrations_log_events" baseColumnNames="event_subcategory_id" constraintName="fk_integrations_log_events_event_subcategories" referencedTableSchemaName="config" referencedTableName="events_subcategories" referencedColumnNames="id" />
+	</changeSet>
+	<changeSet id="add-fk-integrations-log-events-severities" author="serasoft">
+		<addForeignKeyConstraint baseTableSchemaName="logs" baseTableName="integrations_log_events" baseColumnNames="event_severity_id" constraintName="fk_integrations_log_events_event_severities" referencedTableSchemaName="config" referencedTableName="events_severities" referencedColumnNames="id" />
 	</changeSet>
 	<changeSet id="add-fk-integrations-logs-processes" author="serasoft">
-		<addForeignKeyConstraint baseTableSchemaName="logs" baseTableName="integrations_logs" baseColumnNames="integrations_processes_id" constraintName="integrations_logs_integrations_processes_id_fkey" referencedTableSchemaName="config" referencedTableName="integrations_processes" referencedColumnNames="id" />
+		<addForeignKeyConstraint baseTableSchemaName="logs" baseTableName="integrations_logs" baseColumnNames="integrations_processes_id" constraintName="fk_integrations_logs_integrations_processes" referencedTableSchemaName="config" referencedTableName="integrations_processes" referencedColumnNames="id" />
 	</changeSet>
 	<!-- Insert Data -->
 	<changeSet id="insert-initial-events-categories" author="serasoft">
 		<insert schemaName="config" tableName="events_categories">
 			<column name="id" value="SYS001" />
-			<column name="event_type" value="E" />
+			<column name="category_type" value="E" />
 			<column name="name" value="SYSTEM EXCEPTION" />
 		</insert>
 	</changeSet>
@@ -140,6 +143,13 @@
 			<column name="id" value="SYSGE001" />
 			<column name="name" value="GENERIC ERROR" />
 			<column name="event_category_id" value="SYS001" />
+		</insert>
+	</changeSet>
+	<changeSet id="insert-initial-events-severities" author="serasoft">
+		<insert schemaName="config" tableName="events_severities">
+			<column name="id" value="MEDIUM" />
+			<column name="code" value="MEDIUM" />
+			<column name="severity" value="5" />
 		</insert>
 	</changeSet>
 </databaseChangeLog>
