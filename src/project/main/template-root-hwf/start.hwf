@@ -40,30 +40,12 @@
       <yloc>144</yloc>
       <attributes_hac/>
     </action>
-    <action>
-      <name>Abort workflow</name>
-      <description/>
-      <type>ABORT</type>
-      <attributes/>
-      <always_log_rows>N</always_log_rows>
-      <parallel>N</parallel>
-      <xloc>320</xloc>
-      <yloc>144</yloc>
-      <attributes_hac/>
-    </action>
   </actions>
   <hops>
     <hop>
       <from>START</from>
-      <to>Abort workflow</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Abort workflow</from>
       <to>Dummy</to>
-      <enabled>N</enabled>
+      <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>Y</unconditional>
     </hop>

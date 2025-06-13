@@ -614,7 +614,7 @@ PROCESS EXITS!
       <fontitalic>N</fontitalic>
       <fontname>Verdana</fontname>
       <fontsize>10</fontsize>
-      <height>458</height>
+      <height>442</height>
       <xloc>928</xloc>
       <yloc>432</yloc>
       <note>Base template for Hop Processes
@@ -639,7 +639,6 @@ Base Instance Variables:
 Base Variables from Config:
 =================================================================
 - base.dir: Root path to a convenient folder to store processes related things (Mandatory)
-- lock.dir: Path to a folder where the process will put locks' files (Mandatory)
 - hop.user: Associates a user to a running Hop instance
 - hop.program.name: Associates a name to a running Hop instance
 

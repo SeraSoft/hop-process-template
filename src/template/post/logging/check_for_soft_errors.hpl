@@ -55,7 +55,7 @@
       <fontsize>9</fontsize>
       <height>26</height>
       <xloc>1008</xloc>
-      <yloc>512</yloc>
+      <yloc>496</yloc>
       <note>Unhandled exception - Create a line in integration_logs_events</note>
       <width>339</width>
     </notepad>
@@ -142,11 +142,6 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Terminated in error (Error path)</from>
-      <to>Force severity = MEDIUM on aborts</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Log unhandled error</from>
       <to>Ins integrations_log_events</to>
       <enabled>Y</enabled>
@@ -184,6 +179,11 @@
     <hop>
       <from>Terminated successfully</from>
       <to>Set error context 3</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Terminated in error (Error path)</from>
+      <to>Force severity = MEDIUM on aborts</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -255,7 +255,7 @@
           <condition>
             <conditions>
 </conditions>
-            <function>=</function>
+            <function>&gt;=</function>
             <leftvalue>terminated_successfully</leftvalue>
             <negated>N</negated>
             <operator>AND</operator>
@@ -348,7 +348,7 @@
     <attributes/>
     <GUI>
       <xloc>752</xloc>
-      <yloc>576</yloc>
+      <yloc>560</yloc>
     </GUI>
   </transform>
   <transform>
@@ -406,7 +406,7 @@ group by ec.name, es.severity</sql>
     <attributes/>
     <GUI>
       <xloc>1328</xloc>
-      <yloc>576</yloc>
+      <yloc>560</yloc>
     </GUI>
   </transform>
   <transform>
@@ -429,7 +429,7 @@ group by ec.name, es.severity</sql>
     <attributes/>
     <GUI>
       <xloc>1472</xloc>
-      <yloc>576</yloc>
+      <yloc>560</yloc>
     </GUI>
   </transform>
   <transform>
@@ -549,7 +549,7 @@ group by ec.name, es.severity</sql>
     <attributes/>
     <GUI>
       <xloc>960</xloc>
-      <yloc>576</yloc>
+      <yloc>560</yloc>
     </GUI>
   </transform>
   <transform>
@@ -624,14 +624,11 @@ group by ec.name, es.severity</sql>
     <only_when_have_rows>N</only_when_have_rows>
     <partitioning_daily>N</partitioning_daily>
     <partitioning_enabled>N</partitioning_enabled>
-    <partitioning_field/>
     <partitioning_monthly>Y</partitioning_monthly>
-    <return_field/>
     <return_keys>N</return_keys>
     <schema>${integrations.db.log.schema}</schema>
     <specify_fields>Y</specify_fields>
     <table>integrations_log_events</table>
-    <tablename_field/>
     <tablename_in_field>N</tablename_in_field>
     <tablename_in_table>Y</tablename_in_table>
     <truncate>N</truncate>
@@ -639,7 +636,7 @@ group by ec.name, es.severity</sql>
     <attributes/>
     <GUI>
       <xloc>1792</xloc>
-      <yloc>576</yloc>
+      <yloc>560</yloc>
     </GUI>
   </transform>
   <transform>
@@ -711,7 +708,7 @@ group by ec.name, es.severity</sql>
     <attributes/>
     <GUI>
       <xloc>1616</xloc>
-      <yloc>576</yloc>
+      <yloc>560</yloc>
     </GUI>
   </transform>
   <transform>
@@ -768,7 +765,7 @@ group by ec.name, es.severity</sql>
     <attributes/>
     <GUI>
       <xloc>1968</xloc>
-      <yloc>576</yloc>
+      <yloc>560</yloc>
     </GUI>
   </transform>
   <transform>
@@ -855,7 +852,7 @@ group by ec.name, es.severity</sql>
     <attributes/>
     <GUI>
       <xloc>1136</xloc>
-      <yloc>576</yloc>
+      <yloc>560</yloc>
     </GUI>
   </transform>
   <transform>
