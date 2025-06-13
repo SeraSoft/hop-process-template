@@ -97,7 +97,7 @@
       <always_log_rows>N</always_log_rows>
       <parallel>N</parallel>
       <xloc>528</xloc>
-      <yloc>848</yloc>
+      <yloc>896</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -139,7 +139,7 @@
       <variablename>${email.fail.feedback.enabled}</variablename>
       <parallel>N</parallel>
       <xloc>528</xloc>
-      <yloc>608</yloc>
+      <yloc>656</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -163,7 +163,7 @@
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
       <xloc>432</xloc>
-      <yloc>672</yloc>
+      <yloc>720</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -411,7 +411,7 @@ PROCESS EXITS!
       <attributes/>
       <parallel>N</parallel>
       <xloc>528</xloc>
-      <yloc>752</yloc>
+      <yloc>800</yloc>
       <attributes_hac/>
     </action>
   </actions>
@@ -462,8 +462,8 @@ PROCESS EXITS!
       <from>Post Phase Error</from>
       <to>Error Feedback Enabled?</to>
       <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
     </hop>
     <hop>
       <from>START</from>
@@ -614,7 +614,7 @@ PROCESS EXITS!
       <fontitalic>N</fontitalic>
       <fontname>Verdana</fontname>
       <fontsize>10</fontsize>
-      <height>927</height>
+      <height>458</height>
       <xloc>928</xloc>
       <yloc>432</yloc>
       <note>Base template for Hop Processes
@@ -645,7 +645,7 @@ Base Variables from Config:
 
 
 </note>
-      <width>1441</width>
+      <width>614</width>
     </notepad>
   </notepads>
   <attributes>

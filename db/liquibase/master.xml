@@ -15,7 +15,7 @@
 			<column name="id" type="varchar(48)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="category_type" type="char(1)">
+			<column name="type" type="char(1)">
 				<constraints nullable="false" />
 			</column>
 			<column name="name" type="varchar(64)">
@@ -134,7 +134,7 @@
 	<changeSet id="insert-initial-events-categories" author="serasoft">
 		<insert schemaName="config" tableName="events_categories">
 			<column name="id" value="SYS001" />
-			<column name="category_type" value="E" />
+			<column name="type" value="E" />
 			<column name="name" value="SYSTEM EXCEPTION" />
 		</insert>
 	</changeSet>
@@ -150,6 +150,15 @@
 			<column name="id" value="MEDIUM" />
 			<column name="code" value="MEDIUM" />
 			<column name="severity" value="5" />
+		</insert>
+	</changeSet>
+	<changeSet id="insert-initial-integration_processes" author="serasoft">
+		<insert schemaName="config" tableName="integrations_processes">
+			<column name="id" value="default" />
+			<column name="short_name" value="default" />
+			<column name="description" value="Default process to show Hop Process Template" />
+			<column name="project" value="hop-process-template" />
+			<column name="is_active" value="Y" />
 		</insert>
 	</changeSet>
 </databaseChangeLog>

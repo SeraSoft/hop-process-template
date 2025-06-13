@@ -53,11 +53,6 @@ P -> Terminated because not active (Paused)</note>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Get audit fields</from>
-      <to>Get system info</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Get system info</from>
       <to>Set gravity and status</to>
       <enabled>Y</enabled>
@@ -65,6 +60,11 @@ P -> Terminated because not active (Paused)</note>
     <hop>
       <from>Set gravity and status</from>
       <to>Update Hop process log</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get audit fields</from>
+      <to>Get system info</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -81,6 +81,10 @@ P -> Terminated because not active (Paused)</note>
     </partitioning>
     <fields>
       <field>
+        <currency/>
+        <decimal/>
+        <format/>
+        <group/>
         <length>-1</length>
         <name>process_instance_id</name>
         <precision>-1</precision>
@@ -89,6 +93,10 @@ P -> Terminated because not active (Paused)</note>
         <variable>${v_process_instance_id}</variable>
       </field>
       <field>
+        <currency/>
+        <decimal/>
+        <format/>
+        <group/>
         <length>-1</length>
         <name>terminated_successfully</name>
         <precision>-1</precision>
@@ -97,7 +105,10 @@ P -> Terminated because not active (Paused)</note>
         <variable>${terminated.successfully}</variable>
       </field>
       <field>
+        <currency/>
+        <decimal/>
         <format>#</format>
+        <group/>
         <length>-1</length>
         <name>records_in_error</name>
         <precision>-1</precision>
@@ -106,7 +117,10 @@ P -> Terminated because not active (Paused)</note>
         <variable>${v_err_items_num}</variable>
       </field>
       <field>
+        <currency/>
+        <decimal/>
         <format>yyyyMMddHHmmss</format>
+        <group/>
         <length>-1</length>
         <name>date_start</name>
         <precision>-1</precision>
@@ -114,10 +128,22 @@ P -> Terminated because not active (Paused)</note>
         <type>Date</type>
         <variable>${v_job_run_timestamp}</variable>
       </field>
+      <field>
+        <currency/>
+        <decimal/>
+        <format/>
+        <group/>
+        <length>-1</length>
+        <name>severity</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>Integer</type>
+        <variable>${v_severity}</variable>
+      </field>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>325</xloc>
+      <xloc>288</xloc>
       <yloc>160</yloc>
     </GUI>
   </transform>
@@ -140,7 +166,7 @@ P -> Terminated because not active (Paused)</note>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>490</xloc>
+      <xloc>448</xloc>
       <yloc>160</yloc>
     </GUI>
   </transform>
@@ -159,14 +185,6 @@ P -> Terminated because not active (Paused)</note>
       <field_name>status</field_name>
       <formula_string>(terminated_successfully.equals("0") ? "E" : (( terminated_successfully.equals("1") &amp;&amp; records_in_error > 0 ) ? "X" : (terminated_successfully.equals("2") ? "L" : (terminated_successfully.equals("3") ? "P" : "T"))))</formula_string>
       <value_type>String</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <replace_field/>
-    </formula>
-    <formula>
-      <field_name>gravity</field_name>
-      <formula_string>terminated_successfully.equals("0") ? 1 : 0</formula_string>
-      <value_type>Integer</value_type>
       <value_length>-1</value_length>
       <value_precision>-1</value_precision>
       <replace_field/>
@@ -215,11 +233,13 @@ P -> Terminated because not active (Paused)</note>
     <commit>100</commit>
     <connection>${integrations.db.connection.name}</connection>
     <error_ignored>N</error_ignored>
+    <ignore_flag_field/>
     <lookup>
       <key>
         <condition>=</condition>
         <field>id</field>
         <name>process_instance_id</name>
+        <name2/>
       </key>
       <schema>${integrations.db.log.schema}</schema>
       <table>integrations_logs</table>
@@ -232,8 +252,8 @@ P -> Terminated because not active (Paused)</note>
         <rename>status</rename>
       </value>
       <value>
-        <name>max_gravity</name>
-        <rename>gravity</rename>
+        <name>max_severity</name>
+        <rename>severity</rename>
       </value>
     </lookup>
     <skip_lookup>Y</skip_lookup>
