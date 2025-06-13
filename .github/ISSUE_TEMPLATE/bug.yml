@@ -30,35 +30,6 @@ body:
       value: |
         Thanks for taking the time to fill out this bug report! Please fill in the following fields and be as precise as possible. 
         This will help the developer in handling your bug as soon as possible. 
-  - type: input
-    id: hop-distro-optimizer-version
-    attributes:
-      label: Apache Hop version?
-      description: Fill in the Hop Distro Optimizer version, if it's the version currently under development use SNAPSHOT-yyyMMdd format.
-    validations:
-      required: true
-  - type: input
-    id: java-version
-    attributes:
-      label: Java version?
-      description: Fill in the Java version you are using
-      placeholder: |
-        You can use `java -version` on the command line to fetch the java version.
-    validations:
-      required: true
-  - type: dropdown
-    id: os-version
-    attributes:
-      label: Operating system
-      description: What operating system are you using.
-      options:
-        - "Windows"
-        - "Linux"
-        - "macOS"
-        - "Docker"
-        - "Other"
-    validations:
-      required: true
   - type: textarea
     id: what-happened
     attributes:
