@@ -233,13 +233,11 @@ P -> Terminated because not active (Paused)</note>
     <commit>100</commit>
     <connection>${integrations.db.connection.name}</connection>
     <error_ignored>N</error_ignored>
-    <ignore_flag_field/>
     <lookup>
       <key>
         <condition>=</condition>
         <field>id</field>
         <name>process_instance_id</name>
-        <name2/>
       </key>
       <schema>${integrations.db.log.schema}</schema>
       <table>integrations_logs</table>

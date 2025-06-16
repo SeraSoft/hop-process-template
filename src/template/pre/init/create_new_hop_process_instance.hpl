@@ -87,19 +87,11 @@
     </partitioning>
     <formula>
       <field_name>log_filename_ok</field_name>
-      <formula_string>log_filename.equals("${v_logfilename}") ? "Not available" : log_filename</formula_string>
+      <formula_string>log_filename.equals("") ? "Not available" : log_filename</formula_string>
       <value_type>String</value_type>
       <value_length>-1</value_length>
       <value_precision>-1</value_precision>
       <replace_field>log_filename</replace_field>
-    </formula>
-    <formula>
-      <field_name>log_filedir</field_name>
-      <formula_string>log_filedir.equals("${p_logfile_dir}") ? "Not available" : log_filedir</formula_string>
-      <value_type>String</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <replace_field>log_filedir</replace_field>
     </formula>
     <attributes/>
     <GUI>
@@ -154,19 +146,11 @@
       </field>
       <field>
         <length>-1</length>
-        <name>log_filedir</name>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-        <type>String</type>
-        <variable>${p_logfile_dir}</variable>
-      </field>
-      <field>
-        <length>-1</length>
         <name>log_filename</name>
         <precision>-1</precision>
         <trim_type>both</trim_type>
         <type>String</type>
-        <variable>${v_logfilename}</variable>
+        <variable>${p_log_filename}</variable>
       </field>
       <field>
         <length>-1</length>
@@ -297,11 +281,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <loglevel>log_level_basic</loglevel>
     <displayHeader>Y</displayHeader>
-    <limitRows>N</limitRows>
-    <limitRowsNumber>0</limitRowsNumber>
-    <logmessage/>
     <fields>
       <field>
         <name>process_instance_id</name>
@@ -309,7 +289,13 @@
       <field>
         <name>integrations_process_id</name>
       </field>
+      <field>
+        <name>log_filename</name>
+      </field>
     </fields>
+    <limitRows>N</limitRows>
+    <limitRowsNumber>0</limitRowsNumber>
+    <loglevel>Basic</loglevel>
     <attributes/>
     <GUI>
       <xloc>1088</xloc>

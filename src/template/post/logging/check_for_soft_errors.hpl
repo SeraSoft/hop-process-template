@@ -9,6 +9,11 @@
     <pipeline_type>Normal</pipeline_type>
     <pipeline_status>0</pipeline_status>
     <parameters>
+      <parameter>
+        <name>v_process_instance_id</name>
+        <default_value>1a81ba25-dc72-4628-9d71-7f332d12cfb3</default_value>
+        <description/>
+      </parameter>
     </parameters>
     <capture_transform_performance>N</capture_transform_performance>
     <transform_performance_capturing_delay>1000</transform_performance_capturing_delay>
@@ -54,8 +59,8 @@
       <fontname>Segoe UI</fontname>
       <fontsize>9</fontsize>
       <height>26</height>
-      <xloc>1008</xloc>
-      <yloc>496</yloc>
+      <xloc>976</xloc>
+      <yloc>512</yloc>
       <note>Unhandled exception - Create a line in integration_logs_events</note>
       <width>339</width>
     </notepad>
@@ -109,11 +114,6 @@
     <hop>
       <from>Group by</from>
       <to>Execution context info</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Force severity = MEDIUM on aborts</from>
-      <to>Id integrations_log_details</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -184,6 +184,16 @@
     <hop>
       <from>Terminated in error (Error path)</from>
       <to>Force severity = MEDIUM on aborts</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Force severity = MEDIUM on aborts</from>
+      <to>Database lookup</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Database lookup</from>
+      <to>Id integrations_log_details</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -348,7 +358,7 @@
     <attributes/>
     <GUI>
       <xloc>752</xloc>
-      <yloc>560</yloc>
+      <yloc>496</yloc>
     </GUI>
   </transform>
   <transform>
@@ -405,8 +415,8 @@ group by ec.name, es.severity</sql>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>1328</xloc>
-      <yloc>560</yloc>
+      <xloc>1296</xloc>
+      <yloc>576</yloc>
     </GUI>
   </transform>
   <transform>
@@ -428,8 +438,8 @@ group by ec.name, es.severity</sql>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>1472</xloc>
-      <yloc>560</yloc>
+      <xloc>1440</xloc>
+      <yloc>576</yloc>
     </GUI>
   </transform>
   <transform>
@@ -548,8 +558,8 @@ group by ec.name, es.severity</sql>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>960</xloc>
-      <yloc>560</yloc>
+      <xloc>928</xloc>
+      <yloc>576</yloc>
     </GUI>
   </transform>
   <transform>
@@ -635,8 +645,8 @@ group by ec.name, es.severity</sql>
     <use_batch>Y</use_batch>
     <attributes/>
     <GUI>
-      <xloc>1792</xloc>
-      <yloc>560</yloc>
+      <xloc>1760</xloc>
+      <yloc>576</yloc>
     </GUI>
   </transform>
   <transform>
@@ -707,8 +717,8 @@ group by ec.name, es.severity</sql>
     <logmessage>Logged errors in integrations_log_details</logmessage>
     <attributes/>
     <GUI>
-      <xloc>1616</xloc>
-      <yloc>560</yloc>
+      <xloc>1584</xloc>
+      <yloc>576</yloc>
     </GUI>
   </transform>
   <transform>
@@ -751,12 +761,14 @@ group by ec.name, es.severity</sql>
     </partitioning>
     <fields>
       <field>
+        <default_value/>
         <field_name>num_err</field_name>
         <variable_name>v_err_items_num</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
-        <field_name>max_severity</field_name>
+        <default_value/>
+        <field_name>severity_on_abort_value</field_name>
         <variable_name>v_severity</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
@@ -764,8 +776,8 @@ group by ec.name, es.severity</sql>
     <use_formatting>Y</use_formatting>
     <attributes/>
     <GUI>
-      <xloc>1968</xloc>
-      <yloc>560</yloc>
+      <xloc>1936</xloc>
+      <yloc>576</yloc>
     </GUI>
   </transform>
   <transform>
@@ -851,8 +863,8 @@ group by ec.name, es.severity</sql>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>1136</xloc>
-      <yloc>560</yloc>
+      <xloc>1104</xloc>
+      <yloc>576</yloc>
     </GUI>
   </transform>
   <transform>
@@ -1083,6 +1095,47 @@ group by ec.name, es.severity</sql>
     <GUI>
       <xloc>322</xloc>
       <yloc>256</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Database lookup</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <connection>integrations_db</connection>
+    <lookup>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <fail_on_multiple>N</fail_on_multiple>
+      <key>
+        <condition>=</condition>
+        <field>code</field>
+        <name>severity_on_abort</name>
+        <name2/>
+      </key>
+      <orderby/>
+      <schema>config</schema>
+      <table>events_severities</table>
+      <value>
+        <default/>
+        <name>severity</name>
+        <rename>severity_on_abort_value</rename>
+        <trim_type>none</trim_type>
+        <type>Integer</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <GUI>
+      <xloc>752</xloc>
+      <yloc>576</yloc>
     </GUI>
   </transform>
   <transform_error_handling>

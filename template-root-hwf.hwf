@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workflow>
-  <name>Main process job</name>
+  <name>Root workflow template</name>
   <name_sync_with_filename>N</name_sync_with_filename>
   <description/>
   <extended_description/>
@@ -17,9 +17,9 @@
       <description>Base process name to use wherever/whenever required in the process.</description>
     </parameter>
     <parameter>
-      <name>p_logfile_dir</name>
+      <name>p_log_filename</name>
       <default_value/>
-      <description>Directory that will contain the log files. If not specified it will be defaulted to LMS</description>
+      <description>Complete filename of the log file for this instance of execution. If not specified it will be defaulted to "Not available"</description>
     </parameter>
   </parameters>
   <actions>
@@ -109,9 +109,7 @@
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${PROJECT_HOME}/src/project/main/${p_base_process_name}/start.hwf</filename>
-      <logext/>
-      <logfile/>
+      <filename>${project.link.ref}/start.hwf</filename>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -625,7 +623,7 @@ Base Process Parameters:
 =================================================================
 - p_base_process_name: Process's unique identifier declared as an entry of 
                                       integrations_processes table
-- p_log_filedir:                Full log filename 
+- p_log_filename:                Full log filename 
 
 
 Base Instance Variables:

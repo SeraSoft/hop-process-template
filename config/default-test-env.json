@@ -5,7 +5,7 @@
     "description" : ""
   }, {
     "name" : "project.link.ref",
-    "value" : "${PROJECT_HOME}/src/project/main/${p_base_process_name}",
+    "value" : "${PROJECT_HOME}/integration-tests/src/test/${p_base_process_name}",
     "description" : ""
   }, {
     "name" : "hop.user",

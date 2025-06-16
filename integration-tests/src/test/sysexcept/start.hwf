@@ -31,12 +31,14 @@
       <attributes_hac/>
     </action>
     <action>
-      <name>Dummy</name>
+      <name>Unhandled exception</name>
       <description/>
-      <type>DUMMY</type>
+      <type>ABORT</type>
       <attributes/>
+      <always_log_rows>N</always_log_rows>
+      <message/>
       <parallel>N</parallel>
-      <xloc>384</xloc>
+      <xloc>416</xloc>
       <yloc>144</yloc>
       <attributes_hac/>
     </action>
@@ -44,7 +46,7 @@
   <hops>
     <hop>
       <from>START</from>
-      <to>Dummy</to>
+      <to>Unhandled exception</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>Y</unconditional>
