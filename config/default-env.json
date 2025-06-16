@@ -1,9 +1,5 @@
 {
   "variables" : [ {
-    "name" : "project.ref.base.dir",
-    "value" : "/home/sramazzina",
-    "description" : ""
-  }, {
     "name" : "project.link.ref",
     "value" : "${PROJECT_HOME}/src/project/main/${p_base_process_name}",
     "description" : ""
@@ -117,7 +113,7 @@
     "description" : ""
   }, {
     "name" : "mail.subject.application.error",
-    "value" : "${mail.subject} Failed for application exceptions (integration_log_details)",
+    "value" : "${mail.subject} Failed for application exceptions.",
     "description" : ""
   }, {
     "name" : "default.mail.destination.addresses",
@@ -161,7 +157,7 @@
     "description" : ""
   }, {
     "name" : "notactive.mail.text",
-    "value" : "<html><head></head><body>The process ${p_base_process_name} running on server ${v_hostname} can't be started because <strong>is set to not active..</strong><p>Execution's log file available at: ${p_logfile_name}<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>",
+    "value" : "<html><head></head><body>The process ${p_base_process_name} running on server ${v_hostname} can't be started because <strong>is set to not active.</strong><p>Execution's log file available at: ${p_logfile_name}<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>",
     "description" : ""
   } ]
 }
