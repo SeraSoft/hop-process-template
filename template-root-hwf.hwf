@@ -109,7 +109,9 @@
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${PROJECT_HOME}/src/project/main/template-root-hwf/start.hwf</filename>
+      <filename>${PROJECT_HOME}/src/project/main/${p_base_process_name}/start.hwf</filename>
+      <logext/>
+      <logfile/>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
