@@ -2,162 +2,162 @@
   "variables" : [ {
     "name" : "project.link.ref",
     "value" : "${PROJECT_HOME}/src/project/main/${p_base_process_name}",
-    "description" : ""
+    "description" : "Link to activate the main process that must be started by the Hop Process Executor. The link is relative to the project home directory."
   }, {
     "name" : "hop.user",
     "value" : "hopuser",
-    "description" : ""
+    "description" : "The operating system user that will run the Hop Process execution. This user must have read/write permissions on the project home directory."
   }, {
     "name" : "hop.program.name",
     "value" : "hop",
-    "description" : ""
+    "description" : "A virtual name assigned to Apache Hop to be inserted in events logging tables as a reference for the running instance"
   }, {
     "name" : "sys.unhandled.exception.subcategory.generic",
     "value" : "SYSGE001",
-    "description" : ""
+    "description" : "The generic subcategory for unhandled system exceptions. This is used to categorize exceptions in the logs."
   }, {
     "name" : "integrations.db.config.schema",
     "value" : "config",
-    "description" : ""
+    "description" : "Name of the schema containing the configuration tables for the integrations database."
   }, {
     "name" : "integrations.db.log.schema",
     "value" : "logs",
-    "description" : ""
+    "description" : "Name of schema containing the logs tables for the integrations database."
   }, {
     "name" : "integrations.db.host",
     "value" : "localhost",
-    "description" : ""
+    "description" : "Name of the hosts where the integrations database is running. This can be an IP address or a hostname."
   }, {
     "name" : "integrations.db.connection.name",
     "value" : "integrations_db",
-    "description" : ""
+    "description" : "Name of the connection assigned in Apache Hop for the integrations database. This is used to connect to the database during Hop Process execution."
   }, {
     "name" : "integrations.db.name",
     "value" : "integrations_db",
-    "description" : ""
+    "description" : "Name of the database containing the configuration and logs tables for the integrations database."
   }, {
     "name" : "integrations.db.port",
     "value" : "5432",
-    "description" : ""
+    "description" : "Port of the integrations database. This is the port where the database server is listening for connections."
   }, {
     "name" : "integrations.db.user",
     "value" : "postgres",
-    "description" : ""
+    "description" : "Username used to connect to the integrations database. This user must have permissions to read/write in the specified database."
   }, {
     "name" : "integrations.db.pwd",
     "value" : "password",
-    "description" : ""
+    "description" : "Password used to connect to the integrations database. This user must have permissions to read/write in the specified database."
   }, {
     "name" : "email.success.feedback.enabled",
     "value" : "0",
-    "description" : ""
+    "description" : "Flag tha enables or disables the sending of success feedback emails after a process execution. Set to 1 to enable, 0 to disable."
   }, {
     "name" : "email.fail.feedback.enabled",
     "value" : "0",
-    "description" : ""
+    "description" : "Flag that enables or disables the sending of failure feedback emails after a process execution. Set to 1 to enable, 0 to disable."
   }, {
     "name" : "mail.isauthenticated",
     "value" : "false",
-    "description" : ""
+    "description" : "Flag to indicate if the SMTP server requires authentication. Set to true if authentication is needed, false otherwise."
   }, {
     "name" : "mail.isgmail",
     "value" : "false",
-    "description" : ""
+    "description" : "Flag to indicate if the SMTP server is Gmail. Set to true if using Gmail, false otherwise."
   }, {
     "name" : "smtp.mail.host",
-    "value" : "",
-    "description" : ""
+    "value" : "localhost",
+    "description" : "Name of the host where the SMTP server is running. This can be an IP address or a hostname."
   }, {
     "name" : "smtp.mail.port",
     "value" : "25",
-    "description" : ""
+    "description" : "Port where the SMTP server is listening for connections."
   }, {
     "name" : "smtp.mail.user",
     "value" : "user1",
-    "description" : ""
+    "description" : "Username used to connect to SMTP server. This is used for authentication if the SMTP server requires it."
   }, {
     "name" : "smtp.mail.psw",
     "value" : "",
-    "description" : ""
+    "description" : "Password used to connect to SMTP server. This is used for authentication if the SMTP server requires it."
   }, {
     "name" : "smtp.trusted.hosts",
     "value" : "",
-    "description" : ""
+    "description" : "Comma-separated list of trusted hosts for the SMTP server. This can be used to allow connections from specific hosts without authentication."
   }, {
     "name" : "smtp.check.server.identity",
     "value" : "",
-    "description" : ""
+    "description" : "Flag to indiceate if the server identity should be checked when connecting to the SMTP server. Set to true to enable, false to disable."
   }, {
     "name" : "mail.from.displayname",
     "value" : "Hop Process Executor",
-    "description" : ""
+    "description" : "Label displayed in the 'From' field of the email. This is the name that will appear as the sender of the email."
   }, {
     "name" : "mail.from.email",
     "value" : "hopexecutor@maildomain.it",
-    "description" : ""
+    "description" : "Email address used in the 'From' field of the email. This is the address that will appear as the sender of the email."
   }, {
     "name" : "mail.subject",
     "value" : "[${v_hostname} - ${p_base_process_name}]",
-    "description" : ""
+    "description" : "First part of the text displayed in the subject of the email. It includes the hostname and the base process name."
   }, {
     "name" : "mail.subject.error",
     "value" : "${mail.subject} Failed for system exceptions",
-    "description" : ""
+    "description" : "Text displayed in the subject of the email when an error occurs due to system exceptions. It includes the base process name."
   }, {
     "name" : "mail.subject.success",
     "value" : "${mail.subject} Terminated successfully",
-    "description" : ""
+    "description" : "Text displayed in the subject ot the email when the process execution is successful. It includes the base process name."
   }, {
     "name" : "mail.subject.lock",
     "value" : "${mail.subject} Same instance is still running. Execution stopped.",
-    "description" : ""
+    "description" : "Text displayed in the subject ot the email when a lock occurs that prevents the process from executing. It includes the base process name"
   }, {
     "name" : "mail.subject.application.error",
     "value" : "${mail.subject} Failed for application exceptions.",
-    "description" : ""
+    "description" : "Text displayed in the subject of the email when an application error occurs during process execution. It includes the base process name."
   }, {
     "name" : "default.mail.destination.addresses",
     "value" : "destination@maildomain.it",
-    "description" : ""
+    "description" : "Default set of email addresses to included wherever needed. Email addresses are separated by spaces."
   }, {
     "name" : "success.mail.destination.addresses",
     "value" : "${default.mail.destination.addresses}",
-    "description" : ""
+    "description" : "Set of email addresses to send success feedback emails to. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'default.mail.destination.addresses'."
   }, {
     "name" : "errors.mail.destination.addresses",
     "value" : "${default.mail.destination.addresses}",
-    "description" : ""
+    "description" : "Set of email addresses to send error feedback emails to. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'default.mail.destination.addresses'."
   }, {
     "name" : "lock.mail.destination.addresses",
     "value" : "${default.mail.destination.addresses}",
-    "description" : ""
+    "description" : "Set of feedback's email addresses to send because a lock is present. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'default.mail.destination.addresses'."
   }, {
     "name" : "notactive.mail.destination.addresses",
     "value" : "${default.mail.destination.addresses}",
-    "description" : ""
+    "description" : "Set of feedback's email addresses to send because the process is not active. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'default.mail.destination.addresses'."
   }, {
     "name" : "application.error.mail.destination.addresses",
     "value" : "${default.mail.destination.addresses}",
-    "description" : ""
+    "description" : "Set of email addresses to send application's error feedback emails to. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'default.mail.destination.addresses'."
   }, {
     "name" : "success.mail.text",
     "value" : "<html><head></head><body>The process ${p_base_process_name} running on server ${v_hostname} was terminated successfully.<p>Execution's log file available at: ${p_logfile_name}.<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>",
-    "description" : ""
+    "description" : "Sample text for the success feedback email. It includes the base process name, hostname, and log file name."
   }, {
     "name" : "error.mail.text",
     "value" : "<html><head></head><body>The process was terminated abnormally because of an Exception.<p>Execution's log file available at: ${p_logfile_name}.<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>",
-    "description" : ""
+    "description" : "Sample text message for the error feedback email. It includes the log file name."
   }, {
     "name" : "lock.mail.text",
     "value" : "<html><head></head><body>The process ${p_base_process_name} running on server ${v_hostname} can't be started because <strong>same process started at ${v_last_job_run_timestamp} is not yet terminated.</strong><p>Execution's log file available at: ${p_logfile_name}<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>",
-    "description" : ""
+    "description" : "Sample text message used because a process cannot be started because a lock occurs. It includes the base process name, hostname, last job run timestamp, and log file name."
   }, {
     "name" : "application.error.mail.text",
     "value" : "<html><head></head><body>During process's execution we collected some exceptions on integrations_log_details. The detailed list of exception is in the attachment to this email.<p>If needed, execution's log file is available at: ${p_logfile_name}<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>",
-    "description" : ""
+    "description" : "Sample text message used when an application error occurs. It includes the log file name and mentions that detailed exceptions are in the attachment."
   }, {
     "name" : "notactive.mail.text",
     "value" : "<html><head></head><body>The process ${p_base_process_name} running on server ${v_hostname} can't be started because <strong>is set to not active.</strong><p>Execution's log file available at: ${p_logfile_name}<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>",
-    "description" : ""
+    "description" : "Sample text message used when a process cannot be started because it is not active. It includes the base process name, hostname, and log file name."
   } ]
 }
