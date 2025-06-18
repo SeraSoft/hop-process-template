@@ -53,18 +53,28 @@ P -> Terminated because not active (Paused)</note>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Get system info</from>
-      <to>Set gravity and status</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Set gravity and status</from>
+      <from>Calculate process status</from>
       <to>Update Hop process log</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
       <from>Get audit fields</from>
       <to>Get system info</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get system info</from>
+      <to>Add is_running = N</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Add is_running = N</from>
+      <to>Calculate process status</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Update Hop process log</from>
+      <to>Set is_running flag to N</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -81,10 +91,6 @@ P -> Terminated because not active (Paused)</note>
     </partitioning>
     <fields>
       <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
         <length>-1</length>
         <name>process_instance_id</name>
         <precision>-1</precision>
@@ -93,10 +99,6 @@ P -> Terminated because not active (Paused)</note>
         <variable>${v_process_instance_id}</variable>
       </field>
       <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
         <length>-1</length>
         <name>terminated_successfully</name>
         <precision>-1</precision>
@@ -105,10 +107,7 @@ P -> Terminated because not active (Paused)</note>
         <variable>${terminated.successfully}</variable>
       </field>
       <field>
-        <currency/>
-        <decimal/>
         <format>#</format>
-        <group/>
         <length>-1</length>
         <name>records_in_error</name>
         <precision>-1</precision>
@@ -117,10 +116,7 @@ P -> Terminated because not active (Paused)</note>
         <variable>${v_err_items_num}</variable>
       </field>
       <field>
-        <currency/>
-        <decimal/>
         <format>yyyyMMddHHmmss</format>
-        <group/>
         <length>-1</length>
         <name>date_start</name>
         <precision>-1</precision>
@@ -129,16 +125,20 @@ P -> Terminated because not active (Paused)</note>
         <variable>${v_job_run_timestamp}</variable>
       </field>
       <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
         <length>-1</length>
         <name>severity</name>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>Integer</type>
         <variable>${v_severity}</variable>
+      </field>
+      <field>
+        <length>-1</length>
+        <name>process_name</name>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <type>String</type>
+        <variable>${p_base_process_name}</variable>
       </field>
     </fields>
     <attributes/>
@@ -166,15 +166,15 @@ P -> Terminated because not active (Paused)</note>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>448</xloc>
+      <xloc>400</xloc>
       <yloc>160</yloc>
     </GUI>
   </transform>
   <transform>
-    <name>Set gravity and status</name>
+    <name>Calculate process status</name>
     <type>Janino</type>
     <description/>
-    <distribute>N</distribute>
+    <distribute>Y</distribute>
     <custom_distribution/>
     <copies>1</copies>
     <partitioning>
@@ -191,7 +191,7 @@ P -> Terminated because not active (Paused)</note>
     </formula>
     <attributes/>
     <GUI>
-      <xloc>624</xloc>
+      <xloc>640</xloc>
       <yloc>160</yloc>
     </GUI>
   </transform>
@@ -259,6 +259,74 @@ P -> Terminated because not active (Paused)</note>
     <attributes/>
     <GUI>
       <xloc>800</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Add is_running = N</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <currency/>
+        <decimal/>
+        <format/>
+        <group/>
+        <length>-1</length>
+        <name>is_running</name>
+        <nullif>N</nullif>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+        <type>String</type>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>512</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Set is_running flag to N</name>
+    <type>Update</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <commit>100</commit>
+    <connection>integrations_db</connection>
+    <error_ignored>N</error_ignored>
+    <ignore_flag_field/>
+    <lookup>
+      <key>
+        <condition>=</condition>
+        <field>short_name</field>
+        <name>process_name</name>
+        <name2/>
+      </key>
+      <schema>config</schema>
+      <table>integrations_processes</table>
+      <value>
+        <name>is_running</name>
+        <rename>is_running</rename>
+      </value>
+    </lookup>
+    <skip_lookup>N</skip_lookup>
+    <use_batch>N</use_batch>
+    <attributes/>
+    <GUI>
+      <xloc>1040</xloc>
       <yloc>160</yloc>
     </GUI>
   </transform>
