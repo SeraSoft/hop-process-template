@@ -32,23 +32,8 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Get process data</from>
-      <to>Is process active</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Is process running</from>
       <to>Set lock_present = 1</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Dummy (do nothing)</from>
-      <to>Calculate previous_instance_started_at timestamp</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Calculate previous_instance_started_at timestamp</from>
-      <to>Set v_lock_present</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -57,33 +42,38 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Is process active</from>
-      <to>Set process_active = 0</to>
+      <from>Dummy (do nothing)</from>
+      <to>Set v_lock_present</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Is process active</from>
-      <to>Set process_active = 1</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Set process_active = 1</from>
-      <to>Dummy (do nothing) 2</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Dummy (do nothing) 2</from>
-      <to>Is process running</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Set process_active = 0</from>
-      <to>Dummy (do nothing) 2</to>
+      <from>Calculate previous_instance_started_at timestamp</from>
+      <to>Dummy (do nothing)</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
       <from>Set lock_present = 1</from>
-      <to>Dummy (do nothing)</to>
+      <to>Get last execution time</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get last execution time</from>
+      <to>Calculate previous_instance_started_at timestamp</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Start</from>
+      <to>Get process name</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get process name</from>
+      <to>Get running status</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get running status</from>
+      <to>Is process running</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -111,8 +101,8 @@
     <failIfNoFile>N</failIfNoFile>
     <attributes/>
     <GUI>
-      <xloc>1008</xloc>
-      <yloc>272</yloc>
+      <xloc>640</xloc>
+      <yloc>352</yloc>
     </GUI>
   </transform>
   <transform>
@@ -128,13 +118,13 @@
     </partitioning>
     <attributes/>
     <GUI>
-      <xloc>768</xloc>
-      <yloc>272</yloc>
+      <xloc>640</xloc>
+      <yloc>480</yloc>
     </GUI>
   </transform>
   <transform>
-    <name>Dummy (do nothing) 2</name>
-    <type>Dummy</type>
+    <name>Get last execution time</name>
+    <type>DBLookup</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -143,46 +133,41 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <attributes/>
-    <GUI>
-      <xloc>496</xloc>
-      <yloc>96</yloc>
-    </GUI>
-  </transform>
-  <transform>
-    <name>Get process data</name>
-    <type>TableInput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
     <connection>integrations_db</connection>
-    <execute_each_row>N</execute_each_row>
-    <limit>0</limit>
-    <sql>select ip.id integration_process_id
-, ip.short_name
-, ip.is_active
-, il.id process_instance_id
-, il.proc_status process_lock
-, il.date_started last_instance_started_at
- from ${integrations.db.config.schema}.integrations_processes ip
-left outer join ${integrations.db.log.schema}.integrations_logs il on ip.id = il.integrations_processes_id and il.proc_status = 'R'
-where ip.id = '${p_base_process_name}'
-</sql>
-    <variables_active>Y</variables_active>
+    <lookup>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <fail_on_multiple>N</fail_on_multiple>
+      <key>
+        <condition>=</condition>
+        <field>integrations_processes_id</field>
+        <name>integrations_processes_id</name>
+      </key>
+      <key>
+        <condition>=</condition>
+        <field>proc_status</field>
+        <name>running_proc_status</name>
+      </key>
+      <schema>logs</schema>
+      <table>integrations_logs</table>
+      <value>
+        <name>date_started</name>
+        <rename>last_instance_started_at</rename>
+        <trim_type>none</trim_type>
+        <type>Timestamp</type>
+      </value>
+    </lookup>
     <attributes/>
     <GUI>
-      <xloc>96</xloc>
-      <yloc>96</yloc>
+      <xloc>640</xloc>
+      <yloc>240</yloc>
     </GUI>
   </transform>
   <transform>
-    <name>Is process active</name>
-    <type>FilterRows</type>
+    <name>Get process name</name>
+    <type>GetVariable</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -191,30 +176,69 @@ where ip.id = '${p_base_process_name}'
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <compare>
-      <condition>
-        <conditions>
-</conditions>
-        <function>=</function>
-        <leftvalue>is_active</leftvalue>
-        <negated>N</negated>
-        <operator>-</operator>
-        <value>
-          <isnull>N</isnull>
-          <length>-1</length>
-          <name>constant</name>
-          <precision>-1</precision>
-          <text>Y</text>
-          <type>String</type>
-        </value>
-      </condition>
-    </compare>
-    <send_false_to>Set process_active = 0</send_false_to>
-    <send_true_to>Set process_active = 1</send_true_to>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>process_name</name>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <type>String</type>
+        <variable>${p_base_process_name}</variable>
+      </field>
+    </fields>
     <attributes/>
     <GUI>
-      <xloc>240</xloc>
-      <yloc>96</yloc>
+      <xloc>176</xloc>
+      <yloc>112</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Get running status</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <connection>integrations_db</connection>
+    <lookup>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <fail_on_multiple>N</fail_on_multiple>
+      <key>
+        <condition>=</condition>
+        <field>short_name</field>
+        <name>process_name</name>
+      </key>
+      <schema>config</schema>
+      <table>integrations_processes</table>
+      <value>
+        <name>is_running</name>
+        <trim_type>none</trim_type>
+        <type>String</type>
+      </value>
+      <value>
+        <name>id</name>
+        <rename>integrations_processes_id</rename>
+        <trim_type>none</trim_type>
+        <type>String</type>
+      </value>
+      <value>
+        <name>is_active</name>
+        <rename>process_active</rename>
+        <trim_type>none</trim_type>
+        <type>String</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <GUI>
+      <xloc>304</xloc>
+      <yloc>112</yloc>
     </GUI>
   </transform>
   <transform>
@@ -233,7 +257,7 @@ where ip.id = '${p_base_process_name}'
         <conditions>
 </conditions>
         <function>=</function>
-        <leftvalue>process_lock</leftvalue>
+        <leftvalue>is_running</leftvalue>
         <negated>N</negated>
         <operator>-</operator>
         <value>
@@ -241,7 +265,7 @@ where ip.id = '${p_base_process_name}'
           <length>-1</length>
           <name>constant</name>
           <precision>-1</precision>
-          <text>R</text>
+          <text>Y</text>
           <type>String</type>
         </value>
       </condition>
@@ -250,8 +274,8 @@ where ip.id = '${p_base_process_name}'
     <send_true_to>Set lock_present = 1</send_true_to>
     <attributes/>
     <GUI>
-      <xloc>624</xloc>
-      <yloc>96</yloc>
+      <xloc>432</xloc>
+      <yloc>112</yloc>
     </GUI>
   </transform>
   <transform>
@@ -267,6 +291,10 @@ where ip.id = '${p_base_process_name}'
     </partitioning>
     <fields>
       <field>
+        <currency/>
+        <decimal/>
+        <format/>
+        <group/>
         <length>-1</length>
         <name>lock_present</name>
         <nullif>0</nullif>
@@ -274,11 +302,23 @@ where ip.id = '${p_base_process_name}'
         <set_empty_string>N</set_empty_string>
         <type>String</type>
       </field>
+      <field>
+        <currency/>
+        <decimal/>
+        <format/>
+        <group/>
+        <length>-1</length>
+        <name>last_instance_started_at_timestamp</name>
+        <nullif/>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+        <type>Timestamp</type>
+      </field>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>624</xloc>
-      <yloc>272</yloc>
+      <xloc>432</xloc>
+      <yloc>480</yloc>
     </GUI>
   </transform>
   <transform>
@@ -294,6 +334,10 @@ where ip.id = '${p_base_process_name}'
     </partitioning>
     <fields>
       <field>
+        <currency/>
+        <decimal/>
+        <format/>
+        <group/>
         <length>-1</length>
         <name>lock_present</name>
         <nullif>1</nullif>
@@ -301,29 +345,14 @@ where ip.id = '${p_base_process_name}'
         <set_empty_string>N</set_empty_string>
         <type>String</type>
       </field>
-    </fields>
-    <attributes/>
-    <GUI>
-      <xloc>768</xloc>
-      <yloc>96</yloc>
-    </GUI>
-  </transform>
-  <transform>
-    <name>Set process_active = 0</name>
-    <type>Constant</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
       <field>
+        <currency/>
+        <decimal/>
+        <format/>
+        <group/>
         <length>-1</length>
-        <name>process_active</name>
-        <nullif>0</nullif>
+        <name>running_proc_status</name>
+        <nullif>R</nullif>
         <precision>-1</precision>
         <set_empty_string>N</set_empty_string>
         <type>String</type>
@@ -331,35 +360,8 @@ where ip.id = '${p_base_process_name}'
     </fields>
     <attributes/>
     <GUI>
-      <xloc>240</xloc>
-      <yloc>208</yloc>
-    </GUI>
-  </transform>
-  <transform>
-    <name>Set process_active = 1</name>
-    <type>Constant</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <length>-1</length>
-        <name>process_active</name>
-        <nullif>1</nullif>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-        <type>String</type>
-      </field>
-    </fields>
-    <attributes/>
-    <GUI>
-      <xloc>352</xloc>
-      <yloc>96</yloc>
+      <xloc>640</xloc>
+      <yloc>112</yloc>
     </GUI>
   </transform>
   <transform>
@@ -385,7 +387,7 @@ where ip.id = '${p_base_process_name}'
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
-        <field_name>integration_process_id</field_name>
+        <field_name>integrations_processes_id</field_name>
         <variable_name>v_integration_process_id</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
@@ -398,8 +400,32 @@ where ip.id = '${p_base_process_name}'
     <use_formatting>Y</use_formatting>
     <attributes/>
     <GUI>
-      <xloc>1184</xloc>
-      <yloc>272</yloc>
+      <xloc>864</xloc>
+      <yloc>480</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Start</name>
+    <type>RowGenerator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+</fields>
+    <interval_in_ms>5000</interval_in_ms>
+    <last_time_field>FiveSecondsAgo</last_time_field>
+    <limit>1</limit>
+    <never_ending>N</never_ending>
+    <row_time_field>now</row_time_field>
+    <attributes/>
+    <GUI>
+      <xloc>64</xloc>
+      <yloc>112</yloc>
     </GUI>
   </transform>
   <transform_error_handling>

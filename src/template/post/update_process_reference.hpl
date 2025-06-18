@@ -74,10 +74,67 @@ P -> Terminated because not active (Paused)</note>
     </hop>
     <hop>
       <from>Update Hop process log</from>
+      <to>Update running flag only if not lock or paused</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Update running flag only if not lock or paused</from>
       <to>Set is_running flag to N</to>
       <enabled>Y</enabled>
     </hop>
   </order>
+  <transform>
+    <name>Add is_running = N</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>is_running</name>
+        <nullif>N</nullif>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+        <type>String</type>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>512</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Calculate process status</name>
+    <type>Janino</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <formula>
+      <field_name>status</field_name>
+      <formula_string>(terminated_successfully.equals("0") ? "E" : (( terminated_successfully.equals("1") &amp;&amp; records_in_error > 0 ) ? "X" : (terminated_successfully.equals("2") ? "L" : (terminated_successfully.equals("3") ? "P" : "T"))))</formula_string>
+      <value_type>String</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <replace_field/>
+    </formula>
+    <attributes/>
+    <GUI>
+      <xloc>640</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
   <transform>
     <name>Get audit fields</name>
     <type>GetVariable</type>
@@ -171,8 +228,8 @@ P -> Terminated because not active (Paused)</note>
     </GUI>
   </transform>
   <transform>
-    <name>Calculate process status</name>
-    <type>Janino</type>
+    <name>Set is_running flag to N</name>
+    <type>Update</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -181,17 +238,27 @@ P -> Terminated because not active (Paused)</note>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <formula>
-      <field_name>status</field_name>
-      <formula_string>(terminated_successfully.equals("0") ? "E" : (( terminated_successfully.equals("1") &amp;&amp; records_in_error > 0 ) ? "X" : (terminated_successfully.equals("2") ? "L" : (terminated_successfully.equals("3") ? "P" : "T"))))</formula_string>
-      <value_type>String</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <replace_field/>
-    </formula>
+    <commit>100</commit>
+    <connection>integrations_db</connection>
+    <error_ignored>N</error_ignored>
+    <lookup>
+      <key>
+        <condition>=</condition>
+        <field>short_name</field>
+        <name>process_name</name>
+      </key>
+      <schema>config</schema>
+      <table>integrations_processes</table>
+      <value>
+        <name>is_running</name>
+        <rename>is_running</rename>
+      </value>
+    </lookup>
+    <skip_lookup>N</skip_lookup>
+    <use_batch>N</use_batch>
     <attributes/>
     <GUI>
-      <xloc>640</xloc>
+      <xloc>1120</xloc>
       <yloc>160</yloc>
     </GUI>
   </transform>
@@ -263,8 +330,8 @@ P -> Terminated because not active (Paused)</note>
     </GUI>
   </transform>
   <transform>
-    <name>Add is_running = N</name>
-    <type>Constant</type>
+    <name>Update running flag only if not lock or paused</name>
+    <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -273,60 +340,28 @@ P -> Terminated because not active (Paused)</note>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <fields>
-      <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
-        <length>-1</length>
-        <name>is_running</name>
-        <nullif>N</nullif>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-        <type>String</type>
-      </field>
-    </fields>
+    <compare>
+      <condition>
+        <conditions>
+</conditions>
+        <function>&lt;=</function>
+        <leftvalue>terminated_successfully</leftvalue>
+        <negated>N</negated>
+        <operator>-</operator>
+        <value>
+          <isnull>N</isnull>
+          <length>-1</length>
+          <mask/>
+          <name>constant</name>
+          <precision>-1</precision>
+          <text>1</text>
+          <type>String</type>
+        </value>
+      </condition>
+    </compare>
     <attributes/>
     <GUI>
-      <xloc>512</xloc>
-      <yloc>160</yloc>
-    </GUI>
-  </transform>
-  <transform>
-    <name>Set is_running flag to N</name>
-    <type>Update</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <commit>100</commit>
-    <connection>integrations_db</connection>
-    <error_ignored>N</error_ignored>
-    <ignore_flag_field/>
-    <lookup>
-      <key>
-        <condition>=</condition>
-        <field>short_name</field>
-        <name>process_name</name>
-        <name2/>
-      </key>
-      <schema>config</schema>
-      <table>integrations_processes</table>
-      <value>
-        <name>is_running</name>
-        <rename>is_running</rename>
-      </value>
-    </lookup>
-    <skip_lookup>N</skip_lookup>
-    <use_batch>N</use_batch>
-    <attributes/>
-    <GUI>
-      <xloc>1040</xloc>
+      <xloc>944</xloc>
       <yloc>160</yloc>
     </GUI>
   </transform>

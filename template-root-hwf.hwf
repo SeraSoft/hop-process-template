@@ -334,8 +334,12 @@ PROCESS EXITS!
       <description/>
       <type>SIMPLE_EVAL</type>
       <attributes/>
-      <comparevalue>1</comparevalue>
+      <comparevalue>Y</comparevalue>
+      <fieldname/>
       <fieldtype>string</fieldtype>
+      <mask/>
+      <maxvalue/>
+      <minvalue/>
       <successbooleancondition>false</successbooleancondition>
       <successcondition>equal</successcondition>
       <successnumbercondition>equal</successnumbercondition>
