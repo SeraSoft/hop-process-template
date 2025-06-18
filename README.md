@@ -13,7 +13,7 @@ This template gives a Hop project a predefined structure to manage configuration
 
 We adopt Liquibase in order to keep `config` and `logs` tables up-to-date.
 
-## Prerequisited
+## Prerequisites
 #### Liquibase installation 
 
 To be able to create/update the support database conventionally named *integrations_db*, you must install liquibase on your computer. To properly install liquibase on your computer please refer to the installation procedure as specified [here]([here](https://docs.liquibase.com/start/install/home.html))
@@ -29,10 +29,10 @@ In case of brand new database (fresh installation)
 
 ```powershell
 liquibase update \
-    --url="jdbc:postgresql://localhost:5432/hop" \
+    --url="jdbc:postgresql://localhost:5432/integrations_db" \
     --changeLogFile="master.xml" \
-    --username="hop" \
-    --password="password" \
+    --username="postgres" \
+    --password="password" 
 ```
 
 #### Database update
@@ -40,9 +40,9 @@ While, if your database already exists (existing environments):
 
 ```powershell
 liquibase changelogSync \
-    --url="jdbc:postgresql://localhost:5432/hop" \
+    --url="jdbc:postgresql://localhost:5432/integrations_db" \
     --changeLogFile="master.xml" \
-    --username="hop" \
+    --username="postgres" \
     --password="password"
 ```
 
