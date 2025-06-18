@@ -243,8 +243,6 @@
       <attributes/>
       <loglevel>Basic</loglevel>
       <logmessage>
-
-
 =================================================================================================================
 
 Previous instance for base process name ${p_base_process_name} seems executing and it was started at ${v_last_instance_start_timestamp}.
@@ -255,7 +253,7 @@ PROCESS EXITS!
 
 =================================================================================================================
 </logmessage>
-      <logsubject/>
+      <logsubject>PROCESS ${p_base_process_name} IS LOCKED</logsubject>
       <parallel>N</parallel>
       <xloc>448</xloc>
       <yloc>224</yloc>
@@ -335,11 +333,7 @@ PROCESS EXITS!
       <type>SIMPLE_EVAL</type>
       <attributes/>
       <comparevalue>Y</comparevalue>
-      <fieldname/>
       <fieldtype>string</fieldtype>
-      <mask/>
-      <maxvalue/>
-      <minvalue/>
       <successbooleancondition>false</successbooleancondition>
       <successcondition>equal</successcondition>
       <successnumbercondition>equal</successnumbercondition>
@@ -358,17 +352,12 @@ PROCESS EXITS!
       <attributes/>
       <loglevel>Basic</loglevel>
       <logmessage>
-
-
 =================================================================================================================
-
 Process with base process name ${p_base_process_name} tried to start but is set to not active
-
 PROCESS EXITS!
-
 =================================================================================================================
 </logmessage>
-      <logsubject/>
+      <logsubject>PROCESS ${p_base_process_name}  IS PAUSED</logsubject>
       <parallel>N</parallel>
       <xloc>400</xloc>
       <yloc>160</yloc>

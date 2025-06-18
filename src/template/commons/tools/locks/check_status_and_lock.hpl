@@ -144,15 +144,19 @@
         <condition>=</condition>
         <field>integrations_processes_id</field>
         <name>integrations_processes_id</name>
+        <name2/>
       </key>
       <key>
         <condition>=</condition>
         <field>proc_status</field>
         <name>running_proc_status</name>
+        <name2/>
       </key>
+      <orderby/>
       <schema>logs</schema>
       <table>integrations_logs</table>
       <value>
+        <default/>
         <name>date_started</name>
         <rename>last_instance_started_at</rename>
         <trim_type>none</trim_type>
@@ -291,10 +295,6 @@
     </partitioning>
     <fields>
       <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
         <length>-1</length>
         <name>lock_present</name>
         <nullif>0</nullif>
@@ -303,13 +303,8 @@
         <type>String</type>
       </field>
       <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
         <length>-1</length>
         <name>last_instance_started_at_timestamp</name>
-        <nullif/>
         <precision>-1</precision>
         <set_empty_string>N</set_empty_string>
         <type>Timestamp</type>
@@ -334,10 +329,6 @@
     </partitioning>
     <fields>
       <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
         <length>-1</length>
         <name>lock_present</name>
         <nullif>1</nullif>
@@ -346,10 +337,6 @@
         <type>String</type>
       </field>
       <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
         <length>-1</length>
         <name>running_proc_status</name>
         <nullif>R</nullif>

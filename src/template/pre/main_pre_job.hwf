@@ -27,7 +27,7 @@
       <schedulerType>0</schedulerType>
       <weekDay>1</weekDay>
       <parallel>N</parallel>
-      <xloc>144</xloc>
+      <xloc>48</xloc>
       <yloc>336</yloc>
       <attributes_hac/>
     </action>
@@ -38,7 +38,7 @@
       <attributes/>
       <always_log_rows>N</always_log_rows>
       <parallel>N</parallel>
-      <xloc>816</xloc>
+      <xloc>976</xloc>
       <yloc>512</yloc>
       <attributes_hac/>
     </action>
@@ -48,7 +48,7 @@
       <type>SUCCESS</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>1008</xloc>
+      <xloc>1168</xloc>
       <yloc>560</yloc>
       <attributes_hac/>
     </action>
@@ -66,7 +66,7 @@
       <valuetype>variable</valuetype>
       <variablename>${p_base_process_name}</variablename>
       <parallel>N</parallel>
-      <xloc>480</xloc>
+      <xloc>640</xloc>
       <yloc>336</yloc>
       <attributes_hac/>
     </action>
@@ -79,7 +79,7 @@
       <logmessage>BASE PROCESS NAME NOT SET. EXIT!</logmessage>
       <logsubject/>
       <parallel>N</parallel>
-      <xloc>640</xloc>
+      <xloc>800</xloc>
       <yloc>336</yloc>
       <attributes_hac/>
     </action>
@@ -105,7 +105,7 @@
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>816</xloc>
+      <xloc>976</xloc>
       <yloc>48</yloc>
       <attributes_hac/>
     </action>
@@ -124,7 +124,7 @@
       <valuetype>variable</valuetype>
       <variablename>v_lock_present</variablename>
       <parallel>N</parallel>
-      <xloc>1008</xloc>
+      <xloc>1168</xloc>
       <yloc>320</yloc>
       <attributes_hac/>
     </action>
@@ -134,7 +134,7 @@
       <type>SUCCESS</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>1312</xloc>
+      <xloc>1472</xloc>
       <yloc>320</yloc>
       <attributes_hac/>
     </action>
@@ -143,13 +143,13 @@
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
-      <loglevel>Basic</loglevel>
+      <loglevel>Debug</loglevel>
       <logmessage>Multiple active instances running concurrently is not permitted. Going to exit....
 p_base_process_name: ${p_base_process_name}
 v_lock_present: ${v_lock_present}</logmessage>
       <logsubject/>
       <parallel>N</parallel>
-      <xloc>1152</xloc>
+      <xloc>1312</xloc>
       <yloc>320</yloc>
       <attributes_hac/>
     </action>
@@ -175,7 +175,7 @@ v_lock_present: ${v_lock_present}</logmessage>
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>480</xloc>
+      <xloc>640</xloc>
       <yloc>208</yloc>
       <attributes_hac/>
     </action>
@@ -204,7 +204,7 @@ hop.program.name     -> ${hop.program.name}
 Delete this last message and add here your own application instance variable's dump \o/ </logmessage>
       <logsubject/>
       <parallel>N</parallel>
-      <xloc>1008</xloc>
+      <xloc>1168</xloc>
       <yloc>448</yloc>
       <attributes_hac/>
     </action>
@@ -223,7 +223,7 @@ Delete this last message and add here your own application instance variable's d
       <file_variable_type>JVM</file_variable_type>
       <replacevars>Y</replacevars>
       <parallel>N</parallel>
-      <xloc>272</xloc>
+      <xloc>176</xloc>
       <yloc>336</yloc>
       <attributes_hac/>
     </action>
@@ -233,7 +233,7 @@ Delete this last message and add here your own application instance variable's d
       <type>DUMMY</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>816</xloc>
+      <xloc>976</xloc>
       <yloc>336</yloc>
       <attributes_hac/>
     </action>
@@ -250,7 +250,7 @@ Reference for process  [${p_base_process_name}] not found on integrations_proces
 </logmessage>
       <logsubject>PROCESS REFERENCE IS MISSING</logsubject>
       <parallel>N</parallel>
-      <xloc>592</xloc>
+      <xloc>752</xloc>
       <yloc>144</yloc>
       <attributes_hac/>
     </action>
@@ -268,7 +268,7 @@ Reference for process  [${p_base_process_name}] not found on integrations_proces
       <valuetype>variable</valuetype>
       <variablename>${v_integrations_process_id}</variablename>
       <parallel>N</parallel>
-      <xloc>480</xloc>
+      <xloc>640</xloc>
       <yloc>48</yloc>
       <attributes_hac/>
     </action>
@@ -285,7 +285,7 @@ Process found in integrations_processes table. integrations_process_id -> ${v_in
 </logmessage>
       <logsubject>PROCESS REFERENCE PRESENT</logsubject>
       <parallel>N</parallel>
-      <xloc>672</xloc>
+      <xloc>832</xloc>
       <yloc>48</yloc>
       <attributes_hac/>
     </action>
@@ -294,7 +294,7 @@ Process found in integrations_processes table. integrations_process_id -> ${v_in
       <description/>
       <type>SIMPLE_EVAL</type>
       <attributes/>
-      <comparevalue>1</comparevalue>
+      <comparevalue>Y</comparevalue>
       <fieldname>sync_var_value</fieldname>
       <fieldtype>string</fieldtype>
       <successbooleancondition>false</successbooleancondition>
@@ -304,7 +304,7 @@ Process found in integrations_processes table. integrations_process_id -> ${v_in
       <valuetype>variable</valuetype>
       <variablename>v_process_active</variablename>
       <parallel>N</parallel>
-      <xloc>1008</xloc>
+      <xloc>1168</xloc>
       <yloc>160</yloc>
       <attributes_hac/>
     </action>
@@ -314,7 +314,7 @@ Process found in integrations_processes table. integrations_process_id -> ${v_in
       <type>SUCCESS</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>1312</xloc>
+      <xloc>1472</xloc>
       <yloc>160</yloc>
       <attributes_hac/>
     </action>
@@ -323,13 +323,17 @@ Process found in integrations_processes table. integrations_process_id -> ${v_in
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
-      <loglevel>Basic</loglevel>
-      <logmessage>Process is set to not active in configuration tables. Going to exit....
+      <loglevel>Debug</loglevel>
+      <logmessage>
+=============
+Process is set to not active in configuration tables. Going to exit....
 p_base_process_name: ${p_base_process_name}
-v_process_active: ${v_process_active}</logmessage>
+v_process_active: ${v_process_active}
+=============
+</logmessage>
       <logsubject/>
       <parallel>N</parallel>
-      <xloc>1152</xloc>
+      <xloc>1312</xloc>
       <yloc>160</yloc>
       <attributes_hac/>
     </action>
@@ -355,8 +359,51 @@ v_process_active: ${v_process_active}</logmessage>
       <set_logfile>N</set_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
-      <xloc>1008</xloc>
+      <xloc>1168</xloc>
       <yloc>48</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Init Process Context Variables</name>
+      <description/>
+      <type>SET_VARIABLES</type>
+      <attributes/>
+      <fields>
+</fields>
+      <file_variable_type>ROOT_WORKFLOW</file_variable_type>
+      <filename>${PROJECT_HOME}/config/${p_base_process_name}.properties</filename>
+      <replacevars>Y</replacevars>
+      <parallel>N</parallel>
+      <xloc>448</xloc>
+      <yloc>336</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>File exists</name>
+      <description/>
+      <type>FILE_EXISTS</type>
+      <attributes/>
+      <filename>${PROJECT_HOME}/config/${p_base_process_name}.properties</filename>
+      <parallel>N</parallel>
+      <xloc>304</xloc>
+      <yloc>336</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Log info 3</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <loglevel>Basic</loglevel>
+      <logmessage>
+=============
+File ${PROJECT_HOME}/config/${p_base_process_name}.properties not present.
+=============
+</logmessage>
+      <logsubject>PROCESS'S CONTEXT VARIABLES FILE</logsubject>
+      <parallel>N</parallel>
+      <xloc>448</xloc>
+      <yloc>448</yloc>
       <attributes_hac/>
     </action>
   </actions>
@@ -395,13 +442,6 @@ v_process_active: ${v_process_active}</logmessage>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Init Global Vars</from>
-      <to>Check p_base_process_name exists</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
     </hop>
     <hop>
       <from>Check if process can run</from>
@@ -521,6 +561,41 @@ v_process_active: ${v_process_active}</logmessage>
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
       <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Init Process Context Variables</from>
+      <to>Check p_base_process_name exists</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Init Global Vars</from>
+      <to>File exists</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>File exists</from>
+      <to>Init Process Context Variables</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>File exists</from>
+      <to>Log info 3</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Log info 3</from>
+      <to>Check p_base_process_name exists</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
     </hop>
   </hops>
   <notepads>
