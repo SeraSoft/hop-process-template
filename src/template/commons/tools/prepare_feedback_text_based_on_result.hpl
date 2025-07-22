@@ -54,19 +54,16 @@
     </partitioning>
     <fields>
       <field>
-        <default_value/>
         <field_name>body_error</field_name>
         <variable_name>email_body</variable_name>
         <variable_type>PARENT_WORKFLOW</variable_type>
       </field>
       <field>
-        <default_value/>
         <field_name>subject_error</field_name>
         <variable_name>email_subject</variable_name>
         <variable_type>PARENT_WORKFLOW</variable_type>
       </field>
       <field>
-        <default_value/>
         <field_name>error_destination_addresses</field_name>
         <variable_name>mail.destination.addresses</variable_name>
         <variable_type>PARENT_WORKFLOW</variable_type>
@@ -130,7 +127,10 @@
     </partitioning>
     <fields>
       <field>
+        <currency/>
+        <decimal/>
         <format>#</format>
+        <group/>
         <length>-1</length>
         <name>termination_flag</name>
         <precision>-1</precision>
@@ -139,6 +139,10 @@
         <variable>${terminated.successfully}</variable>
       </field>
       <field>
+        <currency/>
+        <decimal/>
+        <format/>
+        <group/>
         <length>-1</length>
         <name>subject_error</name>
         <precision>-1</precision>
@@ -147,6 +151,10 @@
         <variable>${mail.subject.error}</variable>
       </field>
       <field>
+        <currency/>
+        <decimal/>
+        <format/>
+        <group/>
         <length>-1</length>
         <name>subject_success</name>
         <precision>-1</precision>
@@ -155,22 +163,34 @@
         <variable>${mail.subject.success}</variable>
       </field>
       <field>
+        <currency/>
+        <decimal/>
+        <format/>
+        <group/>
         <length>-1</length>
         <name>body_success</name>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${success.email.text}</variable>
+        <variable>${success.mail.text}</variable>
       </field>
       <field>
+        <currency/>
+        <decimal/>
+        <format/>
+        <group/>
         <length>-1</length>
         <name>body_error</name>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${error.email.text}</variable>
+        <variable>${error.mail.text}</variable>
       </field>
       <field>
+        <currency/>
+        <decimal/>
+        <format/>
+        <group/>
         <length>-1</length>
         <name>error_destination_addresses</name>
         <precision>-1</precision>
@@ -179,6 +199,10 @@
         <variable>${errors.mail.destination.addresses}</variable>
       </field>
       <field>
+        <currency/>
+        <decimal/>
+        <format/>
+        <group/>
         <length>-1</length>
         <name>success_destination_addresses</name>
         <precision>-1</precision>
@@ -230,19 +254,16 @@
     </partitioning>
     <fields>
       <field>
-        <default_value/>
         <field_name>body_success</field_name>
         <variable_name>email_body</variable_name>
         <variable_type>PARENT_WORKFLOW</variable_type>
       </field>
       <field>
-        <default_value/>
         <field_name>subject_success</field_name>
         <variable_name>email_subject</variable_name>
         <variable_type>PARENT_WORKFLOW</variable_type>
       </field>
       <field>
-        <default_value/>
         <field_name>success_destination_addresses</field_name>
         <variable_name>mail.destination.addresses</variable_name>
         <variable_type>PARENT_WORKFLOW</variable_type>
