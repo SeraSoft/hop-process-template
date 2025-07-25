@@ -36,6 +36,6 @@ jobs:
       - name: Upload ZIP to Release
         uses: softprops/action-gh-release@v1
         with:
-          files: hop-process-template-${{ env.TAG_VERSION }}.zip
+          files: hop-process-template-v${{ env.TAG_VERSION }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
