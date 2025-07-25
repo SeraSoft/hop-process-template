@@ -1,0 +1,41 @@
+name: Build and Upload Client ZIP
+
+on:
+  release:
+    types: [published]  # Triggers when a new release is published
+  push:
+    tags:
+      - '*'             # Also works if you push a tag like v1.0.0
+
+jobs:
+  build-zip:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up ZIP directory
+        run: |
+          mkdir -p hop-process-template/
+          cp README.md hop-process-template/
+          cp main.hwf hop-process-template/
+          cp -r src/ hop-process-template/
+          cp -r metadata/ hop-process-template/
+          cp -r integration-tests/ hop-process-template/
+          cp -r db/ hop-process-template/
+          cp -r config/ hop-process-template/
+        #  cp -r docs/ hop-process-template/
+
+      - name: Set version variable
+        run: echo "TAG_VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
+
+      - name: Create ZIP
+        run: zip -r hop-process-template-${{ env.TAG_VERSION }}.zip hop-process-template
+
+      - name: Upload ZIP to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: hop-process-template-${{ env.TAG_VERSION }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
