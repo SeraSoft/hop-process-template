@@ -9,7 +9,7 @@ This template gives a Hop project a predefined structure to manage configuration
 - **Single process execution**: if a process instance, same as the one is trying to start, is already executing the new instance will not start. We are used to say that when   
 - **Single point for errors' management**: as a good methodological approach the template try to force the management of events and errors in a single point
 - **Integration tests enablement**: the template gives you the possibility to easily structure a tests strategy for your code by injecting custom code in your pipelines/workflows structure
-- **Event logs structure enable to qoprational analysis**
+- **Event logs structure enable to operational analysis**
 
 We adopt Liquibase in order to keep `config` and `logs` tables up-to-date.
 
