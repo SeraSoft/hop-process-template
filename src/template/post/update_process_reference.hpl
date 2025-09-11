@@ -53,11 +53,6 @@ P -> Terminated because not active (Paused)</note>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Calculate process status</from>
-      <to>Update Hop process log</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Get audit fields</from>
       <to>Get system info</to>
       <enabled>Y</enabled>
@@ -80,6 +75,16 @@ P -> Terminated because not active (Paused)</note>
     <hop>
       <from>Update running flag only if not lock or paused</from>
       <to>Set is_running flag to N</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Calculate process status</from>
+      <to>Set process_status</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Set process_status</from>
+      <to>Update Hop process log</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -258,7 +263,33 @@ P -> Terminated because not active (Paused)</note>
     <use_batch>N</use_batch>
     <attributes/>
     <GUI>
-      <xloc>1120</xloc>
+      <xloc>1264</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Set process_status</name>
+    <type>SetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <default_value/>
+        <field_name>status</field_name>
+        <variable_name>process.status</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+    </fields>
+    <use_formatting>Y</use_formatting>
+    <attributes/>
+    <GUI>
+      <xloc>800</xloc>
       <yloc>160</yloc>
     </GUI>
   </transform>
@@ -325,7 +356,7 @@ P -> Terminated because not active (Paused)</note>
     <use_batch>N</use_batch>
     <attributes/>
     <GUI>
-      <xloc>800</xloc>
+      <xloc>944</xloc>
       <yloc>160</yloc>
     </GUI>
   </transform>
@@ -351,7 +382,6 @@ P -> Terminated because not active (Paused)</note>
         <value>
           <isnull>N</isnull>
           <length>-1</length>
-          <mask/>
           <name>constant</name>
           <precision>-1</precision>
           <text>1</text>
@@ -361,7 +391,7 @@ P -> Terminated because not active (Paused)</note>
     </compare>
     <attributes/>
     <GUI>
-      <xloc>944</xloc>
+      <xloc>1088</xloc>
       <yloc>160</yloc>
     </GUI>
   </transform>

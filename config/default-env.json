@@ -112,6 +112,10 @@
     "value" : "${mail.subject} Same instance is still running. Execution stopped.",
     "description" : "Text displayed in the subject ot the email when a lock occurs that prevents the process from executing. It includes the base process name"
   }, {
+    "name" : "mail.subject.notactive",
+    "value" : "${mail.subject} This instance is paused. Execution not started.",
+    "description" : "Text displayed in the subject ot the email when a lock occurs that prevents the process from executing. It includes the base process name"
+  }, {
     "name" : "mail.subject.application.error",
     "value" : "${mail.subject} Failed for application exceptions.",
     "description" : "Text displayed in the subject of the email when an application error occurs during process execution. It includes the base process name."
@@ -149,7 +153,7 @@
     "description" : "Sample text message for the error feedback email. It includes the log file name."
   }, {
     "name" : "lock.mail.text",
-    "value" : "<html><head></head><body>The process ${p_base_process_name} running on server ${v_hostname} can't be started because <strong>same process started at ${v_last_job_run_timestamp} is not yet terminated.</strong><p>Execution's log file available at: ${p_log_filename}<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>",
+    "value" : "<html><head></head><body>The process ${p_base_process_name} running on server ${v_hostname} can't be started because <strong>same process started at ${v_last_instance_start_timestamp} is not yet terminated.</strong><p>Execution's log file available at: ${p_log_filename}<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>",
     "description" : "Sample text message used because a process cannot be started because a lock occurs. It includes the base process name, hostname, last job run timestamp, and log file name."
   }, {
     "name" : "application.error.mail.text",

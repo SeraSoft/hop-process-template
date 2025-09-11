@@ -18,104 +18,127 @@
     <modified_date>2016/10/28 18:05:26.780</modified_date>
   </info>
   <notepads>
+    <notepad>
+      <backgroundcolorblue>210</backgroundcolorblue>
+      <backgroundcolorgreen>136</backgroundcolorgreen>
+      <backgroundcolorred>15</backgroundcolorred>
+      <bordercolorblue>250</bordercolorblue>
+      <bordercolorgreen>231</bordercolorgreen>
+      <bordercolorred>200</bordercolorred>
+      <fontbold>N</fontbold>
+      <fontcolorblue>250</fontcolorblue>
+      <fontcolorgreen>231</fontcolorgreen>
+      <fontcolorred>200</fontcolorred>
+      <fontitalic>N</fontitalic>
+      <fontname>Segoe UI</fontname>
+      <fontsize>9</fontsize>
+      <height>121</height>
+      <xloc>704</xloc>
+      <yloc>80</yloc>
+      <note>Process Termination Codes Legenda
+
+T -> Terminated Successfully
+E -> Terminated with Errors (Hard Exceptions)
+X -> Terminated with ONLY functional errors (Soft Exceptions)
+L -> Terminated because another instance of same process is running
+P -> Terminated because not active (Paused)</note>
+      <width>377</width>
+    </notepad>
   </notepads>
   <order>
     <hop>
-      <from>Start</from>
-      <to>Retrieve needed data</to>
+      <from>Success</from>
+      <to>Set vars</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Evaluate termination flag</from>
+      <from>Error</from>
+      <to>Set vars</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Lock</from>
+      <to>Set vars</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Paused</from>
+      <to>Set vars</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>process_status</from>
+      <to>Switch / case 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Switch / case 2</from>
+      <to>default</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Switch / case 2</from>
+      <to>T</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Switch / case 2</from>
+      <to>E</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Switch / case 2</from>
+      <to>X</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Switch / case 2</from>
+      <to>L</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Switch / case 2</from>
+      <to>P</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>T</from>
       <to>Success</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Evaluate termination flag</from>
+      <from>E</from>
       <to>Error</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Retrieve needed data</from>
-      <to>Evaluate termination flag</to>
+      <from>X</from>
+      <to>Application Error</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>L</from>
+      <to>Lock</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>P</from>
+      <to>Paused</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>default</from>
+      <to>Success</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Application Error</from>
+      <to>Set vars</to>
       <enabled>Y</enabled>
     </hop>
   </order>
   <transform>
-    <name>Error</name>
-    <type>SetVariable</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <field_name>body_error</field_name>
-        <variable_name>email_body</variable_name>
-        <variable_type>PARENT_WORKFLOW</variable_type>
-      </field>
-      <field>
-        <field_name>subject_error</field_name>
-        <variable_name>email_subject</variable_name>
-        <variable_type>PARENT_WORKFLOW</variable_type>
-      </field>
-      <field>
-        <field_name>error_destination_addresses</field_name>
-        <variable_name>mail.destination.addresses</variable_name>
-        <variable_type>PARENT_WORKFLOW</variable_type>
-      </field>
-    </fields>
-    <use_formatting>Y</use_formatting>
-    <attributes/>
-    <GUI>
-      <xloc>752</xloc>
-      <yloc>368</yloc>
-    </GUI>
-  </transform>
-  <transform>
-    <name>Evaluate termination flag</name>
-    <type>FilterRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <compare>
-      <condition>
-        <conditions>
-</conditions>
-        <function>=</function>
-        <leftvalue>termination_flag</leftvalue>
-        <negated>N</negated>
-        <operator>-</operator>
-        <value>
-          <isnull>N</isnull>
-          <length>-1</length>
-          <mask>#;-#</mask>
-          <name>constant</name>
-          <precision>0</precision>
-          <text>1</text>
-          <type>Integer</type>
-        </value>
-      </condition>
-    </compare>
-    <send_false_to>Error</send_false_to>
-    <send_true_to>Success</send_true_to>
-    <attributes/>
-    <GUI>
-      <xloc>608</xloc>
-      <yloc>272</yloc>
-    </GUI>
-  </transform>
-  <transform>
-    <name>Retrieve needed data</name>
+    <name>Application Error</name>
     <type>GetVariable</type>
     <description/>
     <distribute>Y</distribute>
@@ -127,99 +150,56 @@
     </partitioning>
     <fields>
       <field>
-        <currency/>
-        <decimal/>
-        <format>#</format>
-        <group/>
         <length>-1</length>
-        <name>termination_flag</name>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-        <type>Integer</type>
-        <variable>${terminated.successfully}</variable>
-      </field>
-      <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
-        <length>-1</length>
-        <name>subject_error</name>
+        <name>subject</name>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${mail.subject.error}</variable>
+        <variable>${mail.subject.application.error}</variable>
       </field>
       <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
         <length>-1</length>
-        <name>subject_success</name>
+        <name>body</name>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${mail.subject.success}</variable>
+        <variable>${application.error.mail.text}</variable>
       </field>
       <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
         <length>-1</length>
-        <name>body_success</name>
+        <name>addresses</name>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${success.mail.text}</variable>
-      </field>
-      <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
-        <length>-1</length>
-        <name>body_error</name>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-        <type>String</type>
-        <variable>${error.mail.text}</variable>
-      </field>
-      <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
-        <length>-1</length>
-        <name>error_destination_addresses</name>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-        <type>String</type>
-        <variable>${errors.mail.destination.addresses}</variable>
-      </field>
-      <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
-        <length>-1</length>
-        <name>success_destination_addresses</name>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-        <type>String</type>
-        <variable>${success.mail.destination.addresses}</variable>
+        <variable>${application.error.mail.destination.addresses}</variable>
       </field>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>416</xloc>
-      <yloc>272</yloc>
+      <xloc>544</xloc>
+      <yloc>288</yloc>
     </GUI>
   </transform>
   <transform>
-    <name>Start</name>
-    <type>RowGenerator</type>
+    <name>E</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <GUI>
+      <xloc>416</xloc>
+      <yloc>224</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Error</name>
+    <type>GetVariable</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -229,20 +209,159 @@
       <schema_name/>
     </partitioning>
     <fields>
-</fields>
-    <interval_in_ms>5000</interval_in_ms>
-    <last_time_field>FiveSecondsAgo</last_time_field>
-    <limit>1</limit>
-    <never_ending>N</never_ending>
-    <row_time_field>now</row_time_field>
+      <field>
+        <length>-1</length>
+        <name>subject</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${mail.subject.error}</variable>
+      </field>
+      <field>
+        <length>-1</length>
+        <name>body</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${error.mail.text}</variable>
+      </field>
+      <field>
+        <length>-1</length>
+        <name>addresses</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${errors.mail.destination.addresses}</variable>
+      </field>
+    </fields>
     <attributes/>
     <GUI>
-      <xloc>240</xloc>
-      <yloc>272</yloc>
+      <xloc>544</xloc>
+      <yloc>224</yloc>
     </GUI>
   </transform>
   <transform>
-    <name>Success</name>
+    <name>L</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <GUI>
+      <xloc>416</xloc>
+      <yloc>352</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Lock</name>
+    <type>GetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>subject</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${mail.subject.lock}</variable>
+      </field>
+      <field>
+        <length>-1</length>
+        <name>body</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${lock.mail.text}</variable>
+      </field>
+      <field>
+        <length>-1</length>
+        <name>addresses</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${lock.mail.destination.addresses}</variable>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>544</xloc>
+      <yloc>352</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>P</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <GUI>
+      <xloc>416</xloc>
+      <yloc>416</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Paused</name>
+    <type>GetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>subject</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${mail.subject.notactive}</variable>
+      </field>
+      <field>
+        <length>-1</length>
+        <name>body</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${notactive.mail.text}</variable>
+      </field>
+      <field>
+        <length>-1</length>
+        <name>addresses</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${notactive.mail.destination.addresses}</variable>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>544</xloc>
+      <yloc>416</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Set vars</name>
     <type>SetVariable</type>
     <description/>
     <distribute>Y</distribute>
@@ -254,26 +373,190 @@
     </partitioning>
     <fields>
       <field>
-        <field_name>body_success</field_name>
+        <field_name>addresses</field_name>
+        <variable_name>mail.destination.addresses</variable_name>
+        <variable_type>PARENT_WORKFLOW</variable_type>
+      </field>
+      <field>
+        <field_name>body</field_name>
         <variable_name>email_body</variable_name>
         <variable_type>PARENT_WORKFLOW</variable_type>
       </field>
       <field>
-        <field_name>subject_success</field_name>
+        <field_name>subject</field_name>
         <variable_name>email_subject</variable_name>
-        <variable_type>PARENT_WORKFLOW</variable_type>
-      </field>
-      <field>
-        <field_name>success_destination_addresses</field_name>
-        <variable_name>mail.destination.addresses</variable_name>
         <variable_type>PARENT_WORKFLOW</variable_type>
       </field>
     </fields>
     <use_formatting>Y</use_formatting>
     <attributes/>
     <GUI>
-      <xloc>752</xloc>
-      <yloc>176</yloc>
+      <xloc>704</xloc>
+      <yloc>288</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Success</name>
+    <type>GetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>subject</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${mail.subject.success}</variable>
+      </field>
+      <field>
+        <length>-1</length>
+        <name>body</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${success.mail.text}</variable>
+      </field>
+      <field>
+        <length>-1</length>
+        <name>addresses</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${success.mail.destination.addresses}</variable>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>544</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Switch / case 2</name>
+    <type>SwitchCase</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <case_value_type>String</case_value_type>
+    <cases>
+      <case>
+        <target_transform>T</target_transform>
+        <value>T</value>
+      </case>
+      <case>
+        <target_transform>E</target_transform>
+        <value>E</value>
+      </case>
+      <case>
+        <target_transform>X</target_transform>
+        <value>X</value>
+      </case>
+      <case>
+        <target_transform>L</target_transform>
+        <value>L</value>
+      </case>
+      <case>
+        <target_transform>P</target_transform>
+        <value>P</value>
+      </case>
+    </cases>
+    <default_target_transform>default</default_target_transform>
+    <fieldname>process_status</fieldname>
+    <use_contains>N</use_contains>
+    <attributes/>
+    <GUI>
+      <xloc>272</xloc>
+      <yloc>96</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>T</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <GUI>
+      <xloc>416</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>X</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <GUI>
+      <xloc>416</xloc>
+      <yloc>288</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>default</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <GUI>
+      <xloc>416</xloc>
+      <yloc>96</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>process_status</name>
+    <type>GetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>process_status</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${process.status}</variable>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>112</xloc>
+      <yloc>96</yloc>
     </GUI>
   </transform>
   <transform_error_handling>
