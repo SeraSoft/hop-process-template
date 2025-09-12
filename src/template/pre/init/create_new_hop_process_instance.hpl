@@ -27,7 +27,7 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Add status = R and is_running = Y</from>
+      <from>Add status = R</from>
       <to>Init HOP process log</to>
       <enabled>Y</enabled>
     </hop>
@@ -38,22 +38,17 @@
     </hop>
     <hop>
       <from>Check required variables values</from>
-      <to>Add status = R and is_running = Y</to>
+      <to>Add status = R</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
       <from>Init HOP process log</from>
-      <to>Set is_running flag to Y</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Set is_running flag to Y</from>
       <to>Write to log</to>
       <enabled>Y</enabled>
     </hop>
   </order>
   <transform>
-    <name>Add status = R and is_running = Y</name>
+    <name>Add status = R</name>
     <type>Constant</type>
     <description/>
     <distribute>Y</distribute>
@@ -65,17 +60,13 @@
     </partitioning>
     <fields>
       <field>
+        <currency/>
+        <decimal/>
+        <format/>
+        <group/>
         <length>-1</length>
         <name>status</name>
         <nullif>R</nullif>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-        <type>String</type>
-      </field>
-      <field>
-        <length>-1</length>
-        <name>is_running</name>
-        <nullif>Y</nullif>
         <precision>-1</precision>
         <set_empty_string>N</set_empty_string>
         <type>String</type>
@@ -125,10 +116,6 @@
     </partitioning>
     <fields>
       <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
         <length>10</length>
         <name>utente</name>
         <precision>-1</precision>
@@ -137,10 +124,6 @@
         <variable>${hop.user}</variable>
       </field>
       <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
         <length>-1</length>
         <name>macchina_ip</name>
         <precision>-1</precision>
@@ -149,10 +132,6 @@
         <variable>${v_host_ip}</variable>
       </field>
       <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
         <length>-1</length>
         <name>macchina_hostname</name>
         <precision>-1</precision>
@@ -161,10 +140,7 @@
         <variable>${v_hostname}</variable>
       </field>
       <field>
-        <currency/>
-        <decimal/>
         <format>yyyyMMddHHmmss</format>
-        <group/>
         <length>-1</length>
         <name>date_start</name>
         <precision>-1</precision>
@@ -173,10 +149,6 @@
         <variable>${v_job_run_timestamp}</variable>
       </field>
       <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
         <length>-1</length>
         <name>log_filename</name>
         <precision>-1</precision>
@@ -185,10 +157,6 @@
         <variable>${p_log_filename}</variable>
       </field>
       <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
         <length>-1</length>
         <name>process_instance_id</name>
         <precision>-1</precision>
@@ -197,10 +165,6 @@
         <variable>${v_process_instance_id}</variable>
       </field>
       <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
         <length>-1</length>
         <name>integrations_process_id</name>
         <precision>-1</precision>
@@ -209,10 +173,6 @@
         <variable>${v_integrations_process_id}</variable>
       </field>
       <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
         <length>-1</length>
         <name>process_name</name>
         <precision>-1</precision>
@@ -287,43 +247,6 @@
     <attributes/>
     <GUI>
       <xloc>852</xloc>
-      <yloc>144</yloc>
-    </GUI>
-  </transform>
-  <transform>
-    <name>Set is_running flag to Y</name>
-    <type>Update</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <commit>100</commit>
-    <connection>integrations_db</connection>
-    <error_ignored>N</error_ignored>
-    <ignore_flag_field/>
-    <lookup>
-      <key>
-        <condition>=</condition>
-        <field>short_name</field>
-        <name>process_name</name>
-        <name2/>
-      </key>
-      <schema>config</schema>
-      <table>integrations_processes</table>
-      <value>
-        <name>is_running</name>
-        <rename>is_running</rename>
-      </value>
-    </lookup>
-    <skip_lookup>N</skip_lookup>
-    <use_batch>N</use_batch>
-    <attributes/>
-    <GUI>
-      <xloc>1009</xloc>
       <yloc>144</yloc>
     </GUI>
   </transform>

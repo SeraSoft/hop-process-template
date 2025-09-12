@@ -19,6 +19,7 @@
       <type>SPECIAL</type>
       <attributes/>
       <DayOfMonth>1</DayOfMonth>
+      <doNotWaitOnFirstExecution>N</doNotWaitOnFirstExecution>
       <hour>12</hour>
       <intervalMinutes>60</intervalMinutes>
       <intervalSeconds>0</intervalSeconds>
@@ -38,8 +39,8 @@
       <attributes/>
       <always_log_rows>N</always_log_rows>
       <parallel>N</parallel>
-      <xloc>976</xloc>
-      <yloc>512</yloc>
+      <xloc>928</xloc>
+      <yloc>640</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -49,7 +50,7 @@
       <attributes/>
       <parallel>N</parallel>
       <xloc>1168</xloc>
-      <yloc>560</yloc>
+      <yloc>640</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -79,8 +80,8 @@
       <logmessage>BASE PROCESS NAME NOT SET. EXIT!</logmessage>
       <logsubject/>
       <parallel>N</parallel>
-      <xloc>800</xloc>
-      <yloc>336</yloc>
+      <xloc>784</xloc>
+      <yloc>400</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -125,7 +126,7 @@
       <variablename>v_lock_present</variablename>
       <parallel>N</parallel>
       <xloc>1168</xloc>
-      <yloc>320</yloc>
+      <yloc>288</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -135,7 +136,7 @@
       <attributes/>
       <parallel>N</parallel>
       <xloc>1472</xloc>
-      <yloc>320</yloc>
+      <yloc>288</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -150,7 +151,7 @@ v_lock_present: ${v_lock_present}</logmessage>
       <logsubject/>
       <parallel>N</parallel>
       <xloc>1312</xloc>
-      <yloc>320</yloc>
+      <yloc>288</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -205,7 +206,7 @@ Delete this last message and add here your own application instance variable's d
       <logsubject/>
       <parallel>N</parallel>
       <xloc>1168</xloc>
-      <yloc>448</yloc>
+      <yloc>528</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -233,8 +234,8 @@ Delete this last message and add here your own application instance variable's d
       <type>DUMMY</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>976</xloc>
-      <yloc>336</yloc>
+      <xloc>928</xloc>
+      <yloc>512</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -305,7 +306,7 @@ Process found in integrations_processes table. integrations_process_id -> ${v_in
       <variablename>v_process_active</variablename>
       <parallel>N</parallel>
       <xloc>1168</xloc>
-      <yloc>160</yloc>
+      <yloc>48</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -315,7 +316,7 @@ Process found in integrations_processes table. integrations_process_id -> ${v_in
       <attributes/>
       <parallel>N</parallel>
       <xloc>1472</xloc>
-      <yloc>160</yloc>
+      <yloc>48</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -334,7 +335,7 @@ v_process_active: ${v_process_active}
       <logsubject/>
       <parallel>N</parallel>
       <xloc>1312</xloc>
-      <yloc>160</yloc>
+      <yloc>48</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -360,7 +361,7 @@ v_process_active: ${v_process_active}
       <wait_until_finished>Y</wait_until_finished>
       <parallel>N</parallel>
       <xloc>1168</xloc>
-      <yloc>48</yloc>
+      <yloc>160</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -403,7 +404,24 @@ File ${PROJECT_HOME}/config/${p_base_process_name}.properties not present.
       <logsubject>PROCESS'S CONTEXT VARIABLES FILE</logsubject>
       <parallel>N</parallel>
       <xloc>448</xloc>
-      <yloc>448</yloc>
+      <yloc>256</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Set is_running flag to Y</name>
+      <description/>
+      <type>SQL</type>
+      <attributes/>
+      <connection>${integrations.db.connection.name}</connection>
+      <sendOneStatement>Y</sendOneStatement>
+      <sql>UPDATE ${integrations.db.config.schema}.integrations_processes
+SET is_running='Y'
+WHERE short_name='${p_base_process_name}'</sql>
+      <sqlfromfile>N</sqlfromfile>
+      <useVariableSubstitution>Y</useVariableSubstitution>
+      <parallel>N</parallel>
+      <xloc>1168</xloc>
+      <yloc>416</yloc>
       <attributes_hac/>
     </action>
   </actions>
@@ -454,8 +472,8 @@ File ${PROJECT_HOME}/config/${p_base_process_name}.properties not present.
       <from>Log Info 2</from>
       <to>Dummy</to>
       <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
     </hop>
     <hop>
       <from>Dummy</from>
@@ -514,13 +532,6 @@ File ${PROJECT_HOME}/config/${p_base_process_name}.properties not present.
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Is process active?</from>
-      <to>Is process locked?</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
       <from>Log process not active</from>
       <to>Exit process_active not set</to>
       <enabled>Y</enabled>
@@ -530,34 +541,6 @@ File ${PROJECT_HOME}/config/${p_base_process_name}.properties not present.
     <hop>
       <from>Is process active?</from>
       <to>Log process not active</to>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Check if process can run</from>
-      <to>Create new process instance</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Create new process instance</from>
-      <to>Is process active?</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Create new process instance</from>
-      <to>Dummy</to>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Is process locked?</from>
-      <to>Dump Application Variables</to>
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
       <unconditional>N</unconditional>
@@ -596,6 +579,62 @@ File ${PROJECT_HOME}/config/${p_base_process_name}.properties not present.
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
       <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Is process active?</from>
+      <to>Create new process instance</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Create new process instance</from>
+      <to>Is process locked?</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Check if process can run</from>
+      <to>Is process active?</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Create new process instance</from>
+      <to>Dummy</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Is process locked?</from>
+      <to>Set is_running flag to Y</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Set is_running flag to Y</from>
+      <to>Dump Application Variables</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Set is_running flag to Y</from>
+      <to>Dummy</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Init Process Context Variables</from>
+      <to>Dummy</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
     </hop>
   </hops>
   <notepads>
