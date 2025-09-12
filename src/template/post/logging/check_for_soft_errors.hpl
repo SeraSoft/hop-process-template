@@ -60,7 +60,7 @@
       <fontsize>9</fontsize>
       <height>26</height>
       <xloc>976</xloc>
-      <yloc>512</yloc>
+      <yloc>704</yloc>
       <note>Unhandled exception - Create a line in integration_logs_events</note>
       <width>339</width>
     </notepad>
@@ -72,11 +72,6 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Override to force email send</from>
-      <to>Set v_err_items_num = num_err</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Get count logging_details</from>
       <to>Detect empty stream</to>
       <enabled>Y</enabled>
@@ -84,11 +79,6 @@
     <hop>
       <from>num_err 0</from>
       <to>Get vars and params</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Terminated successfully but we have functional errors</from>
-      <to>Override to force email send</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -132,11 +122,6 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Terminated successfully but we have functional errors</from>
-      <to>Terminated in error (Error path)</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Terminated in error (Error path)</from>
       <to>Dummy (do nothing) 2</to>
       <enabled>Y</enabled>
@@ -177,11 +162,6 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Terminated successfully</from>
-      <to>Set error context 3</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Terminated in error (Error path)</from>
       <to>Force severity = MEDIUM on aborts</to>
       <enabled>Y</enabled>
@@ -196,7 +176,80 @@
       <to>Id integrations_log_details</to>
       <enabled>Y</enabled>
     </hop>
+    <hop>
+      <from>Terminated successfully</from>
+      <to>email.feedback.enabled success</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>email.feedback.enabled success</from>
+      <to>Set error context 3</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>email.feedback.enabled application.error</from>
+      <to>Set v_err_items_num = num_err</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Terminated successfully but we have functional errors</from>
+      <to>email.feedback.enabled application.error</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Terminated successfully but we have functional errors</from>
+      <to>email.feedback.enabled fail</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>email.feedback.enabled fail</from>
+      <to>Set email.feedback.enabled</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Set email.feedback.enabled</from>
+      <to>Terminated in error (Error path)</to>
+      <enabled>Y</enabled>
+    </hop>
   </order>
+  <transform>
+    <name>Database lookup</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <connection>integrations_db</connection>
+    <lookup>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <fail_on_multiple>N</fail_on_multiple>
+      <key>
+        <condition>=</condition>
+        <field>code</field>
+        <name>severity_on_abort</name>
+      </key>
+      <schema>config</schema>
+      <table>events_severities</table>
+      <value>
+        <name>severity</name>
+        <rename>severity_on_abort_value</rename>
+        <trim_type>none</trim_type>
+        <type>Integer</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <GUI>
+      <xloc>752</xloc>
+      <yloc>768</yloc>
+    </GUI>
+  </transform>
   <transform>
     <name>Detect empty stream</name>
     <type>DetectEmptyStream</type>
@@ -228,7 +281,7 @@
     <attributes/>
     <GUI>
       <xloc>976</xloc>
-      <yloc>400</yloc>
+      <yloc>576</yloc>
     </GUI>
   </transform>
   <transform>
@@ -358,7 +411,7 @@
     <attributes/>
     <GUI>
       <xloc>752</xloc>
-      <yloc>496</yloc>
+      <yloc>672</yloc>
     </GUI>
   </transform>
   <transform>
@@ -416,7 +469,7 @@ group by ec.name, es.severity</sql>
     <attributes/>
     <GUI>
       <xloc>1296</xloc>
-      <yloc>576</yloc>
+      <yloc>768</yloc>
     </GUI>
   </transform>
   <transform>
@@ -439,7 +492,7 @@ group by ec.name, es.severity</sql>
     <attributes/>
     <GUI>
       <xloc>1440</xloc>
-      <yloc>576</yloc>
+      <yloc>768</yloc>
     </GUI>
   </transform>
   <transform>
@@ -559,7 +612,7 @@ group by ec.name, es.severity</sql>
     <attributes/>
     <GUI>
       <xloc>928</xloc>
-      <yloc>576</yloc>
+      <yloc>768</yloc>
     </GUI>
   </transform>
   <transform>
@@ -646,7 +699,7 @@ group by ec.name, es.severity</sql>
     <attributes/>
     <GUI>
       <xloc>1760</xloc>
-      <yloc>576</yloc>
+      <yloc>768</yloc>
     </GUI>
   </transform>
   <transform>
@@ -681,7 +734,7 @@ group by ec.name, es.severity</sql>
     <logmessage>Logged errors in integrations_log_details</logmessage>
     <attributes/>
     <GUI>
-      <xloc>1392</xloc>
+      <xloc>1536</xloc>
       <yloc>288</yloc>
     </GUI>
   </transform>
@@ -718,34 +771,7 @@ group by ec.name, es.severity</sql>
     <attributes/>
     <GUI>
       <xloc>1584</xloc>
-      <yloc>576</yloc>
-    </GUI>
-  </transform>
-  <transform>
-    <name>Override to force email send</name>
-    <type>Constant</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <length>-1</length>
-        <name>override</name>
-        <nullif>1</nullif>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-        <type>String</type>
-      </field>
-    </fields>
-    <attributes/>
-    <GUI>
-      <xloc>976</xloc>
-      <yloc>288</yloc>
+      <yloc>768</yloc>
     </GUI>
   </transform>
   <transform>
@@ -761,13 +787,11 @@ group by ec.name, es.severity</sql>
     </partitioning>
     <fields>
       <field>
-        <default_value/>
         <field_name>num_err</field_name>
         <variable_name>v_err_items_num</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
-        <default_value/>
         <field_name>severity_on_abort_value</field_name>
         <variable_name>v_severity</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
@@ -777,7 +801,7 @@ group by ec.name, es.severity</sql>
     <attributes/>
     <GUI>
       <xloc>1936</xloc>
-      <yloc>576</yloc>
+      <yloc>768</yloc>
     </GUI>
   </transform>
   <transform>
@@ -807,7 +831,7 @@ group by ec.name, es.severity</sql>
     <attributes/>
     <GUI>
       <xloc>1152</xloc>
-      <yloc>400</yloc>
+      <yloc>576</yloc>
     </GUI>
   </transform>
   <transform>
@@ -832,11 +856,16 @@ group by ec.name, es.severity</sql>
         <variable_name>v_severity</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
+      <field>
+        <field_name>email.feedback.enabled</field_name>
+        <variable_name>email.feedback.enabled</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
     </fields>
     <use_formatting>Y</use_formatting>
     <attributes/>
     <GUI>
-      <xloc>1184</xloc>
+      <xloc>1344</xloc>
       <yloc>144</yloc>
     </GUI>
   </transform>
@@ -864,7 +893,7 @@ group by ec.name, es.severity</sql>
     <attributes/>
     <GUI>
       <xloc>1104</xloc>
-      <yloc>576</yloc>
+      <yloc>768</yloc>
     </GUI>
   </transform>
   <transform>
@@ -885,16 +914,6 @@ group by ec.name, es.severity</sql>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
-        <field_name>override</field_name>
-        <variable_name>email.success.feedback.enabled</variable_name>
-        <variable_type>ROOT_WORKFLOW</variable_type>
-      </field>
-      <field>
-        <field_name>override</field_name>
-        <variable_name>email.fail.feedback.enabled</variable_name>
-        <variable_type>ROOT_WORKFLOW</variable_type>
-      </field>
-      <field>
         <field_name>category_type</field_name>
         <variable_name>v_category_type</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
@@ -904,11 +923,16 @@ group by ec.name, es.severity</sql>
         <variable_name>v_severity</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
+      <field>
+        <field_name>email.feedback.enabled</field_name>
+        <variable_name>email.feedback.enabled</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
     </fields>
     <use_formatting>Y</use_formatting>
     <attributes/>
     <GUI>
-      <xloc>1168</xloc>
+      <xloc>1360</xloc>
       <yloc>288</yloc>
     </GUI>
   </transform>
@@ -980,7 +1004,7 @@ group by ec.name, es.severity</sql>
     <attributes/>
     <GUI>
       <xloc>752</xloc>
-      <yloc>400</yloc>
+      <yloc>576</yloc>
     </GUI>
   </transform>
   <transform>
@@ -1063,12 +1087,93 @@ group by ec.name, es.severity</sql>
         </value>
       </condition>
     </compare>
-    <send_false_to>Terminated in error (Error path)</send_false_to>
-    <send_true_to>Override to force email send</send_true_to>
+    <send_false_to>email.feedback.enabled fail</send_false_to>
+    <send_true_to>email.feedback.enabled application.error</send_true_to>
     <attributes/>
     <GUI>
       <xloc>752</xloc>
       <yloc>288</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>email.feedback.enabled application.error</name>
+    <type>GetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>email.feedback.enabled</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${email.application.error.feedback.enabled}</variable>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>1088</xloc>
+      <yloc>288</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>email.feedback.enabled fail</name>
+    <type>GetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>email.feedback.enabled</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${email.fail.feedback.enabled}</variable>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>752</xloc>
+      <yloc>400</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>email.feedback.enabled success</name>
+    <type>GetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>email.feedback.enabled</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${email.success.feedback.enabled}</variable>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>1168</xloc>
+      <yloc>144</yloc>
     </GUI>
   </transform>
   <transform>
@@ -1098,8 +1203,8 @@ group by ec.name, es.severity</sql>
     </GUI>
   </transform>
   <transform>
-    <name>Database lookup</name>
-    <type>DBLookup</type>
+    <name>Set email.feedback.enabled</name>
+    <type>SetVariable</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -1108,34 +1213,19 @@ group by ec.name, es.severity</sql>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <cache>N</cache>
-    <cache_load_all>N</cache_load_all>
-    <cache_size>0</cache_size>
-    <connection>integrations_db</connection>
-    <lookup>
-      <eat_row_on_failure>N</eat_row_on_failure>
-      <fail_on_multiple>N</fail_on_multiple>
-      <key>
-        <condition>=</condition>
-        <field>code</field>
-        <name>severity_on_abort</name>
-        <name2/>
-      </key>
-      <orderby/>
-      <schema>config</schema>
-      <table>events_severities</table>
-      <value>
-        <default/>
-        <name>severity</name>
-        <rename>severity_on_abort_value</rename>
-        <trim_type>none</trim_type>
-        <type>Integer</type>
-      </value>
-    </lookup>
+    <fields>
+      <field>
+        <default_value/>
+        <field_name>email.feedback.enabled</field_name>
+        <variable_name>email.feedback.enabled</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+    </fields>
+    <use_formatting>Y</use_formatting>
     <attributes/>
     <GUI>
       <xloc>752</xloc>
-      <yloc>576</yloc>
+      <yloc>480</yloc>
     </GUI>
   </transform>
   <transform_error_handling>

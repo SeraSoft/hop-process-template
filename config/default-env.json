@@ -48,6 +48,18 @@
     "value" : "password",
     "description" : "Password used to connect to the integrations database. This user must have permissions to read/write in the specified database."
   }, {
+    "name" : "email.application.error.feedback.enabled",
+    "value" : "0",
+    "description" : "Flag tha enables or disables the sending of success feedback emails after a process execution. Set to 1 to enable, 0 to disable."
+  }, {
+    "name" : "email.notactive.feedback.enabled",
+    "value" : "0",
+    "description" : "Flag tha enables or disables the sending of success feedback emails after a process execution. Set to 1 to enable, 0 to disable."
+  }, {
+    "name" : "email.lock.feedback.enabled",
+    "value" : "0",
+    "description" : "Flag tha enables or disables the sending of success feedback emails after a process execution. Set to 1 to enable, 0 to disable."
+  }, {
     "name" : "email.success.feedback.enabled",
     "value" : "0",
     "description" : "Flag tha enables or disables the sending of success feedback emails after a process execution. Set to 1 to enable, 0 to disable."

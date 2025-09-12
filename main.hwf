@@ -29,6 +29,7 @@
       <type>SPECIAL</type>
       <attributes/>
       <DayOfMonth>1</DayOfMonth>
+      <doNotWaitOnFirstExecution>N</doNotWaitOnFirstExecution>
       <hour>12</hour>
       <intervalMinutes>60</intervalMinutes>
       <intervalSeconds>0</intervalSeconds>
@@ -136,7 +137,7 @@
       <successnumbercondition>equal</successnumbercondition>
       <successwhenvarset>N</successwhenvarset>
       <valuetype>variable</valuetype>
-      <variablename>${email.fail.feedback.enabled}</variablename>
+      <variablename>${email.feedback.enabled}</variablename>
       <parallel>N</parallel>
       <xloc>528</xloc>
       <yloc>656</yloc>
@@ -167,7 +168,7 @@
       <attributes_hac/>
     </action>
     <action>
-      <name>Send Feedback on Success</name>
+      <name>Send Feedback</name>
       <description/>
       <type>WORKFLOW</type>
       <attributes/>
@@ -191,18 +192,22 @@
       <attributes_hac/>
     </action>
     <action>
-      <name>Success feedback enabled?</name>
+      <name>feedback enabled?</name>
       <description/>
       <type>SIMPLE_EVAL</type>
       <attributes/>
       <comparevalue>1</comparevalue>
+      <fieldname/>
       <fieldtype>string</fieldtype>
+      <mask/>
+      <maxvalue/>
+      <minvalue/>
       <successbooleancondition>false</successbooleancondition>
       <successcondition>equal</successcondition>
       <successnumbercondition>equal</successnumbercondition>
       <successwhenvarset>N</successwhenvarset>
       <valuetype>variable</valuetype>
-      <variablename>${email.success.feedback.enabled}</variablename>
+      <variablename>${email.feedback.enabled}</variablename>
       <parallel>N</parallel>
       <xloc>864</xloc>
       <yloc>192</yloc>
@@ -271,9 +276,9 @@ PROCESS EXITS!
           <variable_value>2</variable_value>
         </field>
         <field>
-          <variable_name>email.success.feedback.enabled</variable_name>
+          <variable_name>email.feedback.enabled</variable_name>
           <variable_type>ROOT_WORKFLOW</variable_type>
-          <variable_value>1</variable_value>
+          <variable_value>${email.lock.feedback.enabled}</variable_value>
         </field>
       </fields>
       <file_variable_type>JVM</file_variable_type>
@@ -375,9 +380,9 @@ PROCESS EXITS!
           <variable_value>3</variable_value>
         </field>
         <field>
-          <variable_name>email.success.feedback.enabled</variable_name>
+          <variable_name>email.feedback.enabled</variable_name>
           <variable_type>ROOT_WORKFLOW</variable_type>
-          <variable_value>1</variable_value>
+          <variable_value>${email.notactive.feedback.enabled}</variable_value>
         </field>
       </fields>
       <file_variable_type>JVM</file_variable_type>
@@ -417,8 +422,8 @@ PROCESS EXITS!
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Success feedback enabled?</from>
-      <to>Send Feedback on Success</to>
+      <from>feedback enabled?</from>
+      <to>Send Feedback</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>N</unconditional>
@@ -432,7 +437,7 @@ PROCESS EXITS!
     </hop>
     <hop>
       <from>Post Phase Success</from>
-      <to>Success feedback enabled?</to>
+      <to>feedback enabled?</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>N</unconditional>
@@ -466,14 +471,14 @@ PROCESS EXITS!
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Success feedback enabled?</from>
+      <from>feedback enabled?</from>
       <to>Dummy 2</to>
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Send Feedback on Success</from>
+      <from>Send Feedback</from>
       <to>Dummy 2</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
