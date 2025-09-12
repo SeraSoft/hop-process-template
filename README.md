@@ -50,7 +50,7 @@ liquibase changelogSync \
 
 The table below summarizes the set of base environment variables provided with the template. This set of variables will be the starting point of your application's environment variables. 
 
-| Nome variabile      | Descrizione                         | Valori di default |
+| Variabile Name      | Description                         | Default value |
 |---------------|-------------------------------------|---------------|
 |project.link.ref|Link to activate the main process that must be started by the Hop Process Executor. The link is relative to the project home directory.| \${PROJECT_HOME}/src/project/main/${p_base_process_name} |
 |hop.user|The operating system user that will run the Hop Process execution. This user must have read/write permissions on the project home directory.|hopuser|
@@ -64,8 +64,11 @@ The table below summarizes the set of base environment variables provided with t
 |integrations.db.port|Port of the integrations database. This is the port where the database server is listening for connections|5432|
 |integrations.db.user|Username used to connect to the integrations database. This user must have permissions to read/write in the specified database|postgres|
 |integrations.db.pwd|Password used to connect to the integrations database. This user must have permissions to read/write in the specified database|password|
-|email.success.feedback.enabled|Flag tha enables or disables the sending of success feedback emails after a process execution. Set to 1 to enable, 0 to disable|0|
+|email.success.feedback.enabled|Flag that enables or disables the sending of success feedback emails after a process execution. Set to 1 to enable, 0 to disable|0|
 |email.fail.feedback.enabled|Flag that enables or disables the sending of failure feedback emails after a process execution. Set to 1 to enable, 0 to disable|1|
+|email.application.error.feedback.enabled|Flag that enables or disables the sending of feedback emails after a process execution if application error. Set to 1 to enable, 0 to disable|1|
+|email.notactive.feedback.enabled|Flag that enables or disables the sending of feedback emails if the process is paused. Set to 1 to enable, 0 to disable|0|
+|email.lock.feedback.enabled|Flag that enables or disables the sending of feedback emails if the same process is alredy running. Set to 1 to enable, 0 to disable|1|
 |mail.isauthenticated|Flag to indicate if the SMTP server requires authentication. Set to true if authentication is needed, false otherwise|0|
 |mail.isgmail|Flag to indicate if the SMTP server is Gmail. Set to true if using Gmail, false otherwise|0|
 |smtp.mail.host|Name of the host where the SMTP server is running. This can be an IP address or a hostname||
@@ -80,7 +83,8 @@ The table below summarizes the set of base environment variables provided with t
 |mail.subject.error|Text displayed in the subject of the email when an error occurs due to system exceptions. It includes the base process name.|\${mail.subject} Failed for system exceptions|
 |mail.subject.success|Text displayed in the subject ot the email when the process execution is successful. It includes the base process name|\${mail.subject} Terminated successfully|
 |mail.subject.lock|Text displayed in the subject ot the email when a lock occurs that prevents the process from executing. It includes the base process name|\${mail.subject} Same instance is still running. Execution stopped.|
-|mail.subject.application.error|Text displayed in the subject of the email when an application error occurs during process execution. It includes the base process name.|\${mail.subject} Failed for application exceptions|
+|mail.subject.application.error|Text displayed in the subject of the email when application errors occurs during process execution. It includes the base process name.|\${mail.subject} Terminated successfully with application exceptions.|
+|mail.subject.notactive|Text displayed in the subject ot the email when the process is paused. It includes the base process name!\${mail.subject} This instance is paused. Execution not started.
 |default.mail.destination.addresses|Default set of email addresses to included wherever needed. Email addresses are separated by spaces|destination@maildomain.it|
 |success.mail.destination.addresses|Set of email addresses to send success feedback emails to. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'default.mail.destination.addresses'|\${default.mail.destination.addresses}|
 |errors.mail.destination.addresses|Set of email addresses to send error feedback emails to. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'default.mail.destination.addresses'|\${default.mail.destination.addresses}|
@@ -89,7 +93,7 @@ The table below summarizes the set of base environment variables provided with t
 |application.error.mail.destination.addresses|Set of email addresses to send application's error feedback emails to. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'default.mail.destination.addresses'|\${default.mail.destination.addresses}|
 |success.mail.text|Sample text for the success feedback email. It includes the base process name, hostname, and log file name|The process ${p_base_process_name} running on server ${v_hostname} was terminated successfully. Execution's log file available at: ${p_logfile_name}. PLEASE DO NOT REPLAY TO THIS EMAIL!|
 |error.mail.text|Sample text message for the error feedback email. It includes the log file name|The process was terminated abnormally because of an Exception. Execution's log file available at: ${p_logfile_name}. PLEASE DO NOT REPLAY TO THIS EMAIL!|
-|lock.mail.text|Sample text message used because a process cannot be started because a lock occurs. It includes the base process name, hostname, last job run timestamp, and log file name|The process ${p_base_process_name} running on server ${v_hostname} can't be started because same process started at ${v_last_job_run_timestamp} is not yet terminated. Execution's log file available at: ${p_logfile_name}. PLEASE DO NOT REPLAY TO THIS EMAIL!|
+|lock.mail.text|Sample text message used because a process cannot be started because a lock occurs. It includes the base process name, hostname, last job run timestamp, and log file name|The process ${p_base_process_name} running on server ${v_hostname} can't be started because same process started at ${v_last_instance_start_timestamp} is not yet terminated. Execution's log file available at: ${p_logfile_name}. PLEASE DO NOT REPLAY TO THIS EMAIL!|
 |application.error.mail.text|Sample text message used when an application error occurs. It includes the log file name and mentions that detailed exceptions are in the attachment|During process's execution we collected some exceptions on integrations_log_details. The detailed list of exception is in the attachment to this email.<p>If needed, execution's log file is available at: ${p_logfile_name}. PLEASE DO NOT REPLAY TO THIS EMAIL!|
 |notactive.mail.text|Sample text message used when a process cannot be started because it is not active. It includes the base process name, hostname, and log file name|The process ${p_base_process_name} running on server ${v_hostname} can't be started because is set to not active. Execution's log file available at: ${p_logfile_name}. PLEASE DO NOT REPLAY TO THIS EMAIL!|
 

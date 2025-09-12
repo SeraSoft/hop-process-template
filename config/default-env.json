@@ -49,23 +49,23 @@
     "description" : "Password used to connect to the integrations database. This user must have permissions to read/write in the specified database."
   }, {
     "name" : "email.application.error.feedback.enabled",
-    "value" : "0",
-    "description" : "Flag tha enables or disables the sending of success feedback emails after a process execution. Set to 1 to enable, 0 to disable."
+    "value" : "1",
+    "description" : "Flag that enables or disables the sending of feedback emails after a process execution if application error. Set to 1 to enable, 0 to disable"
   }, {
     "name" : "email.notactive.feedback.enabled",
     "value" : "0",
-    "description" : "Flag tha enables or disables the sending of success feedback emails after a process execution. Set to 1 to enable, 0 to disable."
+    "description" : "Flag that enables or disables the sending of feedback emails if the process is paused. Set to 1 to enable, 0 to disable"
   }, {
     "name" : "email.lock.feedback.enabled",
-    "value" : "0",
-    "description" : "Flag tha enables or disables the sending of success feedback emails after a process execution. Set to 1 to enable, 0 to disable."
+    "value" : "1",
+    "description" : "Flag that enables or disables the sending of feedback emails if the same process is alredy running. Set to 1 to enable, 0 to disable"
   }, {
     "name" : "email.success.feedback.enabled",
     "value" : "0",
-    "description" : "Flag tha enables or disables the sending of success feedback emails after a process execution. Set to 1 to enable, 0 to disable."
+    "description" : "Flag that enables or disables the sending of success feedback emails after a process execution. Set to 1 to enable, 0 to disable"
   }, {
     "name" : "email.fail.feedback.enabled",
-    "value" : "0",
+    "value" : "1",
     "description" : "Flag that enables or disables the sending of failure feedback emails after a process execution. Set to 1 to enable, 0 to disable."
   }, {
     "name" : "mail.isauthenticated",
@@ -126,11 +126,11 @@
   }, {
     "name" : "mail.subject.notactive",
     "value" : "${mail.subject} This instance is paused. Execution not started.",
-    "description" : "Text displayed in the subject ot the email when a lock occurs that prevents the process from executing. It includes the base process name"
+    "description" : "Text displayed in the subject ot the email when the process is paused. It includes the base process name"
   }, {
     "name" : "mail.subject.application.error",
-    "value" : "${mail.subject} Failed for application exceptions.",
-    "description" : "Text displayed in the subject of the email when an application error occurs during process execution. It includes the base process name."
+    "value" : "${mail.subject} Terminated successfully with application exceptions.",
+    "description" : "Text displayed in the subject of the email when application errors occurs during process execution. It includes the base process name."
   }, {
     "name" : "default.mail.destination.addresses",
     "value" : "destination@maildomain.it",
