@@ -48,18 +48,8 @@ P -> Terminated because not active (Paused)</note>
   </notepads>
   <order>
     <hop>
-      <from>Start</from>
-      <to>Get audit fields</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Get audit fields</from>
       <to>Get system info</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Get system info</from>
-      <to>Add is_running = N</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -85,6 +75,16 @@ P -> Terminated because not active (Paused)</note>
     <hop>
       <from>Set process_status</from>
       <to>Update Hop process log</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get system info</from>
+      <to>string now</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>string now</from>
+      <to>Add is_running = N</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -169,7 +169,6 @@ P -> Terminated because not active (Paused)</note>
         <variable>${terminated.successfully}</variable>
       </field>
       <field>
-        <format>#</format>
         <length>-1</length>
         <name>records_in_error</name>
         <precision>-1</precision>
@@ -205,7 +204,7 @@ P -> Terminated because not active (Paused)</note>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>288</xloc>
+      <xloc>160</xloc>
       <yloc>160</yloc>
     </GUI>
   </transform>
@@ -228,7 +227,45 @@ P -> Terminated because not active (Paused)</note>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>400</xloc>
+      <xloc>272</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>string now</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <meta>
+        <conversion_mask>yyyy-MM-dd HH:mm:ss</conversion_mask>
+        <currency_symbol/>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <decimal_symbol/>
+        <encoding/>
+        <grouping_symbol/>
+        <length>-2</length>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <name>now</name>
+        <precision>-2</precision>
+        <rename>now</rename>
+        <roundingType>half_even</roundingType>
+        <storage_type/>
+        <type>String</type>
+      </meta>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>384</xloc>
       <yloc>160</yloc>
     </GUI>
   </transform>
@@ -280,7 +317,6 @@ P -> Terminated because not active (Paused)</note>
     </partitioning>
     <fields>
       <field>
-        <default_value/>
         <field_name>status</field_name>
         <variable_name>process.status</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
@@ -290,30 +326,6 @@ P -> Terminated because not active (Paused)</note>
     <attributes/>
     <GUI>
       <xloc>800</xloc>
-      <yloc>160</yloc>
-    </GUI>
-  </transform>
-  <transform>
-    <name>Start</name>
-    <type>RowGenerator</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-</fields>
-    <interval_in_ms>5000</interval_in_ms>
-    <last_time_field>FiveSecondsAgo</last_time_field>
-    <limit>1</limit>
-    <never_ending>N</never_ending>
-    <row_time_field>now</row_time_field>
-    <attributes/>
-    <GUI>
-      <xloc>160</xloc>
       <yloc>160</yloc>
     </GUI>
   </transform>
