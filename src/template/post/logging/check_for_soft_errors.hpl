@@ -1245,13 +1245,19 @@ group by ec.name, es.severity</sql>
     </partitioning>
     <fields>
       <meta>
-        <conversion_mask>yyyy-MM-dd HH:mm:ss</conversion_mask>
+        <conversion_mask>yyyy-MM-dd HH:mm:ss.SSS XXX</conversion_mask>
+        <currency_symbol/>
         <date_format_lenient>N</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <decimal_symbol/>
+        <encoding/>
+        <grouping_symbol/>
         <length>-2</length>
         <lenient_string_to_number>N</lenient_string_to_number>
-        <name>now</name>
+        <name>yyyy-MM-dd HH:mm:ss.SSS XXX</name>
         <precision>-2</precision>
-        <rename>now</rename>
+        <rename>yyyy-MM-dd HH:mm:ss.SSS XXX</rename>
         <roundingType>half_even</roundingType>
         <storage_type/>
         <type>String</type>
