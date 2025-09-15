@@ -11,6 +11,7 @@
       "attributes": {
         "SUPPORTS_TIMESTAMP_DATA_TYPE": "Y",
         "QUOTE_ALL_FIELDS": "N",
+        "EXTRA_OPTION_POSTGRESQL.stringtype": "unspecified",
         "SUPPORTS_BOOLEAN_DATA_TYPE": "Y",
         "FORCE_IDENTIFIERS_TO_LOWERCASE": "N",
         "PRESERVE_RESERVED_WORD_CASE": "Y",
@@ -22,5 +23,5 @@
       "username": "${integrations.db.user}"
     }
   },
-  "name": "integrations_db"
+  "name": "integrations_db_postgres"
 }
