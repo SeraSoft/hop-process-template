@@ -244,7 +244,7 @@ P -> Terminated because not active (Paused)</note>
       <schema_name/>
     </partitioning>
     <commit>100</commit>
-    <connection>integrations_db</connection>
+    <connection>${integrations.db.connection.name}</connection>
     <error_ignored>N</error_ignored>
     <lookup>
       <key>
@@ -252,7 +252,7 @@ P -> Terminated because not active (Paused)</note>
         <field>short_name</field>
         <name>process_name</name>
       </key>
-      <schema>config</schema>
+      <schema>${integrations.db.config.schema}</schema>
       <table>integrations_processes</table>
       <value>
         <name>is_running</name>

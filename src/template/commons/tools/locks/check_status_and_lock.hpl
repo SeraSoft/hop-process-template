@@ -136,7 +136,7 @@
     <cache>N</cache>
     <cache_load_all>N</cache_load_all>
     <cache_size>0</cache_size>
-    <connection>integrations_db</connection>
+    <connection>${integrations.db.connection.name}</connection>
     <lookup>
       <eat_row_on_failure>N</eat_row_on_failure>
       <fail_on_multiple>N</fail_on_multiple>
@@ -153,7 +153,7 @@
         <name2/>
       </key>
       <orderby/>
-      <schema>logs</schema>
+      <schema>${integrations.db.log.schema}</schema>
       <table>integrations_logs</table>
       <value>
         <default/>
@@ -210,7 +210,7 @@
     <cache>N</cache>
     <cache_load_all>N</cache_load_all>
     <cache_size>0</cache_size>
-    <connection>integrations_db</connection>
+    <connection>${integrations.db.connection.name}</connection>
     <lookup>
       <eat_row_on_failure>N</eat_row_on_failure>
       <fail_on_multiple>N</fail_on_multiple>
@@ -218,21 +218,27 @@
         <condition>=</condition>
         <field>short_name</field>
         <name>process_name</name>
+        <name2/>
       </key>
-      <schema>config</schema>
+      <orderby/>
+      <schema>${integrations.db.config.schema}</schema>
       <table>integrations_processes</table>
       <value>
+        <default/>
         <name>is_running</name>
+        <rename/>
         <trim_type>none</trim_type>
         <type>String</type>
       </value>
       <value>
+        <default/>
         <name>id</name>
         <rename>integrations_processes_id</rename>
         <trim_type>none</trim_type>
         <type>String</type>
       </value>
       <value>
+        <default/>
         <name>is_active</name>
         <rename>process_active</rename>
         <trim_type>none</trim_type>
