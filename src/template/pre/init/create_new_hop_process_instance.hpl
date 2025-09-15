@@ -22,18 +22,8 @@
   </notepads>
   <order>
     <hop>
-      <from>Start</from>
-      <to>Get audit fields</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Add status = R</from>
       <to>Init HOP process log</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Get audit fields</from>
-      <to>Check required variables values</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -44,6 +34,16 @@
     <hop>
       <from>Init HOP process log</from>
       <to>Write to log</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get audit fields</from>
+      <to>string date_start</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>string date_start</from>
+      <to>Check required variables values</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -60,10 +60,6 @@
     </partitioning>
     <fields>
       <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
         <length>-1</length>
         <name>status</name>
         <nullif>R</nullif>
@@ -183,7 +179,7 @@
     </fields>
     <attributes/>
     <GUI>
-      <xloc>368</xloc>
+      <xloc>208</xloc>
       <yloc>144</yloc>
     </GUI>
   </transform>
@@ -251,30 +247,6 @@
     </GUI>
   </transform>
   <transform>
-    <name>Start</name>
-    <type>RowGenerator</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-</fields>
-    <interval_in_ms>5000</interval_in_ms>
-    <last_time_field>FiveSecondsAgo</last_time_field>
-    <limit>1</limit>
-    <never_ending>N</never_ending>
-    <row_time_field>now</row_time_field>
-    <attributes/>
-    <GUI>
-      <xloc>224</xloc>
-      <yloc>144</yloc>
-    </GUI>
-  </transform>
-  <transform>
     <name>Write to log</name>
     <type>WriteToLog</type>
     <description/>
@@ -303,6 +275,44 @@
     <attributes/>
     <GUI>
       <xloc>1166</xloc>
+      <yloc>144</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>string date_start</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <meta>
+        <conversion_mask>yyyy-MM-dd HH:mm:ss.SSS XXX</conversion_mask>
+        <currency_symbol/>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <decimal_symbol/>
+        <encoding/>
+        <grouping_symbol/>
+        <length>-2</length>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <name>date_start</name>
+        <precision>-2</precision>
+        <rename>date_start</rename>
+        <roundingType>half_even</roundingType>
+        <storage_type/>
+        <type>String</type>
+      </meta>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>368</xloc>
       <yloc>144</yloc>
     </GUI>
   </transform>

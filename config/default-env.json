@@ -16,38 +16,6 @@
     "value" : "SYSGE001",
     "description" : "The generic subcategory for unhandled system exceptions. This is used to categorize exceptions in the logs."
   }, {
-    "name" : "integrations.db.config.schema",
-    "value" : "config",
-    "description" : "Name of the schema containing the configuration tables for the integrations database."
-  }, {
-    "name" : "integrations.db.log.schema",
-    "value" : "logs",
-    "description" : "Name of schema containing the logs tables for the integrations database."
-  }, {
-    "name" : "integrations.db.host",
-    "value" : "localhost",
-    "description" : "Name of the hosts where the integrations database is running. This can be an IP address or a hostname."
-  }, {
-    "name" : "integrations.db.connection.name",
-    "value" : "integrations_db",
-    "description" : "Name of the connection assigned in Apache Hop for the integrations database. This is used to connect to the database during Hop Process execution."
-  }, {
-    "name" : "integrations.db.name",
-    "value" : "integrations_db",
-    "description" : "Name of the database containing the configuration and logs tables for the integrations database."
-  }, {
-    "name" : "integrations.db.port",
-    "value" : "5432",
-    "description" : "Port of the integrations database. This is the port where the database server is listening for connections."
-  }, {
-    "name" : "integrations.db.user",
-    "value" : "postgres",
-    "description" : "Username used to connect to the integrations database. This user must have permissions to read/write in the specified database."
-  }, {
-    "name" : "integrations.db.pwd",
-    "value" : "password",
-    "description" : "Password used to connect to the integrations database. This user must have permissions to read/write in the specified database."
-  }, {
     "name" : "email.application.error.feedback.enabled",
     "value" : "1",
     "description" : "Flag that enables or disables the sending of feedback emails after a process execution if application error. Set to 1 to enable, 0 to disable"

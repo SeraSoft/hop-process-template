@@ -1,0 +1,97 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+	<!-- Create Tables -->
+	<changeSet id="create-config-events-categories-table" author="serasoft">
+		<createTable tableName="events_categories">
+			<column name="id" type="varchar(48)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="type" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="name" type="varchar(64)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="create-config-events-subcategories-table" author="serasoft">
+		<createTable tableName="events_subcategories">
+			<column name="id" type="varchar(48)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="event_category_id" type="varchar(48)">
+				<constraints nullable="false" />
+			</column>
+			<column name="name" type="varchar(64)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="create-config-events-severities-table" author="serasoft">
+		<createTable tableName="events_severities">
+			<column name="id" type="varchar(48)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="code" type="varchar(32)">
+				<constraints nullable="false" />
+			</column>
+			<column name="severity" type="integer" defaultValueNumeric="5">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="create-config-integrations-processes-table" author="serasoft">
+		<createTable tableName="integrations_processes">
+			<column name="id" type="varchar(48)" remarks="This is the process code we use to start HOP processes. Passed with p_program_name.">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="short_name" type="varchar(32)" remarks="Self explanatory, short, description of the process">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(1024)" />
+			<column name="project" type="varchar(64)" remarks="Project's code reference for this process. Must be present in configuration file as hop.project.code">
+				<constraints nullable="false" />
+			</column>
+			<column name="is_active" type="char(1)" defaultValue="Y" remarks="Indicate if the process is active or not (if not is paused). Values: Y, N">
+				<constraints nullable="false" />
+			</column>
+			<column name="is_running" type="char(1)" defaultValue="N" remarks="Indicate if the process currently running or not. Values: Y, N">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<!-- Insert Data -->
+	<changeSet id="insert-initial-events-categories" author="serasoft">
+		<insert tableName="events_categories">
+			<column name="id" value="SYS001" />
+			<column name="type" value="E" />
+			<column name="name" value="SYSTEM EXCEPTION" />
+		</insert>
+	</changeSet>
+	<changeSet id="insert-initial-events-subcategories" author="serasoft">
+		<insert tableName="events_subcategories">
+			<column name="id" value="SYSGE001" />
+			<column name="name" value="GENERIC ERROR" />
+			<column name="event_category_id" value="SYS001" />
+		</insert>
+	</changeSet>
+	<changeSet id="insert-initial-events-severities" author="serasoft">
+		<insert tableName="events_severities">
+			<column name="id" value="MEDIUM" />
+			<column name="code" value="MEDIUM" />
+			<column name="severity" value="5" />
+		</insert>
+	</changeSet>
+	<changeSet id="insert-initial-integration_processes" author="serasoft">
+		<insert tableName="integrations_processes">
+			<column name="id" value="default" />
+			<column name="short_name" value="default" />
+			<column name="description" value="Default process to show Hop Process Template" />
+			<column name="project" value="hop-process-template" />
+			<column name="is_active" value="Y" />
+			<column name="is_running" value="N" />
+		</insert>
+	</changeSet>
+</databaseChangeLog>

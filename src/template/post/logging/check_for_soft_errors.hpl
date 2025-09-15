@@ -137,11 +137,6 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Get system info</from>
-      <to>Log unhandled error</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Detect empty stream</from>
       <to>If Null</to>
       <enabled>Y</enabled>
@@ -209,6 +204,16 @@
     <hop>
       <from>Set email.feedback.enabled</from>
       <to>Terminated in error (Error path)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get system info</from>
+      <to>string now</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>string now</from>
+      <to>Log unhandled error</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -775,6 +780,31 @@ group by ec.name, es.severity</sql>
     </GUI>
   </transform>
   <transform>
+    <name>Set email.feedback.enabled</name>
+    <type>SetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <field_name>email.feedback.enabled</field_name>
+        <variable_name>email.feedback.enabled</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+    </fields>
+    <use_formatting>Y</use_formatting>
+    <attributes/>
+    <GUI>
+      <xloc>752</xloc>
+      <yloc>480</yloc>
+    </GUI>
+  </transform>
+  <transform>
     <name>Set error context</name>
     <type>SetVariable</type>
     <description/>
@@ -1203,8 +1233,8 @@ group by ec.name, es.severity</sql>
     </GUI>
   </transform>
   <transform>
-    <name>Set email.feedback.enabled</name>
-    <type>SetVariable</type>
+    <name>string now</name>
+    <type>SelectValues</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -1214,18 +1244,30 @@ group by ec.name, es.severity</sql>
       <schema_name/>
     </partitioning>
     <fields>
-      <field>
-        <default_value/>
-        <field_name>email.feedback.enabled</field_name>
-        <variable_name>email.feedback.enabled</variable_name>
-        <variable_type>ROOT_WORKFLOW</variable_type>
-      </field>
+      <meta>
+        <conversion_mask>yyyy-MM-dd HH:mm:ss.SSS XXX</conversion_mask>
+        <currency_symbol/>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <decimal_symbol/>
+        <encoding/>
+        <grouping_symbol/>
+        <length>-2</length>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <name>yyyy-MM-dd HH:mm:ss.SSS XXX</name>
+        <precision>-2</precision>
+        <rename>yyyy-MM-dd HH:mm:ss.SSS XXX</rename>
+        <roundingType>half_even</roundingType>
+        <storage_type/>
+        <type>String</type>
+      </meta>
+      <select_unspecified>N</select_unspecified>
     </fields>
-    <use_formatting>Y</use_formatting>
     <attributes/>
     <GUI>
-      <xloc>752</xloc>
-      <yloc>480</yloc>
+      <xloc>1504</xloc>
+      <yloc>736</yloc>
     </GUI>
   </transform>
   <transform_error_handling>
