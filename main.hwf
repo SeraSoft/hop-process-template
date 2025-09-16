@@ -197,11 +197,7 @@
       <type>SIMPLE_EVAL</type>
       <attributes/>
       <comparevalue>1</comparevalue>
-      <fieldname/>
       <fieldtype>string</fieldtype>
-      <mask/>
-      <maxvalue/>
-      <minvalue/>
       <successbooleancondition>false</successbooleancondition>
       <successcondition>equal</successcondition>
       <successnumbercondition>equal</successnumbercondition>
@@ -250,7 +246,7 @@
       <logmessage>
 =================================================================================================================
 
-Previous instance for base process name ${p_base_process_name} seems executing and it was started at ${v_last_instance_start_timestamp}.
+Previous instance for base process name '${p_base_process_name}' seems executing and it was started at '${v_last_instance_start_timestamp}'.
 However, maybe previous instance exited abnormally and lock wasn't cleared.
 Please check integration_processes table and eventually uncleand lock.
 
@@ -358,7 +354,7 @@ PROCESS EXITS!
       <loglevel>Basic</loglevel>
       <logmessage>
 =================================================================================================================
-Process with base process name ${p_base_process_name} tried to start but is set to not active
+Process with base process name '${p_base_process_name}' tried to start but is set to not active
 PROCESS EXITS!
 =================================================================================================================
 </logmessage>
@@ -453,15 +449,15 @@ PROCESS EXITS!
       <from>Log warning lock is set</from>
       <to>Set terminated because lock set </to>
       <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
     </hop>
     <hop>
       <from>Post Phase Error</from>
       <to>Error Feedback Enabled?</to>
       <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
     </hop>
     <hop>
       <from>START</from>
@@ -544,8 +540,8 @@ PROCESS EXITS!
       <from>Log warning process inactive</from>
       <to>Set terminated because not active</to>
       <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
     </hop>
     <hop>
       <from>Main process</from>
@@ -559,14 +555,14 @@ PROCESS EXITS!
       <to>Dummy 3</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
+      <unconditional>Y</unconditional>
     </hop>
     <hop>
       <from>Set terminated because not active</from>
       <to>Dummy 3</to>
       <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
     </hop>
     <hop>
       <from>Dummy 3</from>

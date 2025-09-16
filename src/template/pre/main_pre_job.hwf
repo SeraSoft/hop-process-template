@@ -220,8 +220,14 @@ Delete this last message and add here your own application instance variable's d
           <variable_type>ROOT_WORKFLOW</variable_type>
           <variable_value>1</variable_value>
         </field>
+        <field>
+          <variable_name>email.feedback.enabled</variable_name>
+          <variable_type>ROOT_WORKFLOW</variable_type>
+          <variable_value>1</variable_value>
+        </field>
       </fields>
       <file_variable_type>JVM</file_variable_type>
+      <filename/>
       <replacevars>Y</replacevars>
       <parallel>N</parallel>
       <xloc>176</xloc>

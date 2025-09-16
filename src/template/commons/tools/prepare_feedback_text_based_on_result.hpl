@@ -127,13 +127,13 @@ P -> Terminated because not active (Paused)</note>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>default</from>
-      <to>Success</to>
+      <from>Application Error</from>
+      <to>Set vars</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Application Error</from>
-      <to>Set vars</to>
+      <from>default</from>
+      <to>Error</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -435,7 +435,7 @@ P -> Terminated because not active (Paused)</note>
     <attributes/>
     <GUI>
       <xloc>544</xloc>
-      <yloc>160</yloc>
+      <yloc>96</yloc>
     </GUI>
   </transform>
   <transform>
@@ -495,7 +495,7 @@ P -> Terminated because not active (Paused)</note>
     <attributes/>
     <GUI>
       <xloc>416</xloc>
-      <yloc>160</yloc>
+      <yloc>96</yloc>
     </GUI>
   </transform>
   <transform>
@@ -529,7 +529,7 @@ P -> Terminated because not active (Paused)</note>
     <attributes/>
     <GUI>
       <xloc>416</xloc>
-      <yloc>96</yloc>
+      <yloc>160</yloc>
     </GUI>
   </transform>
   <transform>
