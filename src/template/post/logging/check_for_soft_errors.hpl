@@ -1255,9 +1255,9 @@ group by ec.name, es.severity</sql>
         <grouping_symbol/>
         <length>-2</length>
         <lenient_string_to_number>N</lenient_string_to_number>
-        <name>yyyy-MM-dd HH:mm:ss.SSS XXX</name>
+        <name>now</name>
         <precision>-2</precision>
-        <rename>yyyy-MM-dd HH:mm:ss.SSS XXX</rename>
+        <rename>now</rename>
         <roundingType>half_even</roundingType>
         <storage_type/>
         <type>String</type>
