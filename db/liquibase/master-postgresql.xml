@@ -97,7 +97,7 @@
 			<column name="id" type="varchar(48)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="date_event" type="date" defaultValueComputed="CURRENT_DATE">
+			<column name="date_event" type="timestamp" defaultValueComputed="CURRENT_DATE">
 				<constraints nullable="false" />
 			</column>
 			<column name="integrations_logs_id" type="varchar(48)">
