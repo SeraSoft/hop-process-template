@@ -147,5 +147,9 @@
     "name" : "notactive.mail.text",
     "value" : "<html><head></head><body>The process ${p_base_process_name} running on server ${v_hostname} can't be started because <strong>is set to not active.</strong><p>Execution's log file available at: ${p_log_filename}<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>",
     "description" : "Sample text message used when a process cannot be started because it is not active. It includes the base process name, hostname, and log file name."
+  }, {
+    "name" : "execution.log.filename",
+    "value" : "${PROJECT_HOME}/logs/execution_log_${p_base_process_name}_${project.main.workflow}_${v_process_run_timestamp}.log",
+    "description" : ""
   } ]
 }

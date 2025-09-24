@@ -17,39 +17,36 @@
       <description/>
       <type>MAIL</type>
       <attributes/>
-      <server>${smtp.mail.host}</server>
-      <port>${smtp.mail.port}</port>
+      <auth_password>${smtp.mail.psw}</auth_password>
+      <auth_user>${smtp.mail.user}</auth_user>
+      <check_server_identity>N</check_server_identity>
+      <comment>${email_body}</comment>
       <destination>${mail.destination.addresses}</destination>
-      <destinationCc/>
-      <destinationBCc/>
+      <embeddedimages>
+</embeddedimages>
+      <encoding>UTF-8</encoding>
+      <fileTypes>
+        <fileType>GENERAL</fileType>
+      </fileTypes>
+      <importance>normal</importance>
+      <include_date>N</include_date>
+      <include_files>Y</include_files>
+      <only_comment>Y</only_comment>
+      <port>${smtp.mail.port}</port>
+      <priority>normal</priority>
       <replyto>${mail.from.email}</replyto>
       <replytoname>${mail.from.displayname}</replytoname>
+      <secureconnectiontype>SSL</secureconnectiontype>
+      <sensitivity>normal</sensitivity>
+      <server>${smtp.mail.host}</server>
       <subject>${email_subject}</subject>
-      <include_date>N</include_date>
-      <contact_person/>
-      <contact_phone/>
-      <comment>${email_body}</comment>
-      <include_files>N</include_files>
-      <zip_files>Y</zip_files>
-      <zip_name>error_log.zip</zip_name>
-      <use_auth>Y</use_auth>
-      <use_secure_auth>Y</use_secure_auth>
-      <auth_user>${smtp.mail.user}</auth_user>
-      <auth_password>${smtp.mail.psw}</auth_password>
-      <only_comment>Y</only_comment>
       <use_HTML>Y</use_HTML>
       <use_Priority>N</use_Priority>
-      <encoding>UTF-8</encoding>
-      <priority>normal</priority>
-      <importance>normal</importance>
-      <sensitivity>normal</sensitivity>
-      <secureconnectiontype>SSL</secureconnectiontype>
-      <replyToAddresses/>
-      <filetypes>
-        <filetype>GENERAL</filetype>
-      </filetypes>
-      <embeddedimages>
-      </embeddedimages>
+      <use_auth>Y</use_auth>
+      <use_secure_auth>Y</use_secure_auth>
+      <usexoauth2>N</usexoauth2>
+      <zip_files>Y</zip_files>
+      <zip_name>logs.zip</zip_name>
       <parallel>N</parallel>
       <xloc>960</xloc>
       <yloc>128</yloc>
@@ -70,16 +67,17 @@
       <description/>
       <type>SPECIAL</type>
       <attributes/>
+      <DayOfMonth>1</DayOfMonth>
+      <doNotWaitOnFirstExecution>N</doNotWaitOnFirstExecution>
+      <hour>12</hour>
+      <intervalMinutes>60</intervalMinutes>
+      <intervalSeconds>0</intervalSeconds>
+      <minutes>0</minutes>
       <repeat>N</repeat>
       <schedulerType>0</schedulerType>
-      <intervalSeconds>0</intervalSeconds>
-      <intervalMinutes>60</intervalMinutes>
-      <hour>12</hour>
-      <minutes>0</minutes>
       <weekDay>1</weekDay>
-      <DayOfMonth>1</DayOfMonth>
       <parallel>N</parallel>
-      <xloc>256</xloc>
+      <xloc>80</xloc>
       <yloc>128</yloc>
       <attributes_hac/>
     </action>
@@ -88,6 +86,7 @@
       <description/>
       <type>ABORT</type>
       <attributes/>
+      <always_log_rows>N</always_log_rows>
       <parallel>N</parallel>
       <xloc>592</xloc>
       <yloc>496</yloc>
@@ -98,18 +97,14 @@
       <description/>
       <type>SIMPLE_EVAL</type>
       <attributes/>
-      <valuetype>variable</valuetype>
-      <fieldname/>
-      <variablename>${mail.isgmail}</variablename>
-      <fieldtype>string</fieldtype>
-      <mask/>
       <comparevalue>true</comparevalue>
-      <minvalue/>
-      <maxvalue/>
+      <fieldtype>string</fieldtype>
+      <successbooleancondition>false</successbooleancondition>
       <successcondition>equal</successcondition>
       <successnumbercondition>equal</successnumbercondition>
-      <successbooleancondition>false</successbooleancondition>
       <successwhenvarset>N</successwhenvarset>
+      <valuetype>variable</valuetype>
+      <variablename>${mail.isgmail}</variablename>
       <parallel>N</parallel>
       <xloc>608</xloc>
       <yloc>128</yloc>
@@ -120,39 +115,36 @@
       <description/>
       <type>MAIL</type>
       <attributes/>
-      <server>${smtp.mail.host}</server>
-      <port>${smtp.mail.port}</port>
+      <auth_password>${smtp.mail.psw}</auth_password>
+      <auth_user>${smtp.mail.user}</auth_user>
+      <check_server_identity>N</check_server_identity>
+      <comment>${email_body}</comment>
       <destination>${mail.destination.addresses}</destination>
-      <destinationCc/>
-      <destinationBCc/>
+      <embeddedimages>
+</embeddedimages>
+      <encoding>UTF-8</encoding>
+      <fileTypes>
+        <fileType>GENERAL</fileType>
+      </fileTypes>
+      <importance>normal</importance>
+      <include_date>N</include_date>
+      <include_files>Y</include_files>
+      <only_comment>Y</only_comment>
+      <port>${smtp.mail.port}</port>
+      <priority>normal</priority>
       <replyto>${mail.from.email}</replyto>
       <replytoname>${mail.from.displayname}</replytoname>
+      <secureconnectiontype>SSL</secureconnectiontype>
+      <sensitivity>normal</sensitivity>
+      <server>${smtp.mail.host}</server>
       <subject>${email_subject}</subject>
-      <include_date>N</include_date>
-      <contact_person/>
-      <contact_phone/>
-      <comment>${email_body}</comment>
-      <include_files>N</include_files>
-      <zip_files>Y</zip_files>
-      <zip_name>error_log.zip</zip_name>
-      <use_auth>Y</use_auth>
-      <use_secure_auth>N</use_secure_auth>
-      <auth_user>${smtp.mail.user}</auth_user>
-      <auth_password>${smtp.mail.psw}</auth_password>
-      <only_comment>Y</only_comment>
       <use_HTML>Y</use_HTML>
       <use_Priority>N</use_Priority>
-      <encoding>UTF-8</encoding>
-      <priority>normal</priority>
-      <importance>normal</importance>
-      <sensitivity>normal</sensitivity>
-      <secureconnectiontype>SSL</secureconnectiontype>
-      <replyToAddresses/>
-      <filetypes>
-        <filetype>GENERAL</filetype>
-      </filetypes>
-      <embeddedimages>
-      </embeddedimages>
+      <use_auth>Y</use_auth>
+      <use_secure_auth>N</use_secure_auth>
+      <usexoauth2>N</usexoauth2>
+      <zip_files>Y</zip_files>
+      <zip_name>logs.zip</zip_name>
       <parallel>N</parallel>
       <xloc>784</xloc>
       <yloc>208</yloc>
@@ -163,39 +155,35 @@
       <description/>
       <type>MAIL</type>
       <attributes/>
-      <server>${smtp.mail.host}</server>
-      <port>${smtp.mail.port}</port>
+      <auth_password>${smtp.mail.psw}</auth_password>
+      <check_server_identity>N</check_server_identity>
+      <comment>${email_body}</comment>
       <destination>${mail.destination.addresses}</destination>
-      <destinationCc/>
-      <destinationBCc/>
+      <embeddedimages>
+</embeddedimages>
+      <encoding>UTF-8</encoding>
+      <fileTypes>
+        <fileType>GENERAL</fileType>
+      </fileTypes>
+      <importance>normal</importance>
+      <include_date>N</include_date>
+      <include_files>Y</include_files>
+      <only_comment>Y</only_comment>
+      <port>${smtp.mail.port}</port>
+      <priority>normal</priority>
       <replyto>${mail.from.email}</replyto>
       <replytoname>${mail.from.displayname}</replytoname>
+      <secureconnectiontype>SSL</secureconnectiontype>
+      <sensitivity>normal</sensitivity>
+      <server>${smtp.mail.host}</server>
       <subject>${email_subject}</subject>
-      <include_date>N</include_date>
-      <contact_person/>
-      <contact_phone/>
-      <comment>${email_body}</comment>
-      <include_files>N</include_files>
-      <zip_files>Y</zip_files>
-      <zip_name>error_log.zip</zip_name>
-      <use_auth>N</use_auth>
-      <use_secure_auth>N</use_secure_auth>
-      <auth_user/>
-      <auth_password>${smtp.mail.psw}</auth_password>
-      <only_comment>Y</only_comment>
       <use_HTML>Y</use_HTML>
       <use_Priority>N</use_Priority>
-      <encoding>UTF-8</encoding>
-      <priority>normal</priority>
-      <importance>normal</importance>
-      <sensitivity>normal</sensitivity>
-      <secureconnectiontype>SSL</secureconnectiontype>
-      <replyToAddresses/>
-      <filetypes>
-        <filetype>GENERAL</filetype>
-      </filetypes>
-      <embeddedimages>
-      </embeddedimages>
+      <use_auth>N</use_auth>
+      <use_secure_auth>N</use_secure_auth>
+      <usexoauth2>N</usexoauth2>
+      <zip_files>Y</zip_files>
+      <zip_name>logs.zip</zip_name>
       <parallel>N</parallel>
       <xloc>480</xloc>
       <yloc>208</yloc>
@@ -206,18 +194,14 @@
       <description/>
       <type>SIMPLE_EVAL</type>
       <attributes/>
-      <valuetype>variable</valuetype>
-      <fieldname/>
-      <variablename>${mail.isauthenticated}</variablename>
-      <fieldtype>string</fieldtype>
-      <mask/>
       <comparevalue>true</comparevalue>
-      <minvalue/>
-      <maxvalue/>
+      <fieldtype>string</fieldtype>
+      <successbooleancondition>false</successbooleancondition>
       <successcondition>equal</successcondition>
       <successnumbercondition>equal</successnumbercondition>
-      <successbooleancondition>false</successbooleancondition>
       <successwhenvarset>N</successwhenvarset>
+      <valuetype>variable</valuetype>
+      <variablename>${mail.isauthenticated}</variablename>
       <parallel>N</parallel>
       <xloc>432</xloc>
       <yloc>128</yloc>
@@ -243,6 +227,25 @@
       <yloc>400</yloc>
       <attributes_hac/>
     </action>
+    <action>
+      <name>Add filenames to result</name>
+      <description/>
+      <type>ADD_RESULT_FILENAMES</type>
+      <attributes/>
+      <arg_from_previous>N</arg_from_previous>
+      <delete_all_before>N</delete_all_before>
+      <fields>
+        <field>
+          <filemask/>
+          <name>${execution.log.filename}</name>
+        </field>
+      </fields>
+      <include_subfolders>N</include_subfolders>
+      <parallel>N</parallel>
+      <xloc>256</xloc>
+      <yloc>128</yloc>
+      <attributes_hac/>
+    </action>
   </actions>
   <hops>
     <hop>
@@ -258,13 +261,6 @@
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
       <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>START</from>
-      <to>Use Auth?</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>Y</unconditional>
     </hop>
     <hop>
       <from>Use Auth?</from>
@@ -336,31 +332,44 @@
       <evaluation>Y</evaluation>
       <unconditional>Y</unconditional>
     </hop>
+    <hop>
+      <from>Add filenames to result</from>
+      <to>Use Auth?</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>START</from>
+      <to>Add filenames to result</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
   </hops>
   <notepads>
     <notepad>
+      <backgroundcolorblue>112</backgroundcolorblue>
+      <backgroundcolorgreen>205</backgroundcolorgreen>
+      <backgroundcolorred>255</backgroundcolorred>
+      <bordercolorblue>100</bordercolorblue>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorred>100</bordercolorred>
+      <fontbold>N</fontbold>
+      <fontcolorblue>0</fontcolorblue>
+      <fontcolorgreen>0</fontcolorgreen>
+      <fontcolorred>0</fontcolorred>
+      <fontitalic>N</fontitalic>
+      <fontsize>-1</fontsize>
+      <height>89</height>
+      <xloc>32</xloc>
+      <yloc>528</yloc>
       <note>Generic email sender job. Accepts three variables:
 
 email_subject -> Contains the subject of the email
 email_body -> Contains the body of the email in HTML format
 mail.destination.addresses -> Comma separated list of destination addresses</note>
-      <xloc>32</xloc>
-      <yloc>528</yloc>
       <width>519</width>
-      <heigth>110</heigth>
-      <fontname/>
-      <fontsize>-1</fontsize>
-      <fontbold>N</fontbold>
-      <fontitalic>N</fontitalic>
-      <fontcolorred>0</fontcolorred>
-      <fontcolorgreen>0</fontcolorgreen>
-      <fontcolorblue>0</fontcolorblue>
-      <backgroundcolorred>255</backgroundcolorred>
-      <backgroundcolorgreen>205</backgroundcolorgreen>
-      <backgroundcolorblue>112</backgroundcolorblue>
-      <bordercolorred>100</bordercolorred>
-      <bordercolorgreen>100</bordercolorgreen>
-      <bordercolorblue>100</bordercolorblue>
     </notepad>
   </notepads>
   <attributes/>

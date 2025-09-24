@@ -1,0 +1,14 @@
+{
+  "virtualPath": "",
+  "loggingParentsOnly": false,
+  "name": "workflow_log",
+  "workflowToLog": [
+    "${project.link.ref}/${project.main.workflow}"
+  ],
+  "intervalInSeconds": "30",
+  "executingPeriodically": false,
+  "pipelineFilename": "${PROJECT_HOME}/src/template/commons/tools/log_workflow.hpl",
+  "executingAtEnd": true,
+  "enabled": true,
+  "executingAtStart": true
+}
