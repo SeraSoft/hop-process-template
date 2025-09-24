@@ -4,6 +4,10 @@
     "value" : "${PROJECT_HOME}/src/project/main/${p_base_process_name}",
     "description" : "Link to activate the main process that must be started by the Hop Process Executor. The link is relative to the project home directory."
   }, {
+    "name" : "project.main.workflow",
+    "value" : "start.hwf",
+    "description" : ""
+  }, {
     "name" : "hop.user",
     "value" : "hopuser",
     "description" : "The operating system user that will run the Hop Process execution. This user must have read/write permissions on the project home directory."

@@ -183,7 +183,7 @@ P -> Terminated because not active (Paused)</note>
         <precision>-1</precision>
         <trim_type>both</trim_type>
         <type>Date</type>
-        <variable>${v_job_run_timestamp}</variable>
+        <variable>${v_process_run_timestamp}</variable>
       </field>
       <field>
         <length>-1</length>

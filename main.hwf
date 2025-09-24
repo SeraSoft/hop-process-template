@@ -110,7 +110,7 @@
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${project.link.ref}/start.hwf</filename>
+      <filename>${project.link.ref}/${project.main.workflow}</filename>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -598,13 +598,13 @@ PROCESS EXITS!
       <backgroundcolorblue>105</backgroundcolorblue>
       <backgroundcolorgreen>162</backgroundcolorgreen>
       <backgroundcolorred>38</backgroundcolorred>
-      <bordercolorblue>100</bordercolorblue>
-      <bordercolorgreen>100</bordercolorgreen>
-      <bordercolorred>100</bordercolorred>
+      <bordercolorblue>215</bordercolorblue>
+      <bordercolorgreen>215</bordercolorgreen>
+      <bordercolorred>215</bordercolorred>
       <fontbold>N</fontbold>
-      <fontcolorblue>0</fontcolorblue>
-      <fontcolorgreen>0</fontcolorgreen>
-      <fontcolorred>0</fontcolorred>
+      <fontcolorblue>255</fontcolorblue>
+      <fontcolorgreen>255</fontcolorgreen>
+      <fontcolorred>255</fontcolorred>
       <fontitalic>N</fontitalic>
       <fontname>Verdana</fontname>
       <fontsize>10</fontsize>
@@ -622,8 +622,8 @@ Base Process Parameters:
 
 Base Instance Variables:
 =================================================================
-- v_job_run_date: Date when the job was started in format yyyyMMdd
-- v_job_run_timestamp: Date when the job was started in format yyyyMMddHHmmss
+- v_process_run_date: Date when the process was started in format yyyyMMdd
+- v_process_run_timestamp: Date when the process was started in format yyyyMMddHHmmss
 - v_hostname: Hop server's hostname
 - v_host_ip: Hop server's host ip address
 - v_process_instance_id: UUID to identify currently running process (36 chars string) 
@@ -638,7 +638,7 @@ Base Variables from Config:
 
 
 </note>
-      <width>614</width>
+      <width>636</width>
     </notepad>
   </notepads>
   <attributes>

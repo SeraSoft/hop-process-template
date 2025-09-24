@@ -192,12 +192,10 @@ Dump Application Variables - ${p_base_process_name}
 
 GENERIC
 =======================================================================================
-v_job_run_date       -> ${v_job_run_date} 
-v_job_run_timestamp  -> ${v_job_run_timestamp}
+v_process_run_date       -> ${v_process_run_date} 
+v_process_run_timestamp  -> ${v_process_run_timestamp}
 v_hostname           -> ${v_hostname}
 v_host_ip            -> ${v_host_ip}
-lock.dir             -> ${lock.dir}
-base.tmp.dir             -> ${base.tmp.dir}
 hop.user             -> ${hop.user} 
 hop.program.name     -> ${hop.program.name}
 =======================================================================================

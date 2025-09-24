@@ -62,7 +62,7 @@
       <calc_type>COPY_FIELD</calc_type>
       <conversion_mask>yyyyMMdd</conversion_mask>
       <field_a>sys_date</field_a>
-      <field_name>job_run_date</field_name>
+      <field_name>process_run_date</field_name>
       <remove>N</remove>
       <value_length>-1</value_length>
       <value_precision>-1</value_precision>
@@ -72,7 +72,7 @@
       <calc_type>COPY_FIELD</calc_type>
       <conversion_mask>yyyyMMddHHmmss</conversion_mask>
       <field_a>sys_date</field_a>
-      <field_name>job_run_timestamp</field_name>
+      <field_name>process_run_timestamp</field_name>
       <remove>N</remove>
       <value_length>-1</value_length>
       <value_precision>-1</value_precision>
@@ -220,13 +220,15 @@
     </partitioning>
     <fields>
       <field>
-        <field_name>job_run_date</field_name>
-        <variable_name>v_job_run_date</variable_name>
+        <default_value/>
+        <field_name>process_run_date</field_name>
+        <variable_name>v_process_run_date</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
-        <field_name>job_run_timestamp</field_name>
-        <variable_name>v_job_run_timestamp</variable_name>
+        <default_value/>
+        <field_name>process_run_timestamp</field_name>
+        <variable_name>v_process_run_timestamp</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
