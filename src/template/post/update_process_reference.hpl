@@ -382,7 +382,7 @@ P -> Terminated because not active (Paused)</note>
     </partitioning>
     <fields>
       <meta>
-        <conversion_mask>yyyy-MM-dd HH:mm:ss.SSS XXX</conversion_mask>
+        <conversion_mask>yyyy-MM-dd HH:mm:ss.SSS</conversion_mask>
         <currency_symbol/>
         <date_format_lenient>N</date_format_lenient>
         <date_format_locale/>
