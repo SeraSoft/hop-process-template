@@ -28,21 +28,6 @@
     </hop>
     <hop>
       <from>Calculate job run_date</from>
-      <to>Get variables</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Get variables</from>
-      <to>Get integration_process_id ref</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Get integration_process_id ref</from>
-      <to>Generate process_instance_id</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Generate process_instance_id</from>
       <to>Set Variables</to>
       <enabled>Y</enabled>
     </hop>
@@ -86,29 +71,6 @@
     </GUI>
   </transform>
   <transform>
-    <name>Generate process_instance_id</name>
-    <type>RandomValue</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <name>process_instance_id</name>
-        <type>random uuid</type>
-      </field>
-    </fields>
-    <attributes/>
-    <GUI>
-      <xloc>688</xloc>
-      <yloc>64</yloc>
-    </GUI>
-  </transform>
-  <transform>
     <name>Get System Info</name>
     <type>SystemInfo</type>
     <description/>
@@ -140,74 +102,6 @@
     </GUI>
   </transform>
   <transform>
-    <name>Get integration_process_id ref</name>
-    <type>DBLookup</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <cache>N</cache>
-    <cache_load_all>N</cache_load_all>
-    <cache_size>0</cache_size>
-    <connection>${integrations.db.connection.name}</connection>
-    <lookup>
-      <eat_row_on_failure>N</eat_row_on_failure>
-      <fail_on_multiple>N</fail_on_multiple>
-      <key>
-        <condition>=</condition>
-        <field>id</field>
-        <name>base_process_name</name>
-        <name2/>
-      </key>
-      <orderby/>
-      <schema>${integrations.db.config.schema}</schema>
-      <table>integrations_processes</table>
-      <value>
-        <default>-1</default>
-        <name>id</name>
-        <rename>integration_process_id</rename>
-        <trim_type>none</trim_type>
-        <type>String</type>
-      </value>
-    </lookup>
-    <attributes/>
-    <GUI>
-      <xloc>512</xloc>
-      <yloc>64</yloc>
-    </GUI>
-  </transform>
-  <transform>
-    <name>Get variables</name>
-    <type>GetVariable</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <length>-1</length>
-        <name>base_process_name</name>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-        <type>String</type>
-        <variable>${p_base_process_name}</variable>
-      </field>
-    </fields>
-    <attributes/>
-    <GUI>
-      <xloc>368</xloc>
-      <yloc>64</yloc>
-    </GUI>
-  </transform>
-  <transform>
     <name>Set Variables</name>
     <type>SetVariable</type>
     <description/>
@@ -232,30 +126,22 @@
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
+        <default_value/>
         <field_name>hostname</field_name>
         <variable_name>v_hostname</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
+        <default_value/>
         <field_name>host_ip</field_name>
         <variable_name>v_host_ip</variable_name>
-        <variable_type>ROOT_WORKFLOW</variable_type>
-      </field>
-      <field>
-        <field_name>process_instance_id</field_name>
-        <variable_name>v_process_instance_id</variable_name>
-        <variable_type>ROOT_WORKFLOW</variable_type>
-      </field>
-      <field>
-        <field_name>integration_process_id</field_name>
-        <variable_name>v_integrations_process_id</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
     </fields>
     <use_formatting>Y</use_formatting>
     <attributes/>
     <GUI>
-      <xloc>832</xloc>
+      <xloc>400</xloc>
       <yloc>64</yloc>
     </GUI>
   </transform>
