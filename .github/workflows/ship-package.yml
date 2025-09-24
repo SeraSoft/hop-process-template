@@ -22,6 +22,7 @@ jobs:
           mkdir -p hop-process-template/
           cp README.md hop-process-template/
           cp main.hwf hop-process-template/
+          cp .gitignore hop-process-template/
           cp -r src/ hop-process-template/
           cp -r metadata/ hop-process-template/
           cp -r integration-tests/ hop-process-template/
