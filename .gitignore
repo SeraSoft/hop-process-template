@@ -1,2 +1,3 @@
-config/dev-local.json
+config/*
 db/sqlite/data/*
+logs/*
