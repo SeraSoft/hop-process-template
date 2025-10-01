@@ -110,7 +110,7 @@
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <exec_per_row>N</exec_per_row>
-      <filename>${project.link.ref}/${project.main.workflow}</filename>
+      <filename>${serasoft.project.link.ref}/${serasoft.project.main.workflow}</filename>
       <loglevel>Nothing</loglevel>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
@@ -274,7 +274,7 @@ PROCESS EXITS!
         <field>
           <variable_name>email.feedback.enabled</variable_name>
           <variable_type>ROOT_WORKFLOW</variable_type>
-          <variable_value>${email.lock.feedback.enabled}</variable_value>
+          <variable_value>${serasoft.email.lock.feedback.enabled}</variable_value>
         </field>
       </fields>
       <file_variable_type>JVM</file_variable_type>
@@ -378,7 +378,7 @@ PROCESS EXITS!
         <field>
           <variable_name>email.feedback.enabled</variable_name>
           <variable_type>ROOT_WORKFLOW</variable_type>
-          <variable_value>${email.notactive.feedback.enabled}</variable_value>
+          <variable_value>${serasoft.email.notactive.feedback.enabled}</variable_value>
         </field>
       </fields>
       <file_variable_type>JVM</file_variable_type>
@@ -633,8 +633,8 @@ Base Instance Variables:
 Base Variables from Config:
 =================================================================
 - base.dir: Root path to a convenient folder to store processes related things (Mandatory)
-- hop.user: Associates a user to a running Hop instance
-- hop.program.name: Associates a name to a running Hop instance
+- serasoft.hop.user: Associates a user to a running Hop instance
+- serasoft.hop.program.name: Associates a name to a running Hop instance
 
 
 </note>

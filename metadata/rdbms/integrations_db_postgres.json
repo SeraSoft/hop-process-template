@@ -1,13 +1,13 @@
 {
   "rdbms": {
     "POSTGRESQL": {
-      "databaseName": "${integrations.db.name}",
+      "databaseName": "${serasoft.integrations.db.name}",
       "pluginId": "POSTGRESQL",
       "accessType": 0,
-      "hostname": "${integrations.db.host}",
-      "password": "${integrations.db.pwd}",
+      "hostname": "${serasoft.integrations.db.host}",
+      "password": "${serasoft.integrations.db.pwd}",
       "pluginName": "PostgreSQL",
-      "port": "${integrations.db.port}",
+      "port": "${serasoft.integrations.db.port}",
       "attributes": {
         "SUPPORTS_TIMESTAMP_DATA_TYPE": "Y",
         "QUOTE_ALL_FIELDS": "N",
@@ -20,7 +20,7 @@
         "PREFERRED_SCHEMA_NAME": ""
       },
       "manualUrl": "",
-      "username": "${integrations.db.user}"
+      "username": "${serasoft.integrations.db.user}"
     }
   },
   "name": "integrations_db_postgres"

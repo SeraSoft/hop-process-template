@@ -196,8 +196,8 @@ v_process_run_date       -> ${v_process_run_date}
 v_process_run_timestamp  -> ${v_process_run_timestamp}
 v_hostname           -> ${v_hostname}
 v_host_ip            -> ${v_host_ip}
-hop.user             -> ${hop.user} 
-hop.program.name     -> ${hop.program.name}
+serasoft.hop.user             -> ${serasoft.hop.user} 
+serasoft.hop.program.name     -> ${serasoft.hop.program.name}
 =======================================================================================
 
 Delete this last message and add here your own application instance variable's dump \o/ </logmessage>
@@ -415,9 +415,9 @@ File ${PROJECT_HOME}/config/${p_base_process_name}.properties not present.
       <description/>
       <type>SQL</type>
       <attributes/>
-      <connection>${integrations.db.connection.name}</connection>
+      <connection>${serasoft.integrations.db.connection.name}</connection>
       <sendOneStatement>Y</sendOneStatement>
-      <sql>UPDATE ${integrations.db.config.schema}.integrations_processes
+      <sql>UPDATE ${serasoft.integrations.db.config.schema}.integrations_processes
 SET is_running='Y'
 WHERE short_name='${p_base_process_name}'</sql>
       <sqlfromfile>N</sqlfromfile>

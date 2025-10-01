@@ -17,13 +17,13 @@
       <description/>
       <type>MAIL</type>
       <attributes/>
-      <server>${smtp.mail.host}</server>
-      <port>${smtp.mail.port}</port>
+      <server>${serasoft.smtp.mail.host}</server>
+      <port>${serasoft.smtp.mail.port}</port>
       <destination>${mail.destination.addresses}</destination>
       <destinationCc/>
       <destinationBCc/>
-      <replyto>${mail.from.email}</replyto>
-      <replytoname>${mail.from.displayname}</replytoname>
+      <replyto>${serasoft.mail.from.email}</replyto>
+      <replytoname>${serasoft.mail.from.displayname}</replytoname>
       <subject>${email_subject}</subject>
       <include_date>N</include_date>
       <contact_person/>
@@ -35,8 +35,8 @@
       <use_auth>Y</use_auth>
       <usexoauth2>N</usexoauth2>
       <use_secure_auth>Y</use_secure_auth>
-      <auth_user>${smtp.mail.user}</auth_user>
-      <auth_password>${smtp.mail.psw}</auth_password>
+      <auth_user>${serasoft.smtp.mail.user}</auth_user>
+      <auth_password>${serasoft.smtp.mail.psw}</auth_password>
       <only_comment>Y</only_comment>
       <use_HTML>Y</use_HTML>
       <use_Priority>N</use_Priority>
@@ -102,7 +102,7 @@
       <attributes/>
       <valuetype>variable</valuetype>
       <fieldname/>
-      <variablename>${mail.isgmail}</variablename>
+      <variablename>${serasoft.mail.isgmail}</variablename>
       <fieldtype>string</fieldtype>
       <mask/>
       <comparevalue>true</comparevalue>
@@ -122,13 +122,13 @@
       <description/>
       <type>MAIL</type>
       <attributes/>
-      <server>${smtp.mail.host}</server>
-      <port>${smtp.mail.port}</port>
+      <server>${serasoft.smtp.mail.host}</server>
+      <port>${serasoft.smtp.mail.port}</port>
       <destination>${mail.destination.addresses}</destination>
       <destinationCc/>
       <destinationBCc/>
-      <replyto>${mail.from.email}</replyto>
-      <replytoname>${mail.from.displayname}</replytoname>
+      <replyto>${serasoft.mail.from.email}</replyto>
+      <replytoname>${serasoft.mail.from.displayname}</replytoname>
       <subject>${email_subject}</subject>
       <include_date>N</include_date>
       <contact_person/>
@@ -140,8 +140,8 @@
       <use_auth>Y</use_auth>
       <usexoauth2>N</usexoauth2>
       <use_secure_auth>N</use_secure_auth>
-      <auth_user>${smtp.mail.user}</auth_user>
-      <auth_password>${smtp.mail.psw}</auth_password>
+      <auth_user>${serasoft.smtp.mail.user}</auth_user>
+      <auth_password>${serasoft.smtp.mail.psw}</auth_password>
       <only_comment>Y</only_comment>
       <use_HTML>Y</use_HTML>
       <use_Priority>N</use_Priority>
@@ -166,13 +166,13 @@
       <description/>
       <type>MAIL</type>
       <attributes/>
-      <server>${smtp.mail.host}</server>
-      <port>${smtp.mail.port}</port>
+      <server>${serasoft.smtp.mail.host}</server>
+      <port>${serasoft.smtp.mail.port}</port>
       <destination>${mail.destination.addresses}</destination>
       <destinationCc/>
       <destinationBCc/>
-      <replyto>${mail.from.email}</replyto>
-      <replytoname>${mail.from.displayname}</replytoname>
+      <replyto>${serasoft.mail.from.email}</replyto>
+      <replytoname>${serasoft.mail.from.displayname}</replytoname>
       <subject>${email_subject}</subject>
       <include_date>N</include_date>
       <contact_person/>
@@ -185,7 +185,7 @@
       <usexoauth2>N</usexoauth2>
       <use_secure_auth>N</use_secure_auth>
       <auth_user/>
-      <auth_password>${smtp.mail.psw}</auth_password>
+      <auth_password>${serasoft.smtp.mail.psw}</auth_password>
       <only_comment>Y</only_comment>
       <use_HTML>Y</use_HTML>
       <use_Priority>N</use_Priority>
@@ -212,7 +212,7 @@
       <attributes/>
       <valuetype>variable</valuetype>
       <fieldname/>
-      <variablename>${mail.isauthenticated}</variablename>
+      <variablename>${serasoft.mail.isauthenticated}</variablename>
       <fieldtype>string</fieldtype>
       <mask/>
       <comparevalue>true</comparevalue>

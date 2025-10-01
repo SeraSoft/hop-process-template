@@ -3,7 +3,7 @@
   "loggingParentsOnly": false,
   "name": "workflow_log",
   "workflowToLog": [
-    "${project.link.ref}/${project.main.workflow}"
+    "${serasoft.project.link.ref}/${serasoft.project.main.workflow}"
   ],
   "intervalInSeconds": "30",
   "executingPeriodically": false,

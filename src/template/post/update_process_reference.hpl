@@ -243,7 +243,7 @@ P -> Terminated because not active (Paused)</note>
       <schema_name/>
     </partitioning>
     <commit>100</commit>
-    <connection>${integrations.db.connection.name}</connection>
+    <connection>${serasoft.integrations.db.connection.name}</connection>
     <error_ignored>N</error_ignored>
     <lookup>
       <key>
@@ -251,7 +251,7 @@ P -> Terminated because not active (Paused)</note>
         <field>short_name</field>
         <name>process_name</name>
       </key>
-      <schema>${integrations.db.config.schema}</schema>
+      <schema>${serasoft.integrations.db.config.schema}</schema>
       <table>integrations_processes</table>
       <value>
         <name>is_running</name>
@@ -303,7 +303,7 @@ P -> Terminated because not active (Paused)</note>
       <schema_name/>
     </partitioning>
     <commit>100</commit>
-    <connection>${integrations.db.connection.name}</connection>
+    <connection>${serasoft.integrations.db.connection.name}</connection>
     <error_ignored>N</error_ignored>
     <lookup>
       <key>
@@ -311,7 +311,7 @@ P -> Terminated because not active (Paused)</note>
         <field>id</field>
         <name>process_instance_id</name>
       </key>
-      <schema>${integrations.db.log.schema}</schema>
+      <schema>${serasoft.integrations.db.log.schema}</schema>
       <table>integrations_logs</table>
       <value>
         <name>date_finished</name>

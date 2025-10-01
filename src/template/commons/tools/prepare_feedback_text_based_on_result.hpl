@@ -155,7 +155,7 @@ P -> Terminated because not active (Paused)</note>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${mail.subject.application.error}</variable>
+        <variable>${serasoft.mail.subject.application.error}</variable>
       </field>
       <field>
         <length>-1</length>
@@ -163,7 +163,7 @@ P -> Terminated because not active (Paused)</note>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${application.error.mail.text}</variable>
+        <variable>${serasoft.application.error.mail.text}</variable>
       </field>
       <field>
         <length>-1</length>
@@ -171,7 +171,7 @@ P -> Terminated because not active (Paused)</note>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${application.error.mail.destination.addresses}</variable>
+        <variable>${serasoft.application.error.mail.destination.addresses}</variable>
       </field>
     </fields>
     <attributes/>
@@ -215,7 +215,7 @@ P -> Terminated because not active (Paused)</note>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${mail.subject.error}</variable>
+        <variable>${serasoft.mail.subject.error}</variable>
       </field>
       <field>
         <length>-1</length>
@@ -223,7 +223,7 @@ P -> Terminated because not active (Paused)</note>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${error.mail.text}</variable>
+        <variable>${serasoft.error.mail.text}</variable>
       </field>
       <field>
         <length>-1</length>
@@ -231,7 +231,7 @@ P -> Terminated because not active (Paused)</note>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${errors.mail.destination.addresses}</variable>
+        <variable>${serasoft.errors.mail.destination.addresses}</variable>
       </field>
     </fields>
     <attributes/>
@@ -275,7 +275,7 @@ P -> Terminated because not active (Paused)</note>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${mail.subject.lock}</variable>
+        <variable>${serasoft.mail.subject.lock}</variable>
       </field>
       <field>
         <length>-1</length>
@@ -283,7 +283,7 @@ P -> Terminated because not active (Paused)</note>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${lock.mail.text}</variable>
+        <variable>${serasoft.lock.mail.text}</variable>
       </field>
       <field>
         <length>-1</length>
@@ -291,7 +291,7 @@ P -> Terminated because not active (Paused)</note>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${lock.mail.destination.addresses}</variable>
+        <variable>${serasoft.lock.mail.destination.addresses}</variable>
       </field>
     </fields>
     <attributes/>
@@ -335,7 +335,7 @@ P -> Terminated because not active (Paused)</note>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${mail.subject.notactive}</variable>
+        <variable>${serasoft.mail.subject.notactive}</variable>
       </field>
       <field>
         <length>-1</length>
@@ -343,7 +343,7 @@ P -> Terminated because not active (Paused)</note>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${notactive.mail.text}</variable>
+        <variable>${serasoft.notactive.mail.text}</variable>
       </field>
       <field>
         <length>-1</length>
@@ -351,7 +351,7 @@ P -> Terminated because not active (Paused)</note>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${notactive.mail.destination.addresses}</variable>
+        <variable>${serasoft.notactive.mail.destination.addresses}</variable>
       </field>
     </fields>
     <attributes/>
@@ -413,7 +413,7 @@ P -> Terminated because not active (Paused)</note>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${mail.subject.success}</variable>
+        <variable>${serasoft.mail.subject.success}</variable>
       </field>
       <field>
         <length>-1</length>
@@ -421,7 +421,7 @@ P -> Terminated because not active (Paused)</note>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${success.mail.text}</variable>
+        <variable>${serasoft.success.mail.text}</variable>
       </field>
       <field>
         <length>-1</length>
@@ -429,7 +429,7 @@ P -> Terminated because not active (Paused)</note>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${success.mail.destination.addresses}</variable>
+        <variable>${serasoft.success.mail.destination.addresses}</variable>
       </field>
     </fields>
     <attributes/>

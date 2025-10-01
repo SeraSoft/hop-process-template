@@ -52,7 +52,7 @@
     <fileNameField/>
     <create_parent_folder>Y</create_parent_folder>
     <file>
-      <name>${execution.log.filename}</name>
+      <name>${serasoft.execution.log.filename}</name>
       <servlet_output>N</servlet_output>
       <do_not_open_new_file_init>Y</do_not_open_new_file_init>
       <extention/>

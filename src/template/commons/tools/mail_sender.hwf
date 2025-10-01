@@ -17,8 +17,8 @@
       <description/>
       <type>MAIL</type>
       <attributes/>
-      <auth_password>${smtp.mail.psw}</auth_password>
-      <auth_user>${smtp.mail.user}</auth_user>
+      <auth_password>${serasoft.smtp.mail.psw}</auth_password>
+      <auth_user>${serasoft.smtp.mail.user}</auth_user>
       <check_server_identity>N</check_server_identity>
       <comment>${email_body}</comment>
       <destination>${mail.destination.addresses}</destination>
@@ -32,13 +32,13 @@
       <include_date>N</include_date>
       <include_files>Y</include_files>
       <only_comment>Y</only_comment>
-      <port>${smtp.mail.port}</port>
+      <port>${serasoft.smtp.mail.port}</port>
       <priority>normal</priority>
-      <replyto>${mail.from.email}</replyto>
-      <replytoname>${mail.from.displayname}</replytoname>
+      <replyto>${serasoft.mail.from.email}</replyto>
+      <replytoname>${serasoft.mail.from.displayname}</replytoname>
       <secureconnectiontype>SSL</secureconnectiontype>
       <sensitivity>normal</sensitivity>
-      <server>${smtp.mail.host}</server>
+      <server>${serasoft.smtp.mail.host}</server>
       <subject>${email_subject}</subject>
       <use_HTML>Y</use_HTML>
       <use_Priority>N</use_Priority>
@@ -104,7 +104,7 @@
       <successnumbercondition>equal</successnumbercondition>
       <successwhenvarset>N</successwhenvarset>
       <valuetype>variable</valuetype>
-      <variablename>${mail.isgmail}</variablename>
+      <variablename>${serasoft.mail.isgmail}</variablename>
       <parallel>N</parallel>
       <xloc>608</xloc>
       <yloc>128</yloc>
@@ -115,8 +115,8 @@
       <description/>
       <type>MAIL</type>
       <attributes/>
-      <auth_password>${smtp.mail.psw}</auth_password>
-      <auth_user>${smtp.mail.user}</auth_user>
+      <auth_password>${serasoft.smtp.mail.psw}</auth_password>
+      <auth_user>${serasoft.smtp.mail.user}</auth_user>
       <check_server_identity>N</check_server_identity>
       <comment>${email_body}</comment>
       <destination>${mail.destination.addresses}</destination>
@@ -130,13 +130,13 @@
       <include_date>N</include_date>
       <include_files>Y</include_files>
       <only_comment>Y</only_comment>
-      <port>${smtp.mail.port}</port>
+      <port>${serasoft.smtp.mail.port}</port>
       <priority>normal</priority>
-      <replyto>${mail.from.email}</replyto>
-      <replytoname>${mail.from.displayname}</replytoname>
+      <replyto>${serasoft.mail.from.email}</replyto>
+      <replytoname>${serasoft.mail.from.displayname}</replytoname>
       <secureconnectiontype>SSL</secureconnectiontype>
       <sensitivity>normal</sensitivity>
-      <server>${smtp.mail.host}</server>
+      <server>${serasoft.smtp.mail.host}</server>
       <subject>${email_subject}</subject>
       <use_HTML>Y</use_HTML>
       <use_Priority>N</use_Priority>
@@ -155,7 +155,7 @@
       <description/>
       <type>MAIL</type>
       <attributes/>
-      <auth_password>${smtp.mail.psw}</auth_password>
+      <auth_password>${serasoft.smtp.mail.psw}</auth_password>
       <check_server_identity>N</check_server_identity>
       <comment>${email_body}</comment>
       <destination>${mail.destination.addresses}</destination>
@@ -169,13 +169,13 @@
       <include_date>N</include_date>
       <include_files>Y</include_files>
       <only_comment>Y</only_comment>
-      <port>${smtp.mail.port}</port>
+      <port>${serasoft.smtp.mail.port}</port>
       <priority>normal</priority>
-      <replyto>${mail.from.email}</replyto>
-      <replytoname>${mail.from.displayname}</replytoname>
+      <replyto>${serasoft.mail.from.email}</replyto>
+      <replytoname>${serasoft.mail.from.displayname}</replytoname>
       <secureconnectiontype>SSL</secureconnectiontype>
       <sensitivity>normal</sensitivity>
-      <server>${smtp.mail.host}</server>
+      <server>${serasoft.smtp.mail.host}</server>
       <subject>${email_subject}</subject>
       <use_HTML>Y</use_HTML>
       <use_Priority>N</use_Priority>
@@ -201,7 +201,7 @@
       <successnumbercondition>equal</successnumbercondition>
       <successwhenvarset>N</successwhenvarset>
       <valuetype>variable</valuetype>
-      <variablename>${mail.isauthenticated}</variablename>
+      <variablename>${serasoft.mail.isauthenticated}</variablename>
       <parallel>N</parallel>
       <xloc>432</xloc>
       <yloc>128</yloc>
@@ -237,7 +237,7 @@
       <fields>
         <field>
           <filemask/>
-          <name>${execution.log.filename}</name>
+          <name>${serasoft.execution.log.filename}</name>
         </field>
       </fields>
       <include_subfolders>N</include_subfolders>

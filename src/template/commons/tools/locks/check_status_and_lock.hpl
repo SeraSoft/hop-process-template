@@ -136,7 +136,7 @@
     <cache>N</cache>
     <cache_load_all>N</cache_load_all>
     <cache_size>0</cache_size>
-    <connection>${integrations.db.connection.name}</connection>
+    <connection>${serasoft.integrations.db.connection.name}</connection>
     <lookup>
       <eat_row_on_failure>N</eat_row_on_failure>
       <fail_on_multiple>N</fail_on_multiple>
@@ -153,7 +153,7 @@
         <name2/>
       </key>
       <orderby/>
-      <schema>${integrations.db.log.schema}</schema>
+      <schema>${serasoft.integrations.db.log.schema}</schema>
       <table>integrations_logs</table>
       <value>
         <default/>
@@ -210,7 +210,7 @@
     <cache>N</cache>
     <cache_load_all>N</cache_load_all>
     <cache_size>0</cache_size>
-    <connection>${integrations.db.connection.name}</connection>
+    <connection>${serasoft.integrations.db.connection.name}</connection>
     <lookup>
       <eat_row_on_failure>N</eat_row_on_failure>
       <fail_on_multiple>N</fail_on_multiple>
@@ -221,7 +221,7 @@
         <name2/>
       </key>
       <orderby/>
-      <schema>${integrations.db.config.schema}</schema>
+      <schema>${serasoft.integrations.db.config.schema}</schema>
       <table>integrations_processes</table>
       <value>
         <default/>

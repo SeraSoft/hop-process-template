@@ -1,34 +1,34 @@
 {
   "variables" : [ {
-    "name" : "integrations.db.config.schema",
+    "name" : "serasoft.integrations.db.config.schema",
     "value" : "config",
     "description" : "Name of the schema containing the configuration tables for the integrations database."
   }, {
-    "name" : "integrations.db.log.schema",
+    "name" : "serasoft.integrations.db.log.schema",
     "value" : "logs",
     "description" : "Name of schema containing the logs tables for the integrations database."
   }, {
-    "name" : "integrations.db.host",
+    "name" : "serasoft.integrations.db.host",
     "value" : "",
     "description" : "Name of the hosts where the integrations database is running. This can be an IP address or a hostname."
   }, {
-    "name" : "integrations.db.connection.name",
+    "name" : "serasoft.integrations.db.connection.name",
     "value" : "integrations_db_sqlite",
     "description" : "Name of the connection assigned in Apache Hop for the integrations database. This is used to connect to the database during Hop Process execution."
   }, {
-    "name" : "integrations.db.name",
+    "name" : "serasoft.integrations.db.name",
     "value" : "${PROJECT_HOME}/db/sqlite/data/integrations_db",
     "description" : "Name of the database containing the configuration and logs tables for the integrations database."
   }, {
-    "name" : "integrations.db.port",
+    "name" : "serasoft.integrations.db.port",
     "value" : "",
     "description" : "Port of the integrations database. This is the port where the database server is listening for connections."
   }, {
-    "name" : "integrations.db.user",
+    "name" : "serasoft.integrations.db.user",
     "value" : "",
     "description" : "Username used to connect to the integrations database. This user must have permissions to read/write in the specified database."
   }, {
-    "name" : "integrations.db.pwd",
+    "name" : "serasoft.integrations.db.pwd",
     "value" : "",
     "description" : "Password used to connect to the integrations database. This user must have permissions to read/write in the specified database."
   } ]

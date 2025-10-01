@@ -74,7 +74,7 @@
     <cache>N</cache>
     <cache_load_all>N</cache_load_all>
     <cache_size>0</cache_size>
-    <connection>${integrations.db.connection.name}</connection>
+    <connection>${serasoft.integrations.db.connection.name}</connection>
     <lookup>
       <eat_row_on_failure>N</eat_row_on_failure>
       <fail_on_multiple>N</fail_on_multiple>
@@ -83,7 +83,7 @@
         <field>id</field>
         <name>base_process_name</name>
       </key>
-      <schema>${integrations.db.config.schema}</schema>
+      <schema>${serasoft.integrations.db.config.schema}</schema>
       <table>integrations_processes</table>
       <value>
         <default>-1</default>

@@ -117,7 +117,7 @@
         <precision>-1</precision>
         <trim_type>both</trim_type>
         <type>String</type>
-        <variable>${hop.user}</variable>
+        <variable>${serasoft.hop.user}</variable>
       </field>
       <field>
         <length>-1</length>
@@ -195,7 +195,7 @@
       <schema_name/>
     </partitioning>
     <commit>1000</commit>
-    <connection>${integrations.db.connection.name}</connection>
+    <connection>${serasoft.integrations.db.connection.name}</connection>
     <fields>
       <field>
         <column_name>id</column_name>
@@ -233,7 +233,7 @@
     <partitioning_monthly>Y</partitioning_monthly>
     <return_field>process_instance_id</return_field>
     <return_keys>N</return_keys>
-    <schema>${integrations.db.log.schema}</schema>
+    <schema>${serasoft.integrations.db.log.schema}</schema>
     <specify_fields>Y</specify_fields>
     <table>integrations_logs</table>
     <tablename_in_field>N</tablename_in_field>
