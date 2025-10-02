@@ -37,7 +37,7 @@
       <attributes/>
       <fields>
         <field>
-          <variable_name>terminated.successfully</variable_name>
+          <variable_name>v_terminated_successfully</variable_name>
           <variable_type>ROOT_WORKFLOW</variable_type>
           <variable_value>0</variable_value>
         </field>

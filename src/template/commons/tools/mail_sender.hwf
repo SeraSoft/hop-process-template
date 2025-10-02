@@ -20,8 +20,8 @@
       <auth_password>${serasoft.smtp.mail.psw}</auth_password>
       <auth_user>${serasoft.smtp.mail.user}</auth_user>
       <check_server_identity>N</check_server_identity>
-      <comment>${email_body}</comment>
-      <destination>${mail.destination.addresses}</destination>
+      <comment>${v_email_body}</comment>
+      <destination>${v_mail_destination_addresses}</destination>
       <embeddedimages>
 </embeddedimages>
       <encoding>UTF-8</encoding>
@@ -39,7 +39,7 @@
       <secureconnectiontype>SSL</secureconnectiontype>
       <sensitivity>normal</sensitivity>
       <server>${serasoft.smtp.mail.host}</server>
-      <subject>${email_subject}</subject>
+      <subject>${v_email_subject}</subject>
       <use_HTML>Y</use_HTML>
       <use_Priority>N</use_Priority>
       <use_auth>Y</use_auth>
@@ -118,8 +118,8 @@
       <auth_password>${serasoft.smtp.mail.psw}</auth_password>
       <auth_user>${serasoft.smtp.mail.user}</auth_user>
       <check_server_identity>N</check_server_identity>
-      <comment>${email_body}</comment>
-      <destination>${mail.destination.addresses}</destination>
+      <comment>${v_email_body}</comment>
+      <destination>${v_mail_destination_addresses}</destination>
       <embeddedimages>
 </embeddedimages>
       <encoding>UTF-8</encoding>
@@ -137,7 +137,7 @@
       <secureconnectiontype>SSL</secureconnectiontype>
       <sensitivity>normal</sensitivity>
       <server>${serasoft.smtp.mail.host}</server>
-      <subject>${email_subject}</subject>
+      <subject>${v_email_subject}</subject>
       <use_HTML>Y</use_HTML>
       <use_Priority>N</use_Priority>
       <use_auth>Y</use_auth>
@@ -157,8 +157,8 @@
       <attributes/>
       <auth_password>${serasoft.smtp.mail.psw}</auth_password>
       <check_server_identity>N</check_server_identity>
-      <comment>${email_body}</comment>
-      <destination>${mail.destination.addresses}</destination>
+      <comment>${v_email_body}</comment>
+      <destination>${v_mail_destination_addresses}</destination>
       <embeddedimages>
 </embeddedimages>
       <encoding>UTF-8</encoding>
@@ -176,7 +176,7 @@
       <secureconnectiontype>SSL</secureconnectiontype>
       <sensitivity>normal</sensitivity>
       <server>${serasoft.smtp.mail.host}</server>
-      <subject>${email_subject}</subject>
+      <subject>${v_email_subject}</subject>
       <use_HTML>Y</use_HTML>
       <use_Priority>N</use_Priority>
       <use_auth>N</use_auth>

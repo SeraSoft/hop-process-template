@@ -166,7 +166,7 @@ P -> Terminated because not active (Paused)</note>
         <precision>-1</precision>
         <trim_type>both</trim_type>
         <type>String</type>
-        <variable>${terminated.successfully}</variable>
+        <variable>${v_terminated_successfully}</variable>
       </field>
       <field>
         <length>-1</length>
@@ -280,7 +280,7 @@ P -> Terminated because not active (Paused)</note>
     <fields>
       <field>
         <field_name>status</field_name>
-        <variable_name>process.status</variable_name>
+        <variable_name>v_process_status</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
     </fields>

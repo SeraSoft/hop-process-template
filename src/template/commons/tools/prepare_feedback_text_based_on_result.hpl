@@ -374,17 +374,17 @@ P -> Terminated because not active (Paused)</note>
     <fields>
       <field>
         <field_name>addresses</field_name>
-        <variable_name>mail.destination.addresses</variable_name>
+        <variable_name>v_mail_destination_addresses</variable_name>
         <variable_type>PARENT_WORKFLOW</variable_type>
       </field>
       <field>
         <field_name>body</field_name>
-        <variable_name>email_body</variable_name>
+        <variable_name>v_email_body</variable_name>
         <variable_type>PARENT_WORKFLOW</variable_type>
       </field>
       <field>
         <field_name>subject</field_name>
-        <variable_name>email_subject</variable_name>
+        <variable_name>v_email_subject</variable_name>
         <variable_type>PARENT_WORKFLOW</variable_type>
       </field>
     </fields>
@@ -550,7 +550,7 @@ P -> Terminated because not active (Paused)</note>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${process.status}</variable>
+        <variable>${v_process_status}</variable>
       </field>
     </fields>
     <attributes/>

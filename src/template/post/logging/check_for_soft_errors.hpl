@@ -513,14 +513,10 @@ group by ec.name, es.severity</sql>
     </partitioning>
     <fields>
       <field>
-        <length>-1</length>
-        <name>status</name>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-        <type>String</type>
-        <variable>${status}</variable>
-      </field>
-      <field>
+        <currency/>
+        <decimal/>
+        <format/>
+        <group/>
         <length>-1</length>
         <name>process_instance_id</name>
         <precision>-1</precision>
@@ -529,20 +525,16 @@ group by ec.name, es.severity</sql>
         <variable>${v_process_instance_id}</variable>
       </field>
       <field>
-        <length>-1</length>
-        <name>comes_from_error_path</name>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-        <type>String</type>
-        <variable>${v_comes_from_error_path}</variable>
-      </field>
-      <field>
+        <currency/>
+        <decimal/>
+        <format/>
+        <group/>
         <length>-1</length>
         <name>terminated_successfully</name>
         <precision>-1</precision>
         <trim_type>none</trim_type>
         <type>String</type>
-        <variable>${terminated.successfully}</variable>
+        <variable>${v_terminated_successfully}</variable>
       </field>
     </fields>
     <attributes/>
@@ -793,7 +785,7 @@ group by ec.name, es.severity</sql>
     <fields>
       <field>
         <field_name>email.feedback.enabled</field_name>
-        <variable_name>email.feedback.enabled</variable_name>
+        <variable_name>v_email_feedback_enabled</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
     </fields>
@@ -888,7 +880,7 @@ group by ec.name, es.severity</sql>
       </field>
       <field>
         <field_name>email.feedback.enabled</field_name>
-        <variable_name>email.feedback.enabled</variable_name>
+        <variable_name>v_email_feedback_enabled</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
     </fields>
@@ -955,7 +947,7 @@ group by ec.name, es.severity</sql>
       </field>
       <field>
         <field_name>email.feedback.enabled</field_name>
-        <variable_name>email.feedback.enabled</variable_name>
+        <variable_name>v_email_feedback_enabled</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
     </fields>
@@ -1246,13 +1238,7 @@ group by ec.name, es.severity</sql>
     <fields>
       <meta>
         <conversion_mask>yyyy-MM-dd HH:mm:ss.SSS</conversion_mask>
-        <currency_symbol/>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale/>
-        <date_format_timezone/>
-        <decimal_symbol/>
-        <encoding/>
-        <grouping_symbol/>
         <length>-2</length>
         <lenient_string_to_number>N</lenient_string_to_number>
         <name>now</name>
