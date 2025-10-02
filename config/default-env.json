@@ -129,23 +129,23 @@
     "description" : "Set of email addresses to send application's error feedback emails to. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'serasoft.default.mail.destination.addresses'."
   }, {
     "name" : "serasoft.success.mail.text",
-    "value" : "<html><head></head><body>The process ${p_base_process_name} running on server ${v_hostname} was terminated successfully.<p>Execution's log file available at: ${p_log_filename}.<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>",
+    "value" : "<p>The process ${p_base_process_name} on server ${v_hostname} was terminated successfully.</p><p>Process ${p_base_process_name}'s log attacched.</p><p>Complete execution log file available at: ${p_log_filename}.</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>",
     "description" : "Sample text for the success feedback email. It includes the base process name, hostname, and log file name."
   }, {
     "name" : "serasoft.error.mail.text",
-    "value" : "<html><head></head><body>The process was terminated abnormally because of an Exception.<p>Execution's log file available at: ${p_log_filename}.<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>",
+    "value" : "<p>The process ${p_base_process_name} was terminated abnormally because of an Exception.</p><p>Process ${p_base_process_name}'s log attacched.</p><p>Complete execution log file available at: ${p_log_filename}.</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>",
     "description" : "Sample text message for the error feedback email. It includes the log file name."
   }, {
     "name" : "serasoft.lock.mail.text",
-    "value" : "<html><head></head><body>The process ${p_base_process_name} running on server ${v_hostname} can't be started because <strong>same process started at ${v_last_instance_start_timestamp} is not yet terminated.</strong><p>Execution's log file available at: ${p_log_filename}<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>",
+    "value" : "<p>The process ${p_base_process_name} on server ${v_hostname} can't be started because <strong>same process started at ${v_last_instance_start_timestamp} is not yet terminated</strong>.</p><p>Execution log file available at: ${p_log_filename}</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>",
     "description" : "Sample text message used because a process cannot be started because a lock occurs. It includes the base process name, hostname, last job run timestamp, and log file name."
   }, {
     "name" : "serasoft.application.error.mail.text",
-    "value" : "<html><head></head><body>During process's execution we collected some exceptions on integrations_log_details. The detailed list of exception is in the attachment to this email.<p>If needed, execution's log file is available at: ${p_log_filename}<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>",
+    "value" : "<p>During process ${p_base_process_name}'s execution we collected some exceptions on integrations_log_details.</p><p>Process ${p_base_process_name}'s log attacched to this email.</p><p>Execution log file available at: ${p_log_filename}</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>>",
     "description" : "Sample text message used when an application error occurs. It includes the log file name and mentions that detailed exceptions are in the attachment."
   }, {
     "name" : "serasoft.notactive.mail.text",
-    "value" : "<html><head></head><body>The process ${p_base_process_name} running on server ${v_hostname} can't be started because <strong>is set to not active.</strong><p>Execution's log file available at: ${p_log_filename}<p>PLEASE DO NOT REPLAY TO THIS EMAIL!</body></html>",
+    "value" : "<p>The process ${p_base_process_name} on server ${v_hostname} can't be started because <strong>is set to not active</strong>.</p><p>Execution log file available at: ${p_log_filename}</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>",
     "description" : "Sample text message used when a process cannot be started because it is not active. It includes the base process name, hostname, and log file name."
   }, {
     "name" : "serasoft.execution.log.filename",
