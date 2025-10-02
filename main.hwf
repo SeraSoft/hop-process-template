@@ -137,7 +137,7 @@
       <successnumbercondition>equal</successnumbercondition>
       <successwhenvarset>N</successwhenvarset>
       <valuetype>variable</valuetype>
-      <variablename>${email.feedback.enabled}</variablename>
+      <variablename>${v_email_feedback_enabled}</variablename>
       <parallel>N</parallel>
       <xloc>528</xloc>
       <yloc>656</yloc>
@@ -203,7 +203,7 @@
       <successnumbercondition>equal</successnumbercondition>
       <successwhenvarset>N</successwhenvarset>
       <valuetype>variable</valuetype>
-      <variablename>${email.feedback.enabled}</variablename>
+      <variablename>${v_email_feedback_enabled}</variablename>
       <parallel>N</parallel>
       <xloc>864</xloc>
       <yloc>192</yloc>
@@ -267,12 +267,12 @@ PROCESS EXITS!
       <attributes/>
       <fields>
         <field>
-          <variable_name>terminated.successfully</variable_name>
+          <variable_name>v_terminated_successfully</variable_name>
           <variable_type>ROOT_WORKFLOW</variable_type>
           <variable_value>2</variable_value>
         </field>
         <field>
-          <variable_name>email.feedback.enabled</variable_name>
+          <variable_name>v_email_feedback_enabled</variable_name>
           <variable_type>ROOT_WORKFLOW</variable_type>
           <variable_value>${serasoft.email.lock.feedback.enabled}</variable_value>
         </field>
@@ -371,12 +371,12 @@ PROCESS EXITS!
       <attributes/>
       <fields>
         <field>
-          <variable_name>terminated.successfully</variable_name>
+          <variable_name>v_terminated_successfully</variable_name>
           <variable_type>ROOT_WORKFLOW</variable_type>
           <variable_value>3</variable_value>
         </field>
         <field>
-          <variable_name>email.feedback.enabled</variable_name>
+          <variable_name>v_email_feedback_enabled</variable_name>
           <variable_type>ROOT_WORKFLOW</variable_type>
           <variable_value>${serasoft.email.notactive.feedback.enabled}</variable_value>
         </field>
@@ -598,17 +598,17 @@ PROCESS EXITS!
       <backgroundcolorblue>105</backgroundcolorblue>
       <backgroundcolorgreen>162</backgroundcolorgreen>
       <backgroundcolorred>38</backgroundcolorred>
-      <bordercolorblue>215</bordercolorblue>
-      <bordercolorgreen>215</bordercolorgreen>
-      <bordercolorred>215</bordercolorred>
+      <bordercolorblue>100</bordercolorblue>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorred>100</bordercolorred>
       <fontbold>N</fontbold>
-      <fontcolorblue>255</fontcolorblue>
-      <fontcolorgreen>255</fontcolorgreen>
-      <fontcolorred>255</fontcolorred>
+      <fontcolorblue>0</fontcolorblue>
+      <fontcolorgreen>0</fontcolorgreen>
+      <fontcolorred>0</fontcolorred>
       <fontitalic>N</fontitalic>
       <fontname>Verdana</fontname>
       <fontsize>10</fontsize>
-      <height>442</height>
+      <height>426</height>
       <xloc>928</xloc>
       <yloc>432</yloc>
       <note>Base template for Hop Processes
@@ -632,7 +632,6 @@ Base Instance Variables:
 
 Base Variables from Config:
 =================================================================
-- base.dir: Root path to a convenient folder to store processes related things (Mandatory)
 - serasoft.hop.user: Associates a user to a running Hop instance
 - serasoft.hop.program.name: Associates a name to a running Hop instance
 
