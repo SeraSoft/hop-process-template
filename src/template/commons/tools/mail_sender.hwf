@@ -233,7 +233,7 @@
       <type>ADD_RESULT_FILENAMES</type>
       <attributes/>
       <arg_from_previous>N</arg_from_previous>
-      <delete_all_before>N</delete_all_before>
+      <delete_all_before>Y</delete_all_before>
       <fields>
         <field>
           <filemask/>
