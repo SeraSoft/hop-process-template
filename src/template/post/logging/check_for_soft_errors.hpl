@@ -68,27 +68,12 @@
   <order>
     <hop>
       <from>Get count logging_details</from>
-      <to>Get vars and params</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Get count logging_details</from>
       <to>Detect empty stream</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>num_err 0</from>
-      <to>Get vars and params</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
       <from>Set v_err_items_num = num_err</from>
       <to>Log info</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Get vars and params</from>
-      <to>Group by</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -99,11 +84,6 @@
     <hop>
       <from>Set event_text for generic error</from>
       <to>Get notmatch EVT</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Group by</from>
-      <to>Execution context info</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -214,6 +194,26 @@
     <hop>
       <from>string now</from>
       <to>Log unhandled error</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get count logging_details</from>
+      <to>Group by</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>num_err 0</from>
+      <to>Group by</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Group by</from>
+      <to>Get vars and params</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get vars and params</from>
+      <to>Execution context info</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -380,6 +380,9 @@
         <name>max_severity</name>
       </field>
       <field>
+        <name>process_instance_id</name>
+      </field>
+      <field>
         <name>terminated_successfully</name>
       </field>
     </fields>
@@ -513,10 +516,6 @@ group by ec.name, es.severity</sql>
     </partitioning>
     <fields>
       <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
         <length>-1</length>
         <name>process_instance_id</name>
         <precision>-1</precision>
@@ -525,10 +524,6 @@ group by ec.name, es.severity</sql>
         <variable>${v_process_instance_id}</variable>
       </field>
       <field>
-        <currency/>
-        <decimal/>
-        <format/>
-        <group/>
         <length>-1</length>
         <name>terminated_successfully</name>
         <precision>-1</precision>
@@ -539,7 +534,7 @@ group by ec.name, es.severity</sql>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>322</xloc>
+      <xloc>432</xloc>
       <yloc>144</yloc>
     </GUI>
   </transform>
@@ -569,23 +564,14 @@ group by ec.name, es.severity</sql>
         <type>MAX</type>
       </field>
     </fields>
-    <give_back_row>N</give_back_row>
+    <give_back_row>Y</give_back_row>
     <group>
-      <field>
-        <name>process_instance_id</name>
-      </field>
-      <field>
-        <name>category_type</name>
-      </field>
-      <field>
-        <name>terminated_successfully</name>
-      </field>
-    </group>
+</group>
     <ignore_aggregate>N</ignore_aggregate>
     <prefix>grp</prefix>
     <attributes/>
     <GUI>
-      <xloc>464</xloc>
+      <xloc>320</xloc>
       <yloc>144</yloc>
     </GUI>
   </transform>
@@ -652,8 +638,13 @@ group by ec.name, es.severity</sql>
       <method>none</method>
       <schema_name/>
     </partitioning>
+    <add_columns>N</add_columns>
+    <always_drop_and_recreate>N</always_drop_and_recreate>
+    <auto_update_table_structure>N</auto_update_table_structure>
+    <change_column_types>N</change_column_types>
     <commit>1000</commit>
     <connection>${serasoft.integrations.db.connection.name}</connection>
+    <drop_columns>N</drop_columns>
     <fields>
       <field>
         <column_name>id</column_name>
@@ -714,9 +705,6 @@ group by ec.name, es.severity</sql>
     <fields>
       <field>
         <name>process_instance_id</name>
-      </field>
-      <field>
-        <name>category_type</name>
       </field>
       <field>
         <name>num_err</name>
@@ -931,21 +919,19 @@ group by ec.name, es.severity</sql>
     </partitioning>
     <fields>
       <field>
+        <default_value/>
         <field_name>num_err</field_name>
         <variable_name>v_err_items_num</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
-        <field_name>category_type</field_name>
-        <variable_name>v_category_type</variable_name>
-        <variable_type>ROOT_WORKFLOW</variable_type>
-      </field>
-      <field>
+        <default_value/>
         <field_name>max_severity</field_name>
         <variable_name>v_severity</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
       <field>
+        <default_value/>
         <field_name>email.feedback.enabled</field_name>
         <variable_name>v_email_feedback_enabled</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
