@@ -129,11 +129,11 @@
     "description" : "Set of email addresses to send application's error feedback emails to. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'serasoft.default.mail.destination.addresses'."
   }, {
     "name" : "serasoft.success.mail.text",
-    "value" : "<p>The process ${p_base_process_name} on server ${v_hostname} was terminated successfully.</p><p>Process ${p_base_process_name}'s log attacched.</p><p>Complete execution log file available at: ${p_log_filename}.</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>",
+    "value" : "<p>The process ${p_base_process_name} on server ${v_hostname} was terminated successfully.</p><p>Process ${p_base_process_name}'s log attached.</p><p>Complete execution log file available at: ${p_log_filename}.</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>",
     "description" : "Sample text for the success feedback email. It includes the base process name, hostname, and log file name."
   }, {
     "name" : "serasoft.error.mail.text",
-    "value" : "<p>The process ${p_base_process_name} was terminated abnormally because of an Exception.</p><p>Process ${p_base_process_name}'s log attacched.</p><p>Complete execution log file available at: ${p_log_filename}.</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>",
+    "value" : "<p>The process ${p_base_process_name} was terminated abnormally because of an Exception.</p><p>Process ${p_base_process_name}'s log attached.</p><p>Complete execution log file available at: ${p_log_filename}.</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>",
     "description" : "Sample text message for the error feedback email. It includes the log file name."
   }, {
     "name" : "serasoft.lock.mail.text",
@@ -141,7 +141,7 @@
     "description" : "Sample text message used because a process cannot be started because a lock occurs. It includes the base process name, hostname, last job run timestamp, and log file name."
   }, {
     "name" : "serasoft.application.error.mail.text",
-    "value" : "<p>During process ${p_base_process_name}'s execution we collected some exceptions on integrations_log_details.</p><p>Process ${p_base_process_name}'s log attacched to this email.</p><p>Execution log file available at: ${p_log_filename}</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>>",
+    "value" : "<p>During process ${p_base_process_name}'s execution we collected some exceptions on integrations_log_details.</p><p>Process ${p_base_process_name}'s log attached to this email.</p><p>Process ${p_base_process_name}'s exceptions have been collected in the .csv file attached to this email.</p><p>Execution log file available at: ${p_log_filename}</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>>",
     "description" : "Sample text message used when an application error occurs. It includes the log file name and mentions that detailed exceptions are in the attachment."
   }, {
     "name" : "serasoft.notactive.mail.text",
@@ -150,6 +150,10 @@
   }, {
     "name" : "serasoft.execution.log.filename",
     "value" : "${PROJECT_HOME}/logs/execution_log_${p_base_process_name}_${serasoft.project.main.workflow}_${v_process_run_timestamp}.log",
+    "description" : ""
+  }, {
+    "name" : "serasoft.execution.file.name",
+    "value" : "${PROJECT_HOME}/temp/execution_file_${p_base_process_name}_${v_process_run_timestamp}.csv",
     "description" : ""
   } ]
 }

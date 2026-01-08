@@ -48,8 +48,8 @@
       <zip_files>Y</zip_files>
       <zip_name>logs.zip</zip_name>
       <parallel>N</parallel>
-      <xloc>960</xloc>
-      <yloc>128</yloc>
+      <xloc>1280</xloc>
+      <yloc>272</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -58,8 +58,8 @@
       <type>SUCCESS</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>880</xloc>
-      <yloc>496</yloc>
+      <xloc>944</xloc>
+      <yloc>608</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -88,8 +88,8 @@
       <attributes/>
       <always_log_rows>N</always_log_rows>
       <parallel>N</parallel>
-      <xloc>592</xloc>
-      <yloc>496</yloc>
+      <xloc>1280</xloc>
+      <yloc>608</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -106,7 +106,7 @@
       <valuetype>variable</valuetype>
       <variablename>${serasoft.mail.isgmail}</variablename>
       <parallel>N</parallel>
-      <xloc>608</xloc>
+      <xloc>1112</xloc>
       <yloc>128</yloc>
       <attributes_hac/>
     </action>
@@ -146,8 +146,8 @@
       <zip_files>Y</zip_files>
       <zip_name>logs.zip</zip_name>
       <parallel>N</parallel>
-      <xloc>784</xloc>
-      <yloc>208</yloc>
+      <xloc>944</xloc>
+      <yloc>272</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -185,8 +185,8 @@
       <zip_files>Y</zip_files>
       <zip_name>logs.zip</zip_name>
       <parallel>N</parallel>
-      <xloc>480</xloc>
-      <yloc>208</yloc>
+      <xloc>520</xloc>
+      <yloc>272</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -203,7 +203,7 @@
       <valuetype>variable</valuetype>
       <variablename>${serasoft.mail.isauthenticated}</variablename>
       <parallel>N</parallel>
-      <xloc>432</xloc>
+      <xloc>520</xloc>
       <yloc>128</yloc>
       <attributes_hac/>
     </action>
@@ -213,8 +213,8 @@
       <type>DUMMY</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>592</xloc>
-      <yloc>400</yloc>
+      <xloc>1280</xloc>
+      <yloc>488</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -223,8 +223,8 @@
       <type>DUMMY</type>
       <attributes/>
       <parallel>N</parallel>
-      <xloc>880</xloc>
-      <yloc>400</yloc>
+      <xloc>944</xloc>
+      <yloc>488</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -236,13 +236,15 @@
       <delete_all_before>Y</delete_all_before>
       <fields>
         <field>
-          <filemask/>
           <name>${serasoft.execution.log.filename}</name>
+        </field>
+        <field>
+          <name>${serasoft.execution.file.name}</name>
         </field>
       </fields>
       <include_subfolders>N</include_subfolders>
       <parallel>N</parallel>
-      <xloc>256</xloc>
+      <xloc>300</xloc>
       <yloc>128</yloc>
       <attributes_hac/>
     </action>
@@ -362,8 +364,8 @@
       <fontitalic>N</fontitalic>
       <fontsize>-1</fontsize>
       <height>89</height>
-      <xloc>32</xloc>
-      <yloc>528</yloc>
+      <xloc>80</xloc>
+      <yloc>496</yloc>
       <note>Generic email sender job. Accepts three variables:
 
 email_subject -> Contains the subject of the email
