@@ -67,17 +67,6 @@
       <attributes_hac/>
     </action>
     <action>
-      <name>Abort job</name>
-      <description/>
-      <type>ABORT</type>
-      <attributes/>
-      <always_log_rows>N</always_log_rows>
-      <parallel>N</parallel>
-      <xloc>512</xloc>
-      <yloc>336</yloc>
-      <attributes_hac/>
-    </action>
-    <action>
       <name>Prepare Feedback Text</name>
       <description/>
       <type>PIPELINE</type>
@@ -138,16 +127,6 @@
       <attributes_hac/>
     </action>
     <action>
-      <name>Dummy</name>
-      <description/>
-      <type>DUMMY</type>
-      <attributes/>
-      <parallel>N</parallel>
-      <xloc>512</xloc>
-      <yloc>200</yloc>
-      <attributes_hac/>
-    </action>
-    <action>
       <name>Prepare Feedback File</name>
       <description/>
       <type>PIPELINE</type>
@@ -195,67 +174,32 @@
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Mail Sender</from>
-      <to>Dummy</to>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Prepare Feedback Text</from>
-      <to>Dummy</to>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Dummy</from>
-      <to>Abort job</to>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
       <from>Prepare Feedback Text</from>
       <to>Prepare Feedback File</to>
       <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
     </hop>
     <hop>
       <from>Prepare Feedback File</from>
       <to>Mail Sender</to>
       <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Prepare Feedback File</from>
-      <to>Dummy</to>
-      <enabled>Y</enabled>
       <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
+      <unconditional>Y</unconditional>
     </hop>
     <hop>
       <from>Mail Sender</from>
       <to>Delete file</to>
       <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
     </hop>
     <hop>
       <from>Delete file</from>
       <to>Success</to>
       <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Delete file</from>
-      <to>Dummy</to>
-      <enabled>Y</enabled>
       <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
+      <unconditional>Y</unconditional>
     </hop>
   </hops>
   <notepads>
