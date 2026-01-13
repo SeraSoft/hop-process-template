@@ -1,159 +1,199 @@
 {
-  "variables" : [ {
-    "name" : "serasoft.project.link.ref",
-    "value" : "${PROJECT_HOME}/src/project/main/${p_base_process_name}",
-    "description" : "Link to activate the main process that must be started by the Hop Process Executor. The link is relative to the project home directory."
-  }, {
-    "name" : "serasoft.project.main.workflow",
-    "value" : "start.hwf",
-    "description" : ""
-  }, {
-    "name" : "serasoft.hop.user",
-    "value" : "hopuser",
-    "description" : "The operating system user that will run the Hop Process execution. This user must have read/write permissions on the project home directory."
-  }, {
-    "name" : "serasoft.hop.program.name",
-    "value" : "hop",
-    "description" : "A virtual name assigned to Apache Hop to be inserted in events logging tables as a reference for the running instance"
-  }, {
-    "name" : "serasoft.sys.unhandled.exception.subcategory.generic",
-    "value" : "SYSGE001",
-    "description" : "The generic subcategory for unhandled system exceptions. This is used to categorize exceptions in the logs."
-  }, {
-    "name" : "serasoft.email.application.error.feedback.enabled",
-    "value" : "1",
-    "description" : "Flag that enables or disables the sending of feedback emails after a process execution if application error. Set to 1 to enable, 0 to disable"
-  }, {
-    "name" : "serasoft.email.notactive.feedback.enabled",
-    "value" : "0",
-    "description" : "Flag that enables or disables the sending of feedback emails if the process is paused. Set to 1 to enable, 0 to disable"
-  }, {
-    "name" : "serasoft.email.lock.feedback.enabled",
-    "value" : "1",
-    "description" : "Flag that enables or disables the sending of feedback emails if the same process is alredy running. Set to 1 to enable, 0 to disable"
-  }, {
-    "name" : "serasoft.email.success.feedback.enabled",
-    "value" : "0",
-    "description" : "Flag that enables or disables the sending of success feedback emails after a process execution. Set to 1 to enable, 0 to disable"
-  }, {
-    "name" : "serasoft.email.fail.feedback.enabled",
-    "value" : "1",
-    "description" : "Flag that enables or disables the sending of failure feedback emails after a process execution. Set to 1 to enable, 0 to disable."
-  }, {
-    "name" : "serasoft.mail.isauthenticated",
-    "value" : "false",
-    "description" : "Flag to indicate if the SMTP server requires authentication. Set to true if authentication is needed, false otherwise."
-  }, {
-    "name" : "serasoft.mail.isgmail",
-    "value" : "false",
-    "description" : "Flag to indicate if the SMTP server is Gmail. Set to true if using Gmail, false otherwise."
-  }, {
-    "name" : "serasoft.smtp.mail.host",
-    "value" : "localhost",
-    "description" : "Name of the host where the SMTP server is running. This can be an IP address or a hostname."
-  }, {
-    "name" : "serasoft.smtp.mail.port",
-    "value" : "25",
-    "description" : "Port where the SMTP server is listening for connections."
-  }, {
-    "name" : "serasoft.smtp.mail.user",
-    "value" : "user1",
-    "description" : "Username used to connect to SMTP server. This is used for authentication if the SMTP server requires it."
-  }, {
-    "name" : "serasoft.smtp.mail.psw",
-    "value" : "",
-    "description" : "Password used to connect to SMTP server. This is used for authentication if the SMTP server requires it."
-  }, {
-    "name" : "serasoft.smtp.trusted.hosts",
-    "value" : "",
-    "description" : "Comma-separated list of trusted hosts for the SMTP server. This can be used to allow connections from specific hosts without authentication."
-  }, {
-    "name" : "serasoft.smtp.check.server.identity",
-    "value" : "",
-    "description" : "Flag to indiceate if the server identity should be checked when connecting to the SMTP server. Set to true to enable, false to disable."
-  }, {
-    "name" : "serasoft.mail.from.displayname",
-    "value" : "Hop Process Executor",
-    "description" : "Label displayed in the 'From' field of the email. This is the name that will appear as the sender of the email."
-  }, {
-    "name" : "serasoft.mail.from.email",
-    "value" : "hopexecutor@maildomain.it",
-    "description" : "Email address used in the 'From' field of the email. This is the address that will appear as the sender of the email."
-  }, {
-    "name" : "serasoft.mail.subject",
-    "value" : "[${v_hostname} - ${p_base_process_name}]",
-    "description" : "First part of the text displayed in the subject of the email. It includes the hostname and the base process name."
-  }, {
-    "name" : "serasoft.mail.subject.error",
-    "value" : "${serasoft.mail.subject} Failed for system exceptions",
-    "description" : "Text displayed in the subject of the email when an error occurs due to system exceptions. It includes the base process name."
-  }, {
-    "name" : "serasoft.mail.subject.success",
-    "value" : "${serasoft.mail.subject} Terminated successfully",
-    "description" : "Text displayed in the subject ot the email when the process execution is successful. It includes the base process name."
-  }, {
-    "name" : "serasoft.mail.subject.lock",
-    "value" : "${serasoft.mail.subject} Same instance is still running. Execution stopped.",
-    "description" : "Text displayed in the subject ot the email when a lock occurs that prevents the process from executing. It includes the base process name"
-  }, {
-    "name" : "serasoft.mail.subject.notactive",
-    "value" : "${serasoft.mail.subject} This instance is paused. Execution not started.",
-    "description" : "Text displayed in the subject ot the email when the process is paused. It includes the base process name"
-  }, {
-    "name" : "serasoft.mail.subject.application.error",
-    "value" : "${serasoft.mail.subject} Terminated successfully with application exceptions.",
-    "description" : "Text displayed in the subject of the email when application errors occurs during process execution. It includes the base process name."
-  }, {
-    "name" : "serasoft.default.mail.destination.addresses",
-    "value" : "destination@maildomain.it",
-    "description" : "Default set of email addresses to included wherever needed. Email addresses are separated by spaces."
-  }, {
-    "name" : "serasoft.success.mail.destination.addresses",
-    "value" : "${serasoft.default.mail.destination.addresses}",
-    "description" : "Set of email addresses to send success feedback emails to. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'serasoft.default.mail.destination.addresses'."
-  }, {
-    "name" : "serasoft.errors.mail.destination.addresses",
-    "value" : "${serasoft.default.mail.destination.addresses}",
-    "description" : "Set of email addresses to send error feedback emails to. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'serasoft.default.mail.destination.addresses'."
-  }, {
-    "name" : "serasoft.lock.mail.destination.addresses",
-    "value" : "${serasoft.default.mail.destination.addresses}",
-    "description" : "Set of feedback's email addresses to send because a lock is present. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'serasoft.default.mail.destination.addresses'."
-  }, {
-    "name" : "serasoft.notactive.mail.destination.addresses",
-    "value" : "${serasoft.default.mail.destination.addresses}",
-    "description" : "Set of feedback's email addresses to send because the process is not active. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'serasoft.default.mail.destination.addresses'."
-  }, {
-    "name" : "serasoft.application.error.mail.destination.addresses",
-    "value" : "${serasoft.default.mail.destination.addresses}",
-    "description" : "Set of email addresses to send application's error feedback emails to. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'serasoft.default.mail.destination.addresses'."
-  }, {
-    "name" : "serasoft.success.mail.text",
-    "value" : "<p>The process ${p_base_process_name} on server ${v_hostname} was terminated successfully.</p><p>Process ${p_base_process_name}'s log attached.</p><p>Complete execution log file available at: ${p_log_filename}.</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>",
-    "description" : "Sample text for the success feedback email. It includes the base process name, hostname, and log file name."
-  }, {
-    "name" : "serasoft.error.mail.text",
-    "value" : "<p>The process ${p_base_process_name} was terminated abnormally because of an Exception.</p><p>Process ${p_base_process_name}'s log attached.</p><p>Complete execution log file available at: ${p_log_filename}.</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>",
-    "description" : "Sample text message for the error feedback email. It includes the log file name."
-  }, {
-    "name" : "serasoft.lock.mail.text",
-    "value" : "<p>The process ${p_base_process_name} on server ${v_hostname} can't be started because <strong>same process started at ${v_last_instance_start_timestamp} is not yet terminated</strong>.</p><p>Execution log file available at: ${p_log_filename}</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>",
-    "description" : "Sample text message used because a process cannot be started because a lock occurs. It includes the base process name, hostname, last job run timestamp, and log file name."
-  }, {
-    "name" : "serasoft.application.error.mail.text",
-    "value" : "<p>During process ${p_base_process_name}'s execution we collected some exceptions on integrations_log_details.</p><p>Process ${p_base_process_name}'s log attached to this email.</p><p>Process ${p_base_process_name}'s exceptions have been collected in the .csv file attached to this email.</p><p>Execution log file available at: ${p_log_filename}</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>>",
-    "description" : "Sample text message used when an application error occurs. It includes the log file name and mentions that detailed exceptions are in the attachment."
-  }, {
-    "name" : "serasoft.notactive.mail.text",
-    "value" : "<p>The process ${p_base_process_name} on server ${v_hostname} can't be started because <strong>is set to not active</strong>.</p><p>Execution log file available at: ${p_log_filename}</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>",
-    "description" : "Sample text message used when a process cannot be started because it is not active. It includes the base process name, hostname, and log file name."
-  }, {
-    "name" : "serasoft.execution.log.filename",
-    "value" : "${PROJECT_HOME}/logs/execution_log_${p_base_process_name}_${serasoft.project.main.workflow}_${v_process_run_timestamp}.log",
-    "description" : ""
-  }, {
-    "name" : "serasoft.execution.file.name",
-    "value" : "${PROJECT_HOME}/temp/execution_file_${p_base_process_name}_${v_process_run_timestamp}.csv",
-    "description" : ""
-  } ]
+  "variables" : [
+    {
+      "name" : "serasoft.project.link.ref",
+      "value" : "${PROJECT_HOME}/src/project/main/${p_base_process_name}",
+      "description" : "Link to activate the main process that must be started by the Hop Process Executor. The link is relative to the project home directory."
+    },
+    {
+      "name" : "serasoft.project.main.workflow",
+      "value" : "start.hwf",
+      "description" : ""
+    },
+    {
+      "name" : "serasoft.hop.user",
+      "value" : "hopuser",
+      "description" : "The operating system user that will run the Hop Process execution. This user must have read/write permissions on the project home directory."
+    },
+    {
+      "name" : "serasoft.hop.program.name",
+      "value" : "hop",
+      "description" : "A virtual name assigned to Apache Hop to be inserted in events logging tables as a reference for the running instance"
+    },
+    {
+      "name" : "serasoft.sys.unhandled.exception.subcategory.generic",
+      "value" : "SYSGE001",
+      "description" : "The generic subcategory for unhandled system exceptions. This is used to categorize exceptions in the logs."
+    },
+    {
+      "name" : "serasoft.email.application.error.feedback.enabled",
+      "value" : "1",
+      "description" : "Flag that enables or disables the sending of feedback emails after a process execution if application error. Set to 1 to enable, 0 to disable"
+    },
+    {
+      "name" : "serasoft.email.notactive.feedback.enabled",
+      "value" : "0",
+      "description" : "Flag that enables or disables the sending of feedback emails if the process is paused. Set to 1 to enable, 0 to disable"
+    },
+    {
+      "name" : "serasoft.email.lock.feedback.enabled",
+      "value" : "1",
+      "description" : "Flag that enables or disables the sending of feedback emails if the same process is alredy running. Set to 1 to enable, 0 to disable"
+    },
+    {
+      "name" : "serasoft.email.success.feedback.enabled",
+      "value" : "0",
+      "description" : "Flag that enables or disables the sending of success feedback emails after a process execution. Set to 1 to enable, 0 to disable"
+    },
+    {
+      "name" : "serasoft.email.fail.feedback.enabled",
+      "value" : "1",
+      "description" : "Flag that enables or disables the sending of failure feedback emails after a process execution. Set to 1 to enable, 0 to disable."
+    },
+    {
+      "name" : "serasoft.mail.isauthenticated",
+      "value" : "false",
+      "description" : "Flag to indicate if the SMTP server requires authentication. Set to true if authentication is needed, false otherwise."
+    },
+    {
+      "name" : "serasoft.mail.isgmail",
+      "value" : "false",
+      "description" : "Flag to indicate if the SMTP server is Gmail. Set to true if using Gmail, false otherwise."
+    },
+    {
+      "name" : "serasoft.smtp.mail.host",
+      "value" : "localhost",
+      "description" : "Name of the host where the SMTP server is running. This can be an IP address or a hostname."
+    },
+    {
+      "name" : "serasoft.smtp.mail.port",
+      "value" : "25",
+      "description" : "Port where the SMTP server is listening for connections."
+    },
+    {
+      "name" : "serasoft.smtp.mail.user",
+      "value" : "user1",
+      "description" : "Username used to connect to SMTP server. This is used for authentication if the SMTP server requires it."
+    },
+    {
+      "name" : "serasoft.smtp.mail.psw",
+      "value" : "",
+      "description" : "Password used to connect to SMTP server. This is used for authentication if the SMTP server requires it."
+    },
+    {
+      "name" : "serasoft.smtp.trusted.hosts",
+      "value" : "",
+      "description" : "Comma-separated list of trusted hosts for the SMTP server. This can be used to allow connections from specific hosts without authentication."
+    },
+    {
+      "name" : "serasoft.smtp.check.server.identity",
+      "value" : "",
+      "description" : "Flag to indiceate if the server identity should be checked when connecting to the SMTP server. Set to true to enable, false to disable."
+    },
+    {
+      "name" : "serasoft.mail.from.displayname",
+      "value" : "Hop Process Executor",
+      "description" : "Label displayed in the 'From' field of the email. This is the name that will appear as the sender of the email."
+    },
+    {
+      "name" : "serasoft.mail.from.email",
+      "value" : "hopexecutor@maildomain.it",
+      "description" : "Email address used in the 'From' field of the email. This is the address that will appear as the sender of the email."
+    },
+    {
+      "name" : "serasoft.mail.subject",
+      "value" : "[${v_hostname} - ${p_base_process_name}]",
+      "description" : "First part of the text displayed in the subject of the email. It includes the hostname and the base process name."
+    },
+    {
+      "name" : "serasoft.mail.subject.error",
+      "value" : "${serasoft.mail.subject} Failed for system exceptions",
+      "description" : "Text displayed in the subject of the email when an error occurs due to system exceptions. It includes the base process name."
+    },
+    {
+      "name" : "serasoft.mail.subject.success",
+      "value" : "${serasoft.mail.subject} Terminated successfully",
+      "description" : "Text displayed in the subject ot the email when the process execution is successful. It includes the base process name."
+    },
+    {
+      "name" : "serasoft.mail.subject.lock",
+      "value" : "${serasoft.mail.subject} Same instance is still running. Execution stopped.",
+      "description" : "Text displayed in the subject ot the email when a lock occurs that prevents the process from executing. It includes the base process name"
+    },
+    {
+      "name" : "serasoft.mail.subject.notactive",
+      "value" : "${serasoft.mail.subject} This instance is paused. Execution not started.",
+      "description" : "Text displayed in the subject ot the email when the process is paused. It includes the base process name"
+    },
+    {
+      "name" : "serasoft.mail.subject.application.error",
+      "value" : "${serasoft.mail.subject} Terminated successfully with application exceptions.",
+      "description" : "Text displayed in the subject of the email when application errors occurs during process execution. It includes the base process name."
+    },
+    {
+      "name" : "serasoft.default.mail.destination.addresses",
+      "value" : "destination@maildomain.it",
+      "description" : "Default set of email addresses to included wherever needed. Email addresses are separated by spaces."
+    },
+    {
+      "name" : "serasoft.success.mail.destination.addresses",
+      "value" : "${serasoft.default.mail.destination.addresses}",
+      "description" : "Set of email addresses to send success feedback emails to. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'serasoft.default.mail.destination.addresses'."
+    },
+    {
+      "name" : "serasoft.errors.mail.destination.addresses",
+      "value" : "${serasoft.default.mail.destination.addresses}",
+      "description" : "Set of email addresses to send error feedback emails to. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'serasoft.default.mail.destination.addresses'."
+    },
+    {
+      "name" : "serasoft.lock.mail.destination.addresses",
+      "value" : "${serasoft.default.mail.destination.addresses}",
+      "description" : "Set of feedback's email addresses to send because a lock is present. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'serasoft.default.mail.destination.addresses'."
+    },
+    {
+      "name" : "serasoft.notactive.mail.destination.addresses",
+      "value" : "${serasoft.default.mail.destination.addresses}",
+      "description" : "Set of feedback's email addresses to send because the process is not active. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'serasoft.default.mail.destination.addresses'."
+    },
+    {
+      "name" : "serasoft.application.error.mail.destination.addresses",
+      "value" : "${serasoft.default.mail.destination.addresses}",
+      "description" : "Set of email addresses to send application's error feedback emails to. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'serasoft.default.mail.destination.addresses'."
+    },
+    {
+      "name" : "serasoft.success.mail.text",
+      "value" : "<p>The process ${p_base_process_name} on server ${v_hostname} was terminated successfully.</p><p>Process ${p_base_process_name}'s log attached.</p><p>Complete execution log file available at: ${p_log_filename}.</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>",
+      "description" : "Sample text for the success feedback email. It includes the base process name, hostname, and log file name."
+    },
+    {
+      "name" : "serasoft.error.mail.text",
+      "value" : "<p>The process ${p_base_process_name} was terminated abnormally because of an Exception.</p><p>Process ${p_base_process_name}'s log attached.</p><p>Complete execution log file available at: ${p_log_filename}.</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>",
+      "description" : "Sample text message for the error feedback email. It includes the log file name."
+    },
+    {
+      "name" : "serasoft.lock.mail.text",
+      "value" : "<p>The process ${p_base_process_name} on server ${v_hostname} can't be started because <strong>same process started at ${v_last_instance_start_timestamp} is not yet terminated</strong>.</p><p>Execution log file available at: ${p_log_filename}</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>",
+      "description" : "Sample text message used because a process cannot be started because a lock occurs. It includes the base process name, hostname, last job run timestamp, and log file name."
+    },
+    {
+      "name" : "serasoft.application.error.mail.text",
+      "value" : "<p>During process ${p_base_process_name}'s execution we collected some exceptions on integrations_log_details.</p><p>Process ${p_base_process_name}'s log attached to this email.</p><p>Process ${p_base_process_name}'s exceptions have been collected in the .csv file attached to this email.</p><p>Execution log file available at: ${p_log_filename}</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>>",
+      "description" : "Sample text message used when an application error occurs. It includes the log file name and mentions that detailed exceptions are in the attachment."
+    },
+    {
+      "name" : "serasoft.notactive.mail.text",
+      "value" : "<p>The process ${p_base_process_name} on server ${v_hostname} can't be started because <strong>is set to not active</strong>.</p><p>Execution log file available at: ${p_log_filename}</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>",
+      "description" : "Sample text message used when a process cannot be started because it is not active. It includes the base process name, hostname, and log file name."
+    },
+    {
+      "name" : "serasoft.execution.log.filename",
+      "value" : "${PROJECT_HOME}/logs/execution_log_${p_base_process_name}_${serasoft.project.main.workflow}_${v_process_run_timestamp}.log",
+      "description" : ""
+    },
+    {
+      "name" : "serasoft.execution.file.name",
+      "value" : "${PROJECT_HOME}/temp/execution_file_${p_base_process_name}_${serasoft.project.main.workflow}_${v_process_run_timestamp}.csv",
+      "description" : ""
+    }
+  ]
 }

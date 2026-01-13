@@ -1,35 +1,37 @@
 {
-  "variables" : [ {
-    "name" : "serasoft.integrations.db.config.schema",
-    "value" : "config",
-    "description" : "Name of the schema containing the configuration tables for the integrations database."
-  }, {
-    "name" : "serasoft.integrations.db.log.schema",
-    "value" : "logs",
-    "description" : "Name of schema containing the logs tables for the integrations database."
-  }, {
-    "name" : "serasoft.integrations.db.host",
-    "value" : "localhost",
-    "description" : "Name of the hosts where the integrations database is running. This can be an IP address or a hostname."
-  }, {
-    "name" : "serasoft.integrations.db.connection.name",
-    "value" : "integrations_db_postgres",
-    "description" : "Name of the connection assigned in Apache Hop for the integrations database. This is used to connect to the database during Hop Process execution."
-  }, {
-    "name" : "serasoft.integrations.db.name",
-    "value" : "integrations_db",
-    "description" : "Name of the database containing the configuration and logs tables for the integrations database."
-  }, {
-    "name" : "serasoft.integrations.db.port",
-    "value" : "5432",
-    "description" : "Port of the integrations database. This is the port where the database server is listening for connections."
-  }, {
-    "name" : "serasoft.integrations.db.user",
-    "value" : "postgres",
-    "description" : "Username used to connect to the integrations database. This user must have permissions to read/write in the specified database."
-  }, {
-    "name" : "serasoft.integrations.db.pwd",
-    "value" : "password",
-    "description" : "Password used to connect to the integrations database. This user must have permissions to read/write in the specified database."
-  } ]
+  "variables" : [
+    {
+      "name" : "serasoft.integrations.db.config.schema",
+      "value" : "config",
+      "description" : "Name of the schema containing the configuration tables for the integrations database."
+    }, {
+      "name" : "serasoft.integrations.db.log.schema",
+      "value" : "logs",
+      "description" : "Name of schema containing the logs tables for the integrations database."
+    }, {
+      "name" : "serasoft.integrations.db.host",
+      "value" : "localhost",
+      "description" : "Name of the hosts where the integrations database is running. This can be an IP address or a hostname."
+    }, {
+      "name" : "serasoft.integrations.db.connection.name",
+      "value" : "integrations_db_postgres",
+      "description" : "Name of the connection assigned in Apache Hop for the integrations database. This is used to connect to the database during Hop Process execution."
+    }, {
+      "name" : "serasoft.integrations.db.name",
+      "value" : "integrations_db",
+      "description" : "Name of the database containing the configuration and logs tables for the integrations database."
+    }, {
+      "name" : "serasoft.integrations.db.port",
+      "value" : "54321",
+      "description" : "Port of the integrations database. This is the port where the database server is listening for connections."
+    }, {
+      "name" : "serasoft.integrations.db.user",
+      "value" : "postgres",
+      "description" : "Username used to connect to the integrations database. This user must have permissions to read/write in the specified database."
+    }, {
+      "name" : "serasoft.integrations.db.pwd",
+      "value" : "password",
+      "description" : "Password used to connect to the integrations database. This user must have permissions to read/write in the specified database."
+    }
+  ]
 }
