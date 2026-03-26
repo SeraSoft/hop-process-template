@@ -27,43 +27,8 @@
   </notepads>
   <order>
     <hop>
-      <from>Set lock_present = 0</from>
-      <to>Dummy (do nothing)</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Is process running</from>
-      <to>Set lock_present = 1</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Is process running</from>
       <to>Set lock_present = 0</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Dummy (do nothing)</from>
-      <to>Set v_lock_present</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Calculate previous_instance_started_at timestamp</from>
-      <to>Dummy (do nothing)</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Set lock_present = 1</from>
-      <to>Get last execution time</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Get last execution time</from>
-      <to>Calculate previous_instance_started_at timestamp</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Start</from>
-      <to>Get process name</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -74,6 +39,41 @@
     <hop>
       <from>Get running status</from>
       <to>Is process running</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get last execution time</from>
+      <to>Calculate previous_instance_started_at timestamp</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select integrations_processes_id</from>
+      <to>Get last execution time</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Calculate previous_instance_started_at timestamp</from>
+      <to>Set last_instance_started_at_timestamp</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Is process running</from>
+      <to>Set lock_present = 1</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Set lock_present = 0</from>
+      <to>Set root vars</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Set lock_present = 1</from>
+      <to>Set root vars</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Set lock_present = 1</from>
+      <to>Select integrations_processes_id</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -96,35 +96,18 @@
       <remove>N</remove>
       <value_length>-1</value_length>
       <value_precision>-1</value_precision>
-      <value_type>String</value_type>
+      <value_type>Timestamp</value_type>
     </calculation>
     <failIfNoFile>N</failIfNoFile>
     <attributes/>
     <GUI>
-      <xloc>640</xloc>
-      <yloc>352</yloc>
-    </GUI>
-  </transform>
-  <transform>
-    <name>Dummy (do nothing)</name>
-    <type>Dummy</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <attributes/>
-    <GUI>
-      <xloc>640</xloc>
-      <yloc>480</yloc>
+      <xloc>1312</xloc>
+      <yloc>112</yloc>
     </GUI>
   </transform>
   <transform>
     <name>Get last execution time</name>
-    <type>DBLookup</type>
+    <type>TableInput</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -133,40 +116,21 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <cache>N</cache>
-    <cache_load_all>N</cache_load_all>
-    <cache_size>0</cache_size>
     <connection>${serasoft.integrations.db.connection.name}</connection>
-    <lookup>
-      <eat_row_on_failure>N</eat_row_on_failure>
-      <fail_on_multiple>N</fail_on_multiple>
-      <key>
-        <condition>=</condition>
-        <field>integrations_processes_id</field>
-        <name>integrations_processes_id</name>
-        <name2/>
-      </key>
-      <key>
-        <condition>=</condition>
-        <field>proc_status</field>
-        <name>running_proc_status</name>
-        <name2/>
-      </key>
-      <orderby/>
-      <schema>${serasoft.integrations.db.log.schema}</schema>
-      <table>integrations_logs</table>
-      <value>
-        <default/>
-        <name>date_started</name>
-        <rename>last_instance_started_at</rename>
-        <trim_type>none</trim_type>
-        <type>Timestamp</type>
-      </value>
-    </lookup>
+    <execute_each_row>Y</execute_each_row>
+    <limit>0</limit>
+    <lookup>Select integrations_processes_id</lookup>
+    <sql>SELECT 
+	MAX(date_started) as last_instance_started_at 
+FROM ${serasoft.integrations.db.log.schema}.integrations_logs
+WHERE 
+	integrations_processes_id = ? AND
+	proc_status = 'R'</sql>
+    <variables_active>Y</variables_active>
     <attributes/>
     <GUI>
-      <xloc>640</xloc>
-      <yloc>240</yloc>
+      <xloc>1040</xloc>
+      <yloc>112</yloc>
     </GUI>
   </transform>
   <transform>
@@ -218,27 +182,21 @@
         <condition>=</condition>
         <field>short_name</field>
         <name>process_name</name>
-        <name2/>
       </key>
-      <orderby/>
       <schema>${serasoft.integrations.db.config.schema}</schema>
       <table>integrations_processes</table>
       <value>
-        <default/>
         <name>is_running</name>
-        <rename/>
         <trim_type>none</trim_type>
         <type>String</type>
       </value>
       <value>
-        <default/>
         <name>id</name>
         <rename>integrations_processes_id</rename>
         <trim_type>none</trim_type>
         <type>String</type>
       </value>
       <value>
-        <default/>
         <name>is_active</name>
         <rename>process_active</rename>
         <trim_type>none</trim_type>
@@ -284,7 +242,57 @@
     <send_true_to>Set lock_present = 1</send_true_to>
     <attributes/>
     <GUI>
-      <xloc>432</xloc>
+      <xloc>464</xloc>
+      <yloc>112</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Select integrations_processes_id</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-2</length>
+        <name>integrations_processes_id</name>
+        <precision>-2</precision>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>832</xloc>
+      <yloc>112</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Set last_instance_started_at_timestamp</name>
+    <type>SetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <field_name>last_instance_started_at_timestamp</field_name>
+        <variable_name>v_last_instance_start_timestamp</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+    </fields>
+    <use_formatting>Y</use_formatting>
+    <attributes/>
+    <GUI>
+      <xloc>1632</xloc>
       <yloc>112</yloc>
     </GUI>
   </transform>
@@ -308,25 +316,18 @@
         <set_empty_string>N</set_empty_string>
         <type>String</type>
       </field>
-      <field>
-        <length>-1</length>
-        <name>last_instance_started_at_timestamp</name>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-        <type>Timestamp</type>
-      </field>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>432</xloc>
-      <yloc>480</yloc>
+      <xloc>464</xloc>
+      <yloc>224</yloc>
     </GUI>
   </transform>
   <transform>
     <name>Set lock_present = 1</name>
     <type>Constant</type>
     <description/>
-    <distribute>Y</distribute>
+    <distribute>N</distribute>
     <custom_distribution/>
     <copies>1</copies>
     <partitioning>
@@ -342,23 +343,15 @@
         <set_empty_string>N</set_empty_string>
         <type>String</type>
       </field>
-      <field>
-        <length>-1</length>
-        <name>running_proc_status</name>
-        <nullif>R</nullif>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-        <type>String</type>
-      </field>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>640</xloc>
+      <xloc>624</xloc>
       <yloc>112</yloc>
     </GUI>
   </transform>
   <transform>
-    <name>Set v_lock_present</name>
+    <name>Set root vars</name>
     <type>SetVariable</type>
     <description/>
     <distribute>Y</distribute>
@@ -384,41 +377,12 @@
         <variable_name>v_integration_process_id</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
       </field>
-      <field>
-        <field_name>last_instance_started_at_timestamp</field_name>
-        <variable_name>v_last_instance_start_timestamp</variable_name>
-        <variable_type>ROOT_WORKFLOW</variable_type>
-      </field>
     </fields>
     <use_formatting>Y</use_formatting>
     <attributes/>
     <GUI>
-      <xloc>864</xloc>
-      <yloc>480</yloc>
-    </GUI>
-  </transform>
-  <transform>
-    <name>Start</name>
-    <type>RowGenerator</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-</fields>
-    <interval_in_ms>5000</interval_in_ms>
-    <last_time_field>FiveSecondsAgo</last_time_field>
-    <limit>1</limit>
-    <never_ending>N</never_ending>
-    <row_time_field>now</row_time_field>
-    <attributes/>
-    <GUI>
-      <xloc>64</xloc>
-      <yloc>112</yloc>
+      <xloc>624</xloc>
+      <yloc>224</yloc>
     </GUI>
   </transform>
   <transform_error_handling>
