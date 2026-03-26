@@ -662,8 +662,8 @@ WHERE short_name='${p_base_process_name}'</sql>
       <from>Init Global Vars</from>
       <to>init_sys_variables.hpl</to>
       <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
     </hop>
     <hop>
       <from>init_sys_variables.hpl</from>
