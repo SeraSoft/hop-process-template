@@ -11,46 +11,46 @@
 	</changeSet>
 	<!-- Create Tables -->
 	<changeSet id="create-config-events-categories-table" author="serasoft">
-		<createTable schemaName="config" tableName="events_categories">
-			<column name="id" type="varchar(48)">
+		<createTable schemaName="config" tableName="events_categories" remarks="This table contains the categories of events. Each event must be assigned to a category.">
+			<column name="id" type="varchar(48)" remarks="Table's surrogate primary key">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="type" type="char(1)">
+			<column name="type" type="char(1)" remarks="Type of the event category">
 				<constraints nullable="false" />
 			</column>
-			<column name="name" type="varchar(64)">
+			<column name="name" type="varchar(64)" remarks="Self explanatory, short, description of the category">
 				<constraints nullable="false" />
 			</column>
 		</createTable>
 	</changeSet>
-	<changeSet id="create-config-events-subcategories-table" author="serasoft">
-		<createTable schemaName="config" tableName="events_subcategories">
-			<column name="id" type="varchar(48)">
+	<changeSet id="create-config-events-subcategories-table" author="serasoft" >
+		<createTable schemaName="config" tableName="events_subcategories" remarks="This table contains the subcategories of events. Each event must be assigned to a subcategory.">
+			<column name="id" type="varchar(48)" remarks="Table's surrogate primary key">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="event_category_id" type="varchar(48)">
+			<column name="event_category_id" type="varchar(48)" remarks="Reference to the event category">
 				<constraints nullable="false" />
 			</column>
-			<column name="name" type="varchar(64)">
+			<column name="name" type="varchar(64)" remarks="Self explanatory, short, description of the subcategory">
 				<constraints nullable="false" />
 			</column>
 		</createTable>
 	</changeSet>
-	<changeSet id="create-config-events-severities-table" author="serasoft">
-		<createTable schemaName="config" tableName="events_severities">
-			<column name="id" type="varchar(48)">
-				<constraints primaryKey="true" nullable="false" />
+	<changeSet id="create-config-events-severities-table" author="serasoft" >
+		<createTable schemaName="config" tableName="events_severities" remarks="This table contains the severities of events. Each event must be assigned a severity.">
+			<column name="id" type="varchar(48)"  remarks="Table's surrogate primary key" >
+				<constraints primaryKey="true" nullable="false"/>
 			</column>
-			<column name="code" type="varchar(32)">
+			<column name="code" type="varchar(32)" remarks="Code describing the severity to assign to an event. Ex: LOW, MEDIUM, HIGH, etc.">
 				<constraints nullable="false" />
 			</column>
-			<column name="severity" type="integer" defaultValueNumeric="5">
+			<column name="severity" type="integer" defaultValueNumeric="5" remarks="Numeric value to represent the severity of an event. The higher the value, the more severe the event is.">
 				<constraints nullable="false" />
 			</column>
 		</createTable>
 	</changeSet>
 	<changeSet id="create-config-integrations-processes-table" author="serasoft">
-		<createTable schemaName="config" tableName="integrations_processes">
+		<createTable schemaName="config" tableName="integrations_processes" remarks="This table contains the processes that can be executed in HOP. Each process must be assigned to a project and have a code to be started.">
 			<column name="id" type="varchar(48)" remarks="This is the process code we use to start HOP processes. Passed with p_program_name.">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
@@ -70,7 +70,7 @@
 		</createTable>
 	</changeSet>
 	<changeSet id="create-logs-integrations-logs-table" author="serasoft">
-		<createTable schemaName="logs" tableName="integrations_logs">
+		<createTable schemaName="logs" tableName="integrations_logs" remarks="This table contains the logs of integration processes.There is a log for each process execution.">
 			<column name="id" type="varchar(48)" remarks="Table's surrogate primary key">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
@@ -93,28 +93,28 @@
 		</createTable>
 	</changeSet>
 	<changeSet id="create-logs-integrations-log-events-table" author="serasoft">
-		<createTable schemaName="logs" tableName="integrations_log_events">
-			<column name="id" type="varchar(48)">
+		<createTable schemaName="logs" tableName="integrations_log_events" remarks="This table contains the events raised during the execution of integration processes. Each event must be assigned to a category, subcategory and severity.">
+			<column name="id" type="varchar(48)" remarks="Table's surrogate primary key">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="date_event" type="timestamp" defaultValueComputed="CURRENT_DATE">
+			<column name="date_event" type="timestamp" defaultValueComputed="CURRENT_DATE" remarks="Event timestamp">
 				<constraints nullable="false" />
 			</column>
-			<column name="integrations_logs_id" type="varchar(48)">
+			<column name="integrations_logs_id" type="varchar(48)" remarks="Reference to the integration log">
 				<constraints nullable="false" />
 			</column>
-			<column name="event_subcategory_id" type="varchar(48)">
+			<column name="event_subcategory_id" type="varchar(48)" remarks="Reference to the event subcategory">
 				<constraints nullable="false" />
 			</column>
-			<column name="event_severity_id" type="varchar(48)">
+			<column name="event_severity_id" type="varchar(48)" remarks="Reference to the event severity">
 				<constraints nullable="false" />
 			</column>
-			<column name="source_sys_code" type="varchar(32)" />
-			<column name="source_sys_row_ref" type="varchar(50)" />
-			<column name="event_text" type="text">
+			<column name="source_sys_code" type="varchar(32)" remarks="Reference to the source system code" />
+			<column name="source_sys_row_ref" type="varchar(50)" remarks="Reference to the row in the source system" />
+			<column name="event_text" type="text" remarks="Textual description of the event">
 				<constraints nullable="false" />
 			</column>
-			<column name="event_data" type="text" />
+			<column name="event_data" type="text" remarks="Additional data related to the event" />
 		</createTable>
 	</changeSet>
 	<!-- Add Foreign Keys -->
