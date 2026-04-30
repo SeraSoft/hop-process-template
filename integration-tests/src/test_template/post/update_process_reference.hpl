@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pipeline>
+  <info>
+    <name>Update Hop Process Reference</name>
+    <name_sync_with_filename>N</name_sync_with_filename>
+    <description/>
+    <extended_description/>
+    <pipeline_version/>
+    <pipeline_type>Normal</pipeline_type>
+    <pipeline_status>0</pipeline_status>
+    <parameters>
+    </parameters>
+    <capture_transform_performance>N</capture_transform_performance>
+    <transform_performance_capturing_delay>1000</transform_performance_capturing_delay>
+    <transform_performance_capturing_size_limit/>
+    <created_user>-</created_user>
+    <created_date>2020/01/07 10:56:30.129</created_date>
+    <modified_user>-</modified_user>
+    <modified_date>2020/01/07 10:56:30.129</modified_date>
+  </info>
+  <notepads>
+    <notepad>
+      <backgroundcolorblue>112</backgroundcolorblue>
+      <backgroundcolorgreen>205</backgroundcolorgreen>
+      <backgroundcolorred>255</backgroundcolorred>
+      <bordercolorblue>100</bordercolorblue>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorred>100</bordercolorred>
+      <fontbold>N</fontbold>
+      <fontcolorblue>0</fontcolorblue>
+      <fontcolorgreen>0</fontcolorgreen>
+      <fontcolorred>0</fontcolorred>
+      <fontitalic>N</fontitalic>
+      <fontname>Segoe UI</fontname>
+      <fontsize>9</fontsize>
+      <height>121</height>
+      <xloc>224</xloc>
+      <yloc>368</yloc>
+      <note>Process Termination Codes Legenda
+
+T -> Terminated Successfully
+E -> Terminated with Errors (Hard Exceptions)
+X -> Terminated with ONLY functional errors (Soft Exceptions)
+L -> Terminated because another instance of same process is running
+P -> Terminated because not active (Paused)</note>
+      <width>377</width>
+    </notepad>
+  </notepads>
+  <order>
+    <hop>
+      <from>Get audit fields</from>
+      <to>Get system info</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Add is_running = N</from>
+      <to>Calculate process status</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Update Hop process log</from>
+      <to>Update running flag only if not lock or paused</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Update running flag only if not lock or paused</from>
+      <to>Set is_running flag to N</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Calculate process status</from>
+      <to>Set process_status</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Set process_status</from>
+      <to>Update Hop process log</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get system info</from>
+      <to>string now</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>string now</from>
+      <to>Add is_running = N</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+  <transform>
+    <name>Add is_running = N</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>is_running</name>
+        <nullif>N</nullif>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+        <type>String</type>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>512</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Calculate process status</name>
+    <type>Janino</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <formula>
+      <field_name>status</field_name>
+      <formula_string>(terminated_successfully.equals("0") ? "E" : (( terminated_successfully.equals("1") &amp;&amp; records_in_error > 0 ) ? "X" : (terminated_successfully.equals("2") ? "L" : (terminated_successfully.equals("3") ? "P" : "T"))))</formula_string>
+      <value_type>String</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <replace_field/>
+    </formula>
+    <attributes/>
+    <GUI>
+      <xloc>640</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Get audit fields</name>
+    <type>GetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>process_instance_id</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${v_process_instance_id}</variable>
+      </field>
+      <field>
+        <length>-1</length>
+        <name>terminated_successfully</name>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <type>String</type>
+        <variable>${v_terminated_successfully}</variable>
+      </field>
+      <field>
+        <length>-1</length>
+        <name>records_in_error</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>Integer</type>
+        <variable>${v_err_items_num}</variable>
+      </field>
+      <field>
+        <format>yyyyMMddHHmmss</format>
+        <length>-1</length>
+        <name>date_start</name>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <type>Date</type>
+        <variable>${v_process_run_timestamp}</variable>
+      </field>
+      <field>
+        <length>-1</length>
+        <name>severity</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>Integer</type>
+        <variable>${v_severity}</variable>
+      </field>
+      <field>
+        <length>-1</length>
+        <name>process_name</name>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <type>String</type>
+        <variable>${p_base_process_name}</variable>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>160</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Get system info</name>
+    <type>SystemInfo</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>now</name>
+        <type>system date (fixed)</type>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>272</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Set is_running flag to N</name>
+    <type>Update</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <commit>100</commit>
+    <connection>${serasoft.integrations.db.connection.name}</connection>
+    <error_ignored>N</error_ignored>
+    <lookup>
+      <key>
+        <condition>=</condition>
+        <field>short_name</field>
+        <name>process_name</name>
+      </key>
+      <schema>${serasoft.integrations.db.config.schema}</schema>
+      <table>integrations_processes</table>
+      <value>
+        <name>is_running</name>
+        <rename>is_running</rename>
+      </value>
+    </lookup>
+    <skip_lookup>N</skip_lookup>
+    <use_batch>N</use_batch>
+    <attributes/>
+    <GUI>
+      <xloc>1264</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Set process_status</name>
+    <type>SetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <field_name>status</field_name>
+        <variable_name>v_process_status</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+    </fields>
+    <use_formatting>Y</use_formatting>
+    <attributes/>
+    <GUI>
+      <xloc>800</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Update Hop process log</name>
+    <type>Update</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <commit>100</commit>
+    <connection>${serasoft.integrations.db.connection.name}</connection>
+    <error_ignored>N</error_ignored>
+    <lookup>
+      <key>
+        <condition>=</condition>
+        <field>id</field>
+        <name>process_instance_id</name>
+      </key>
+      <schema>${serasoft.integrations.db.log.schema}</schema>
+      <table>integrations_logs</table>
+      <value>
+        <name>date_finished</name>
+        <rename>now</rename>
+      </value>
+      <value>
+        <name>proc_status</name>
+        <rename>status</rename>
+      </value>
+      <value>
+        <name>max_severity</name>
+        <rename>severity</rename>
+      </value>
+    </lookup>
+    <skip_lookup>Y</skip_lookup>
+    <use_batch>N</use_batch>
+    <attributes/>
+    <GUI>
+      <xloc>944</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Update running flag only if not lock or paused</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <compare>
+      <condition>
+        <conditions>
+</conditions>
+        <function>&lt;=</function>
+        <leftvalue>terminated_successfully</leftvalue>
+        <negated>N</negated>
+        <operator>-</operator>
+        <value>
+          <isnull>N</isnull>
+          <length>-1</length>
+          <name>constant</name>
+          <precision>-1</precision>
+          <text>1</text>
+          <type>String</type>
+        </value>
+      </condition>
+    </compare>
+    <attributes/>
+    <GUI>
+      <xloc>1088</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>string now</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <meta>
+        <conversion_mask>yyyy-MM-dd HH:mm:ss.SSS</conversion_mask>
+        <currency_symbol/>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <decimal_symbol/>
+        <encoding/>
+        <grouping_symbol/>
+        <length>-2</length>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <name>now</name>
+        <precision>-2</precision>
+        <rename>now</rename>
+        <roundingType>half_even</roundingType>
+        <storage_type/>
+        <type>String</type>
+      </meta>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>384</xloc>
+      <yloc>160</yloc>
+    </GUI>
+  </transform>
+  <transform_error_handling>
+  </transform_error_handling>
+  <attributes/>
+</pipeline>

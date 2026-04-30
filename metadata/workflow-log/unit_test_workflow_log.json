@@ -1,0 +1,14 @@
+{
+  "virtualPath": "",
+  "loggingParentsOnly": false,
+  "name": "unit_test_workflow_log",
+  "workflowToLog": [
+    "${serasoft.test.link.ref}/${p_base_process_name}/${serasoft.test.main.workflow}"
+  ],
+  "intervalInSeconds": "30",
+  "executingPeriodically": false,
+  "pipelineFilename": "${PROJECT_HOME}/integration-tests/src/test_template/commons/tools/log_workflow.hpl",
+  "executingAtEnd": true,
+  "enabled": true,
+  "executingAtStart": true
+}

@@ -1,0 +1,1248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pipeline>
+  <info>
+    <name>check_for_soft_errors</name>
+    <name_sync_with_filename>N</name_sync_with_filename>
+    <description/>
+    <extended_description/>
+    <pipeline_version/>
+    <pipeline_type>Normal</pipeline_type>
+    <pipeline_status>0</pipeline_status>
+    <parameters>
+      <parameter>
+        <name>v_process_instance_id</name>
+        <default_value>1a81ba25-dc72-4628-9d71-7f332d12cfb3</default_value>
+        <description/>
+      </parameter>
+    </parameters>
+    <capture_transform_performance>N</capture_transform_performance>
+    <transform_performance_capturing_delay>1000</transform_performance_capturing_delay>
+    <transform_performance_capturing_size_limit/>
+    <created_user>-</created_user>
+    <created_date>2020/01/07 10:56:30.129</created_date>
+    <modified_user>-</modified_user>
+    <modified_date>2020/01/07 10:56:30.129</modified_date>
+  </info>
+  <notepads>
+    <notepad>
+      <backgroundcolorblue>251</backgroundcolorblue>
+      <backgroundcolorgreen>232</backgroundcolorgreen>
+      <backgroundcolorred>201</backgroundcolorred>
+      <bordercolorblue>90</bordercolorblue>
+      <bordercolorgreen>58</bordercolorgreen>
+      <bordercolorred>14</bordercolorred>
+      <fontbold>N</fontbold>
+      <fontcolorblue>90</fontcolorblue>
+      <fontcolorgreen>58</fontcolorgreen>
+      <fontcolorred>14</fontcolorred>
+      <fontitalic>N</fontitalic>
+      <fontname>Segoe UI</fontname>
+      <fontsize>9</fontsize>
+      <height>26</height>
+      <xloc>912</xloc>
+      <yloc>224</yloc>
+      <note>Finished successsfully but got some errors (functional)</note>
+      <width>297</width>
+    </notepad>
+    <notepad>
+      <backgroundcolorblue>251</backgroundcolorblue>
+      <backgroundcolorgreen>232</backgroundcolorgreen>
+      <backgroundcolorred>201</backgroundcolorred>
+      <bordercolorblue>90</bordercolorblue>
+      <bordercolorgreen>58</bordercolorgreen>
+      <bordercolorred>14</bordercolorred>
+      <fontbold>N</fontbold>
+      <fontcolorblue>90</fontcolorblue>
+      <fontcolorgreen>58</fontcolorgreen>
+      <fontcolorred>14</fontcolorred>
+      <fontitalic>N</fontitalic>
+      <fontname>Segoe UI</fontname>
+      <fontsize>9</fontsize>
+      <height>26</height>
+      <xloc>976</xloc>
+      <yloc>704</yloc>
+      <note>Unhandled exception - Create a line in integration_logs_events</note>
+      <width>339</width>
+    </notepad>
+  </notepads>
+  <order>
+    <hop>
+      <from>Get count logging_details</from>
+      <to>Detect empty stream</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Set v_err_items_num = num_err</from>
+      <to>Log info</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Id integrations_log_details</from>
+      <to>Set event_text for generic error</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Set event_text for generic error</from>
+      <to>Get notmatch EVT</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Everything fine</from>
+      <to>Terminated successfully</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Execution context info</from>
+      <to>Everything fine</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Everything fine</from>
+      <to>Terminated successfully but we have functional errors</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Terminated in error (Error path)</from>
+      <to>Dummy (do nothing) 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Log unhandled error</from>
+      <to>Ins integrations_log_events</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get notmatch EVT</from>
+      <to>Get system info</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Detect empty stream</from>
+      <to>If Null</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>If Null</from>
+      <to>num_err 0</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Ins integrations_log_events</from>
+      <to>Set error context</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy (do nothing) 2</from>
+      <to>Set error context 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Terminated in error (Error path)</from>
+      <to>Force severity = MEDIUM on aborts</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Force severity = MEDIUM on aborts</from>
+      <to>Database lookup</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Database lookup</from>
+      <to>Id integrations_log_details</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Terminated successfully</from>
+      <to>email.feedback.enabled success</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>email.feedback.enabled success</from>
+      <to>Set error context 3</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>email.feedback.enabled application.error</from>
+      <to>Set v_err_items_num = num_err</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Terminated successfully but we have functional errors</from>
+      <to>email.feedback.enabled application.error</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Terminated successfully but we have functional errors</from>
+      <to>email.feedback.enabled fail</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>email.feedback.enabled fail</from>
+      <to>Set email.feedback.enabled</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Set email.feedback.enabled</from>
+      <to>Terminated in error (Error path)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get system info</from>
+      <to>string now</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>string now</from>
+      <to>Log unhandled error</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get count logging_details</from>
+      <to>Group by</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>num_err 0</from>
+      <to>Group by</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Group by</from>
+      <to>Get vars and params</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get vars and params</from>
+      <to>Execution context info</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+  <transform>
+    <name>Database lookup</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <connection>${serasoft.integrations.db.connection.name}</connection>
+    <lookup>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <fail_on_multiple>N</fail_on_multiple>
+      <key>
+        <condition>=</condition>
+        <field>code</field>
+        <name>severity_on_abort</name>
+      </key>
+      <schema>${serasoft.integrations.db.config.schema}</schema>
+      <table>events_severities</table>
+      <value>
+        <name>severity</name>
+        <rename>severity_on_abort_value</rename>
+        <trim_type>none</trim_type>
+        <type>Integer</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <GUI>
+      <xloc>752</xloc>
+      <yloc>768</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Detect empty stream</name>
+    <type>DetectEmptyStream</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <GUI>
+      <xloc>112</xloc>
+      <yloc>256</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Dummy (do nothing) 2</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <GUI>
+      <xloc>976</xloc>
+      <yloc>576</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Everything fine</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <compare>
+      <condition>
+        <conditions>
+          <condition>
+            <conditions>
+</conditions>
+            <function>=</function>
+            <leftvalue>num_err</leftvalue>
+            <negated>N</negated>
+            <operator>-</operator>
+            <value>
+              <isnull>N</isnull>
+              <length>-1</length>
+              <mask>####0;-####0</mask>
+              <name>constant</name>
+              <precision>0</precision>
+              <text>0</text>
+              <type>Integer</type>
+            </value>
+          </condition>
+          <condition>
+            <conditions>
+</conditions>
+            <function>&gt;=</function>
+            <leftvalue>terminated_successfully</leftvalue>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <value>
+              <isnull>N</isnull>
+              <length>-1</length>
+              <name>constant</name>
+              <precision>-1</precision>
+              <text>1</text>
+              <type>String</type>
+            </value>
+          </condition>
+        </conditions>
+        <function>&gt;</function>
+        <leftvalue>num_err</leftvalue>
+        <negated>N</negated>
+        <operator>-</operator>
+        <value>
+          <isnull>N</isnull>
+          <length>-1</length>
+          <mask>####0;-####0</mask>
+          <name>constant</name>
+          <precision>0</precision>
+          <text>0</text>
+          <type>Integer</type>
+        </value>
+      </condition>
+    </compare>
+    <send_false_to>Terminated successfully but we have functional errors</send_false_to>
+    <send_true_to>Terminated successfully</send_true_to>
+    <attributes/>
+    <GUI>
+      <xloc>752</xloc>
+      <yloc>144</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Execution context info</name>
+    <type>WriteToLog</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <displayHeader>Y</displayHeader>
+    <fields>
+      <field>
+        <name>num_err</name>
+      </field>
+      <field>
+        <name>max_severity</name>
+      </field>
+      <field>
+        <name>process_instance_id</name>
+      </field>
+      <field>
+        <name>terminated_successfully</name>
+      </field>
+    </fields>
+    <limitRows>N</limitRows>
+    <limitRowsNumber>0</limitRowsNumber>
+    <loglevel>Basic</loglevel>
+    <attributes/>
+    <GUI>
+      <xloc>592</xloc>
+      <yloc>144</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Force severity = MEDIUM on aborts</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>severity_on_abort</name>
+        <nullif>MEDIUM</nullif>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+        <type>String</type>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>752</xloc>
+      <yloc>672</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Get count logging_details</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>${serasoft.integrations.db.connection.name}</connection>
+    <execute_each_row>N</execute_each_row>
+    <limit>0</limit>
+    <sql>select ec.name category_type
+, COALESCE(es.severity, 0) severity
+, count(*) as num_err 
+ from ${serasoft.integrations.db.log.schema}.integrations_log_events ile 
+left outer join ${serasoft.integrations.db.config.schema}.events_subcategories esc on ile.event_subcategory_id = esc.id
+left outer join ${serasoft.integrations.db.config.schema}.events_categories ec on esc.event_category_id = ec.id
+left outer join ${serasoft.integrations.db.config.schema}.events_severities es on ile.event_severity_id = es.id
+inner join ${serasoft.integrations.db.log.schema}.integrations_logs il on il.id = ile.integrations_logs_id
+where il.id = '${v_process_instance_id}'
+group by ec.name, es.severity</sql>
+    <variables_active>Y</variables_active>
+    <attributes/>
+    <GUI>
+      <xloc>112</xloc>
+      <yloc>144</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Get notmatch EVT</name>
+    <type>GetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>events_subcategory_id</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${serasoft.sys.unhandled.exception.subcategory.generic}</variable>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>1296</xloc>
+      <yloc>768</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Get system info</name>
+    <type>SystemInfo</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>now</name>
+        <type>system date (fixed)</type>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>1440</xloc>
+      <yloc>768</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Get vars and params</name>
+    <type>GetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>process_instance_id</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${v_process_instance_id}</variable>
+      </field>
+      <field>
+        <length>-1</length>
+        <name>terminated_successfully</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${v_terminated_successfully}</variable>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>432</xloc>
+      <yloc>144</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Group by</name>
+    <type>GroupBy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <add_linenr>N</add_linenr>
+    <all_rows>N</all_rows>
+    <directory>%%java.io.tmpdir%%</directory>
+    <fields>
+      <field>
+        <aggregate>num_err</aggregate>
+        <subject>num_err</subject>
+        <type>SUM</type>
+      </field>
+      <field>
+        <aggregate>max_severity</aggregate>
+        <subject>severity</subject>
+        <type>MAX</type>
+      </field>
+    </fields>
+    <give_back_row>Y</give_back_row>
+    <group>
+</group>
+    <ignore_aggregate>N</ignore_aggregate>
+    <prefix>grp</prefix>
+    <attributes/>
+    <GUI>
+      <xloc>320</xloc>
+      <yloc>144</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Id integrations_log_details</name>
+    <type>RandomValue</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>id</name>
+        <type>random uuid</type>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>928</xloc>
+      <yloc>768</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>If Null</name>
+    <type>IfNull</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>severity</name>
+        <set_empty_string>N</set_empty_string>
+        <value>0</value>
+      </field>
+    </fields>
+    <selectFields>Y</selectFields>
+    <selectValuesType>N</selectValuesType>
+    <setEmptyStringAll>N</setEmptyStringAll>
+    <valuetypes>
+</valuetypes>
+    <attributes/>
+    <GUI>
+      <xloc>208</xloc>
+      <yloc>256</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Ins integrations_log_events</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <add_columns>N</add_columns>
+    <always_drop_and_recreate>N</always_drop_and_recreate>
+    <auto_update_table_structure>N</auto_update_table_structure>
+    <change_column_types>N</change_column_types>
+    <commit>1000</commit>
+    <connection>${serasoft.integrations.db.connection.name}</connection>
+    <drop_columns>N</drop_columns>
+    <fields>
+      <field>
+        <column_name>id</column_name>
+        <stream_name>id</stream_name>
+      </field>
+      <field>
+        <column_name>integrations_logs_id</column_name>
+        <stream_name>process_instance_id</stream_name>
+      </field>
+      <field>
+        <column_name>event_subcategory_id</column_name>
+        <stream_name>events_subcategory_id</stream_name>
+      </field>
+      <field>
+        <column_name>event_text</column_name>
+        <stream_name>event_text</stream_name>
+      </field>
+      <field>
+        <column_name>event_severity_id</column_name>
+        <stream_name>severity_on_abort</stream_name>
+      </field>
+      <field>
+        <column_name>date_event</column_name>
+        <stream_name>now</stream_name>
+      </field>
+    </fields>
+    <ignore_errors>N</ignore_errors>
+    <only_when_have_rows>N</only_when_have_rows>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <return_keys>N</return_keys>
+    <schema>${serasoft.integrations.db.log.schema}</schema>
+    <specify_fields>Y</specify_fields>
+    <table>integrations_log_events</table>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_in_table>Y</tablename_in_table>
+    <truncate>N</truncate>
+    <use_batch>Y</use_batch>
+    <attributes/>
+    <GUI>
+      <xloc>1760</xloc>
+      <yloc>768</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Log info</name>
+    <type>WriteToLog</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <displayHeader>Y</displayHeader>
+    <fields>
+      <field>
+        <name>process_instance_id</name>
+      </field>
+      <field>
+        <name>num_err</name>
+      </field>
+      <field>
+        <name>max_severity</name>
+      </field>
+    </fields>
+    <limitRows>N</limitRows>
+    <limitRowsNumber>0</limitRowsNumber>
+    <loglevel>Basic</loglevel>
+    <logmessage>Logged errors in integrations_log_details</logmessage>
+    <attributes/>
+    <GUI>
+      <xloc>1536</xloc>
+      <yloc>288</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Log unhandled error</name>
+    <type>WriteToLog</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <displayHeader>Y</displayHeader>
+    <fields>
+      <field>
+        <name>process_instance_id</name>
+      </field>
+      <field>
+        <name>num_err</name>
+      </field>
+      <field>
+        <name>severity_on_abort</name>
+      </field>
+      <field>
+        <name>now</name>
+      </field>
+    </fields>
+    <limitRows>N</limitRows>
+    <limitRowsNumber>0</limitRowsNumber>
+    <loglevel>Basic</loglevel>
+    <logmessage>Logged errors in integrations_log_details</logmessage>
+    <attributes/>
+    <GUI>
+      <xloc>1584</xloc>
+      <yloc>768</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Set email.feedback.enabled</name>
+    <type>SetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <field_name>email.feedback.enabled</field_name>
+        <variable_name>v_email_feedback_enabled</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+    </fields>
+    <use_formatting>Y</use_formatting>
+    <attributes/>
+    <GUI>
+      <xloc>752</xloc>
+      <yloc>480</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Set error context</name>
+    <type>SetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <field_name>num_err</field_name>
+        <variable_name>v_err_items_num</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+      <field>
+        <field_name>severity_on_abort_value</field_name>
+        <variable_name>v_severity</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+    </fields>
+    <use_formatting>Y</use_formatting>
+    <attributes/>
+    <GUI>
+      <xloc>1936</xloc>
+      <yloc>768</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Set error context 2</name>
+    <type>SetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <field_name>num_err</field_name>
+        <variable_name>v_err_items_num</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+      <field>
+        <field_name>max_severity</field_name>
+        <variable_name>v_severity</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+    </fields>
+    <use_formatting>Y</use_formatting>
+    <attributes/>
+    <GUI>
+      <xloc>1152</xloc>
+      <yloc>576</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Set error context 3</name>
+    <type>SetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <field_name>num_err</field_name>
+        <variable_name>v_err_items_num</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+      <field>
+        <field_name>max_severity</field_name>
+        <variable_name>v_severity</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+      <field>
+        <field_name>email.feedback.enabled</field_name>
+        <variable_name>v_email_feedback_enabled</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+    </fields>
+    <use_formatting>Y</use_formatting>
+    <attributes/>
+    <GUI>
+      <xloc>1344</xloc>
+      <yloc>144</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Set event_text for generic error</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>event_text</name>
+        <nullif>Unhandled error occured during process execution. Check the log for further details.</nullif>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+        <type>String</type>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>1104</xloc>
+      <yloc>768</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Set v_err_items_num = num_err</name>
+    <type>SetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <default_value/>
+        <field_name>num_err</field_name>
+        <variable_name>v_err_items_num</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+      <field>
+        <default_value/>
+        <field_name>max_severity</field_name>
+        <variable_name>v_severity</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+      <field>
+        <default_value/>
+        <field_name>email.feedback.enabled</field_name>
+        <variable_name>v_email_feedback_enabled</variable_name>
+        <variable_type>ROOT_WORKFLOW</variable_type>
+      </field>
+    </fields>
+    <use_formatting>Y</use_formatting>
+    <attributes/>
+    <GUI>
+      <xloc>1360</xloc>
+      <yloc>288</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Terminated in error (Error path)</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <compare>
+      <condition>
+        <conditions>
+          <condition>
+            <conditions>
+</conditions>
+            <function>&gt;</function>
+            <leftvalue>num_err</leftvalue>
+            <negated>N</negated>
+            <operator>-</operator>
+            <value>
+              <isnull>N</isnull>
+              <length>-1</length>
+              <mask>####0;-####0</mask>
+              <name>constant</name>
+              <precision>0</precision>
+              <text>0</text>
+              <type>Integer</type>
+            </value>
+          </condition>
+          <condition>
+            <conditions>
+</conditions>
+            <function>=</function>
+            <leftvalue>terminated_successfully</leftvalue>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <value>
+              <isnull>N</isnull>
+              <length>-1</length>
+              <name>constant</name>
+              <precision>-1</precision>
+              <text>0</text>
+              <type>String</type>
+            </value>
+          </condition>
+        </conditions>
+        <function>&gt;</function>
+        <leftvalue>num_err</leftvalue>
+        <negated>N</negated>
+        <operator>-</operator>
+        <value>
+          <isnull>N</isnull>
+          <length>-1</length>
+          <mask>####0;-####0</mask>
+          <name>constant</name>
+          <precision>0</precision>
+          <text>0</text>
+          <type>Integer</type>
+        </value>
+      </condition>
+    </compare>
+    <send_false_to>Force severity = MEDIUM on aborts</send_false_to>
+    <send_true_to>Dummy (do nothing) 2</send_true_to>
+    <attributes/>
+    <GUI>
+      <xloc>752</xloc>
+      <yloc>576</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Terminated successfully</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <GUI>
+      <xloc>976</xloc>
+      <yloc>144</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Terminated successfully but we have functional errors</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <compare>
+      <condition>
+        <conditions>
+          <condition>
+            <conditions>
+</conditions>
+            <function>&gt;</function>
+            <leftvalue>num_err</leftvalue>
+            <negated>N</negated>
+            <operator>-</operator>
+            <value>
+              <isnull>N</isnull>
+              <length>-1</length>
+              <mask>####0;-####0</mask>
+              <name>constant</name>
+              <precision>0</precision>
+              <text>0</text>
+              <type>Integer</type>
+            </value>
+          </condition>
+          <condition>
+            <conditions>
+</conditions>
+            <function>=</function>
+            <leftvalue>terminated_successfully</leftvalue>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <value>
+              <isnull>N</isnull>
+              <length>-1</length>
+              <name>constant</name>
+              <precision>-1</precision>
+              <text>1</text>
+              <type>String</type>
+            </value>
+          </condition>
+        </conditions>
+        <function>&gt;</function>
+        <leftvalue>num_err</leftvalue>
+        <negated>N</negated>
+        <operator>-</operator>
+        <value>
+          <isnull>N</isnull>
+          <length>-1</length>
+          <mask>####0;-####0</mask>
+          <name>constant</name>
+          <precision>0</precision>
+          <text>0</text>
+          <type>Integer</type>
+        </value>
+      </condition>
+    </compare>
+    <send_false_to>email.feedback.enabled fail</send_false_to>
+    <send_true_to>email.feedback.enabled application.error</send_true_to>
+    <attributes/>
+    <GUI>
+      <xloc>752</xloc>
+      <yloc>288</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>email.feedback.enabled application.error</name>
+    <type>GetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>email.feedback.enabled</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${serasoft.email.application.error.feedback.enabled}</variable>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>1088</xloc>
+      <yloc>288</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>email.feedback.enabled fail</name>
+    <type>GetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>email.feedback.enabled</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${serasoft.email.fail.feedback.enabled}</variable>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>752</xloc>
+      <yloc>400</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>email.feedback.enabled success</name>
+    <type>GetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>email.feedback.enabled</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${serasoft.email.success.feedback.enabled}</variable>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>1168</xloc>
+      <yloc>144</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>num_err 0</name>
+    <type>SetValueConstant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <usevar>N</usevar>
+    <fields>
+      <field>
+        <name>num_err</name>
+        <value>0</value>
+        <mask/>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>322</xloc>
+      <yloc>256</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>string now</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <meta>
+        <conversion_mask>yyyy-MM-dd HH:mm:ss.SSS</conversion_mask>
+        <date_format_lenient>N</date_format_lenient>
+        <length>-2</length>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <name>now</name>
+        <precision>-2</precision>
+        <rename>now</rename>
+        <roundingType>half_even</roundingType>
+        <storage_type/>
+        <type>String</type>
+      </meta>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>1504</xloc>
+      <yloc>736</yloc>
+    </GUI>
+  </transform>
+  <transform_error_handling>
+  </transform_error_handling>
+  <attributes/>
+</pipeline>

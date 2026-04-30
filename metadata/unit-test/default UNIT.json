@@ -1,0 +1,33 @@
+{
+  "database_replacements": [],
+  "autoOpening": true,
+  "description": "SeraSoft template default test",
+  "persist_filename": "",
+  "test_type": "UNIT_TEST",
+  "variableValues": [],
+  "basePath": "${HOP_UNIT_TESTS_FOLDER}",
+  "golden_data_sets": [
+    {
+      "field_mappings": [
+        {
+          "transform_field": "field_1",
+          "data_set_field": "field_1"
+        },
+        {
+          "transform_field": "field_2",
+          "data_set_field": "field_2"
+        }
+      ],
+      "field_order": [
+        "field_1",
+        "field_2"
+      ],
+      "data_set_name": "default-golden",
+      "transform_name": "Write to log"
+    }
+  ],
+  "input_data_sets": [],
+  "name": "default UNIT",
+  "trans_test_tweaks": [],
+  "pipeline_filename": "./src/project/main/default/default.hpl"
+}

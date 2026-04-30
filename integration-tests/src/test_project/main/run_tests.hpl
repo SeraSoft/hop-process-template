@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pipeline>
+  <info>
+    <name>run_tests</name>
+    <name_sync_with_filename>Y</name_sync_with_filename>
+    <description/>
+    <extended_description/>
+    <pipeline_version/>
+    <pipeline_type>Normal</pipeline_type>
+    <pipeline_status>0</pipeline_status>
+    <parameters>
+    </parameters>
+    <capture_transform_performance>N</capture_transform_performance>
+    <transform_performance_capturing_delay>1000</transform_performance_capturing_delay>
+    <transform_performance_capturing_size_limit>100</transform_performance_capturing_size_limit>
+    <created_user>-</created_user>
+    <created_date>2026/02/20 17:34:09.967</created_date>
+    <modified_user>-</modified_user>
+    <modified_date>2026/02/20 17:34:09.967</modified_date>
+  </info>
+  <notepads>
+  </notepads>
+  <order>
+    <hop>
+      <from>Get test names</from>
+      <to>Sort rows</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Sort rows</from>
+      <to>run_test.hwf</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>run_test.hwf</from>
+      <to>execution results</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>execution results</from>
+      <to>trace cast error</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+  <transform>
+    <name>Get test names</name>
+    <type>GetFileNames</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <doNotFailIfNoFile>N</doNotFailIfNoFile>
+    <dynamic_include_subfolders>N</dynamic_include_subfolders>
+    <file>
+      <file_required>N</file_required>
+      <filemask>integration_test-[0-9]+\.hwf</filemask>
+      <include_subfolders>N</include_subfolders>
+      <name>${serasoft.test.link.ref}/${p_base_process_name}</name>
+    </file>
+    <filefield>N</filefield>
+    <filter>
+      <filterfiletype>only_files</filterfiletype>
+    </filter>
+    <isaddresult>Y</isaddresult>
+    <limit>0</limit>
+    <raiseAnExceptionIfNoFile>N</raiseAnExceptionIfNoFile>
+    <rownum>N</rownum>
+    <attributes/>
+    <GUI>
+      <xloc>128</xloc>
+      <yloc>128</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Sort rows</name>
+    <type>SortRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <compress>N</compress>
+    <directory>${java.io.tmpdir}</directory>
+    <fields>
+      <field>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <collator_enabled>N</collator_enabled>
+        <collator_strength>0</collator_strength>
+        <name>filename</name>
+        <presorted>N</presorted>
+      </field>
+    </fields>
+    <sort_prefix>out</sort_prefix>
+    <sort_size>1000000</sort_size>
+    <unique_rows>N</unique_rows>
+    <attributes/>
+    <GUI>
+      <xloc>296</xloc>
+      <yloc>128</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>execution results</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <GUI>
+      <xloc>632</xloc>
+      <yloc>128</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>run_test.hwf</name>
+    <type>WorkflowExecutor</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <execution_errors_field>ExecutionNrErrors</execution_errors_field>
+    <execution_exit_status_field>ExecutionExitStatus</execution_exit_status_field>
+    <execution_files_retrieved_field>ExecutionFilesRetrieved</execution_files_retrieved_field>
+    <execution_lines_deleted_field>ExecutionLinesDeleted</execution_lines_deleted_field>
+    <execution_lines_input_field>ExecutionLinesInput</execution_lines_input_field>
+    <execution_lines_output_field>ExecutionLinesOutput</execution_lines_output_field>
+    <execution_lines_read_field>ExecutionLinesRead</execution_lines_read_field>
+    <execution_lines_rejected_field>ExecutionLinesRejected</execution_lines_rejected_field>
+    <execution_lines_updated_field>ExecutionLinesUpdated</execution_lines_updated_field>
+    <execution_lines_written_field>ExecutionLinesWritten</execution_lines_written_field>
+    <execution_log_channelid_field>ExecutionLogChannelId</execution_log_channelid_field>
+    <execution_log_text_field>ExecutionLogText</execution_log_text_field>
+    <execution_result_field>ExecutionResult</execution_result_field>
+    <execution_result_target_transform>execution results</execution_result_target_transform>
+    <execution_time_field>ExecutionTime</execution_time_field>
+    <filename>${serasoft.test.link.ref}/run_test.hwf</filename>
+    <group_size>1</group_size>
+    <inherit_all_vars>Y</inherit_all_vars>
+    <parameters>
+      <variablemapping>
+        <field>filename</field>
+        <variable>p_integration_test_workflow</variable>
+      </variablemapping>
+    </parameters>
+    <result_files_file_name_field>FileName</result_files_file_name_field>
+    <run_configuration>local</run_configuration>
+    <attributes/>
+    <GUI>
+      <xloc>464</xloc>
+      <yloc>128</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>trace cast error</name>
+    <type>EventsTraceTransform</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>${serasoft.integrations.db.connection.name}</connection>
+    <eventCategory>SYSTEM EXCEPTION</eventCategory>
+    <eventDataField>ExecutionLogText</eventDataField>
+    <eventDataInField>Y</eventDataInField>
+    <eventDataValue>${v_cartella}/${v_short_filename}</eventDataValue>
+    <eventSeverity>MEDIUM</eventSeverity>
+    <eventSubCategory>GENERIC ERROR</eventSubCategory>
+    <eventTextInField>N</eventTextInField>
+    <eventTextValue>Risultato di esecuzione del test</eventTextValue>
+    <processReferenceInField>N</processReferenceInField>
+    <processReferenceValue>${v_process_instance_id}</processReferenceValue>
+    <sourceSysCodeInField>N</sourceSysCodeInField>
+    <sourceSysCodeValue>hostname: ${v_hostname}</sourceSysCodeValue>
+    <sourceSysRowRefInField>N</sourceSysRowRefInField>
+    <sourceSysRowRefValue>integration process: ${v_integration_process_id}</sourceSysRowRefValue>
+    <attributes/>
+    <GUI>
+      <xloc>800</xloc>
+      <yloc>128</yloc>
+    </GUI>
+  </transform>
+  <transform_error_handling>
+  </transform_error_handling>
+  <attributes>
+    <group>
+      <name>debug_plugin</name>
+    </group>
+  </attributes>
+</pipeline>

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workflow>
-  <name>starter_job</name>
-  <name_sync_with_filename>N</name_sync_with_filename>
+  <name>integration_test-0001</name>
+  <name_sync_with_filename>Y</name_sync_with_filename>
   <description/>
   <extended_description/>
   <workflow_version/>
+  <workflow_status>0</workflow_status>
   <created_user>-</created_user>
   <created_date>2012/07/23 09:53:39.204</created_date>
   <modified_user>-</modified_user>
@@ -18,6 +19,7 @@
       <type>SPECIAL</type>
       <attributes/>
       <DayOfMonth>1</DayOfMonth>
+      <doNotWaitOnFirstExecution>N</doNotWaitOnFirstExecution>
       <hour>12</hour>
       <intervalMinutes>60</intervalMinutes>
       <intervalSeconds>0</intervalSeconds>
@@ -26,27 +28,30 @@
       <schedulerType>0</schedulerType>
       <weekDay>1</weekDay>
       <parallel>N</parallel>
-      <xloc>143</xloc>
-      <yloc>144</yloc>
+      <xloc>128</xloc>
+      <yloc>112</yloc>
       <attributes_hac/>
     </action>
     <action>
-      <name>Unhandled exception</name>
+      <name>Run Pipeline Unit Tests</name>
       <description/>
-      <type>ABORT</type>
+      <type>RunPipelineTests</type>
       <attributes/>
-      <always_log_rows>N</always_log_rows>
-      <message/>
+      <test_names>
+        <test_name>
+          <name>default UNIT</name>
+        </test_name>
+      </test_names>
       <parallel>N</parallel>
-      <xloc>416</xloc>
-      <yloc>144</yloc>
+      <xloc>352</xloc>
+      <yloc>112</yloc>
       <attributes_hac/>
     </action>
   </actions>
   <hops>
     <hop>
       <from>START</from>
-      <to>Unhandled exception</to>
+      <to>Run Pipeline Unit Tests</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>Y</unconditional>
@@ -54,5 +59,9 @@
   </hops>
   <notepads>
   </notepads>
-  <attributes/>
+  <attributes>
+    <group>
+      <name>debug_plugin</name>
+    </group>
+  </attributes>
 </workflow>

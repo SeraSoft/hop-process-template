@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pipeline>
+  <info>
+    <name>prepare_feedback_file_based_on_result</name>
+    <name_sync_with_filename>N</name_sync_with_filename>
+    <description/>
+    <extended_description/>
+    <pipeline_version/>
+    <pipeline_type>Normal</pipeline_type>
+    <pipeline_status>0</pipeline_status>
+    <parameters>
+    </parameters>
+    <capture_transform_performance>N</capture_transform_performance>
+    <transform_performance_capturing_delay>1000</transform_performance_capturing_delay>
+    <transform_performance_capturing_size_limit/>
+    <created_user>-</created_user>
+    <created_date>2016/10/28 18:05:26.780</created_date>
+    <modified_user>-</modified_user>
+    <modified_date>2016/10/28 18:05:26.780</modified_date>
+  </info>
+  <notepads>
+  </notepads>
+  <order>
+    <hop>
+      <from>Get logging_details</from>
+      <to>Build temporary CSV</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+  <transform>
+    <name>Build temporary CSV</name>
+    <type>TextFileOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <schema_definition/>
+    <ignore_fields>N</ignore_fields>
+    <separator>;</separator>
+    <enclosure>"</enclosure>
+    <enclosure_forced>N</enclosure_forced>
+    <enclosure_fix_disabled>N</enclosure_fix_disabled>
+    <header>Y</header>
+    <footer>N</footer>
+    <format>DOS</format>
+    <compression>None</compression>
+    <encoding>windows-1252</encoding>
+    <endedLine/>
+    <fileNameInField>N</fileNameInField>
+    <fileNameField/>
+    <create_parent_folder>Y</create_parent_folder>
+    <file>
+      <name>${serasoft.execution.file.name}</name>
+      <servlet_output>N</servlet_output>
+      <do_not_open_new_file_init>Y</do_not_open_new_file_init>
+      <extention/>
+      <append>N</append>
+      <split>N</split>
+      <haspartno>N</haspartno>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <SpecifyFormat>N</SpecifyFormat>
+      <date_time_format/>
+      <add_to_result_filenames>Y</add_to_result_filenames>
+      <pad>N</pad>
+      <fast_dump>N</fast_dump>
+      <splitevery/>
+    </file>
+    <fields>
+      <field>
+        <name>category_type</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>none</trim_type>
+        <roundingType>unnecessary</roundingType>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>subcategory_type</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>none</trim_type>
+        <roundingType>unnecessary</roundingType>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>severity</name>
+        <type>Number</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>none</trim_type>
+        <roundingType>unnecessary</roundingType>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>source_system</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>none</trim_type>
+        <roundingType>unnecessary</roundingType>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>source_system_reference</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>none</trim_type>
+        <roundingType>unnecessary</roundingType>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>event_text</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>none</trim_type>
+        <roundingType>unnecessary</roundingType>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>event_data</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>none</trim_type>
+        <roundingType>unnecessary</roundingType>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>352</xloc>
+      <yloc>80</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Get logging_details</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>${serasoft.integrations.db.connection.name}</connection>
+    <execute_each_row>N</execute_each_row>
+    <limit>0</limit>
+    <sql>select 
+  ec.name category_type
+, esc.name subcategory_type
+, COALESCE(es.severity, 0) severity
+, source_sys_code source_system
+, source_sys_row_ref source_system_reference
+, event_text 
+, event_data
+ from ${serasoft.integrations.db.log.schema}.integrations_log_events ile 
+left outer join ${serasoft.integrations.db.config.schema}.events_subcategories esc on ile.event_subcategory_id = esc.id
+left outer join ${serasoft.integrations.db.config.schema}.events_categories ec on esc.event_category_id = ec.id
+left outer join ${serasoft.integrations.db.config.schema}.events_severities es on ile.event_severity_id = es.id
+inner join ${serasoft.integrations.db.log.schema}.integrations_logs il on il.id = ile.integrations_logs_id
+where il.id = '${v_process_instance_id}'
+</sql>
+    <variables_active>Y</variables_active>
+    <attributes/>
+    <GUI>
+      <xloc>144</xloc>
+      <yloc>80</yloc>
+    </GUI>
+  </transform>
+  <transform_error_handling>
+  </transform_error_handling>
+  <attributes/>
+</pipeline>
