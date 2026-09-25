@@ -278,7 +278,8 @@
 
 Previous instance for base process name '${p_base_process_name}' seems executing and it was started at '${v_last_instance_start_timestamp}'.
 However, maybe previous instance exited abnormally and lock wasn't cleared.
-Please check integration_processes table and eventually uncleand lock.
+If no instance is really running, release the lock with
+src/template/commons/tools/locks/release_lock.hwf (parameter p_base_process_name, see README, "Stale locks").
 
 PROCESS EXITS!
 

@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workflow>
+  <name>Release lock</name>
+  <name_sync_with_filename>N</name_sync_with_filename>
+  <description>Releases the single-instance lock of a process left set by an execution that was killed (see README, "Stale locks")</description>
+  <extended_description/>
+  <workflow_version/>
+  <workflow_status>0</workflow_status>
+  <created_user>-</created_user>
+  <created_date>2026/09/25 00:00:00.000</created_date>
+  <modified_user>-</modified_user>
+  <modified_date>2026/09/25 00:00:00.000</modified_date>
+  <parameters>
+    <parameter>
+      <name>p_base_process_name</name>
+      <default_value/>
+      <description>Base process name (short_name in integrations_processes) whose lock must be released.</description>
+    </parameter>
+  </parameters>
+  <actions>
+    <action>
+      <name>START</name>
+      <description/>
+      <type>SPECIAL</type>
+      <attributes/>
+      <DayOfMonth>1</DayOfMonth>
+      <doNotWaitOnFirstExecution>N</doNotWaitOnFirstExecution>
+      <hour>12</hour>
+      <intervalMinutes>60</intervalMinutes>
+      <intervalSeconds>0</intervalSeconds>
+      <minutes>0</minutes>
+      <repeat>N</repeat>
+      <schedulerType>0</schedulerType>
+      <weekDay>1</weekDay>
+      <parallel>N</parallel>
+      <xloc>48</xloc>
+      <yloc>192</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Check p_base_process_name exists</name>
+      <description/>
+      <type>SIMPLE_EVAL</type>
+      <attributes/>
+      <comparevalue>(?!$|\s+).*</comparevalue>
+      <fieldtype>string</fieldtype>
+      <successbooleancondition>false</successbooleancondition>
+      <successcondition>regexp</successcondition>
+      <successnumbercondition>equal</successnumbercondition>
+      <successwhenvarset>N</successwhenvarset>
+      <valuetype>variable</valuetype>
+      <variablename>${p_base_process_name}</variablename>
+      <parallel>N</parallel>
+      <xloc>240</xloc>
+      <yloc>192</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Check process exists</name>
+      <description/>
+      <type>PIPELINE</type>
+      <attributes/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <clear_files>N</clear_files>
+      <clear_rows>N</clear_rows>
+      <create_parent_folder>N</create_parent_folder>
+      <exec_per_row>N</exec_per_row>
+      <filename>${PROJECT_HOME}/src/template/commons/tools/locks/release_lock_check.hpl</filename>
+      <loglevel>Basic</loglevel>
+      <parameters>
+        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>
+      <params_from_previous>N</params_from_previous>
+      <run_configuration>local</run_configuration>
+      <set_append_logfile>N</set_append_logfile>
+      <set_logfile>N</set_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <parallel>N</parallel>
+      <xloc>448</xloc>
+      <yloc>192</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Log lock release</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <loglevel>Basic</loglevel>
+      <logmessage>
+=================================================================================================================
+
+Releasing the lock of base process name '${p_base_process_name}'.
+Its interrupted executions still marked as running (proc_status 'R') are marked as released (proc_status 'K').
+Use this only after checking that no instance of the process is really running.
+
+=================================================================================================================
+</logmessage>
+      <logsubject>RELEASING LOCK OF PROCESS ${p_base_process_name}</logsubject>
+      <parallel>N</parallel>
+      <xloc>640</xloc>
+      <yloc>192</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Release lock</name>
+      <description/>
+      <type>SQL</type>
+      <attributes/>
+      <connection>${serasoft.integrations.db.connection.name}</connection>
+      <sendOneStatement>N</sendOneStatement>
+      <sql>UPDATE ${serasoft.integrations.db.log.schema}.integrations_logs
+SET proc_status='K'
+WHERE proc_status='R'
+AND integrations_processes_id IN (
+  SELECT id FROM ${serasoft.integrations.db.config.schema}.integrations_processes
+  WHERE short_name='${p_base_process_name}');
+UPDATE ${serasoft.integrations.db.config.schema}.integrations_processes
+SET is_running='N'
+WHERE short_name='${p_base_process_name}';</sql>
+      <sqlfromfile>N</sqlfromfile>
+      <useVariableSubstitution>Y</useVariableSubstitution>
+      <parallel>N</parallel>
+      <xloc>832</xloc>
+      <yloc>192</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Lock released</name>
+      <description/>
+      <type>SUCCESS</type>
+      <attributes/>
+      <parallel>N</parallel>
+      <xloc>1024</xloc>
+      <yloc>192</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Missing p_base_process_name</name>
+      <description/>
+      <type>ABORT</type>
+      <attributes/>
+      <always_log_rows>N</always_log_rows>
+      <message>Parameter p_base_process_name is required: the lock to release is not known</message>
+      <parallel>N</parallel>
+      <xloc>240</xloc>
+      <yloc>320</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Unknown process</name>
+      <description/>
+      <type>ABORT</type>
+      <attributes/>
+      <always_log_rows>N</always_log_rows>
+      <message>Process '${p_base_process_name}' is not declared in integrations_processes: no lock released</message>
+      <parallel>N</parallel>
+      <xloc>448</xloc>
+      <yloc>320</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Release failed</name>
+      <description/>
+      <type>ABORT</type>
+      <attributes/>
+      <always_log_rows>N</always_log_rows>
+      <message>Lock of process '${p_base_process_name}' NOT released: the update of the integrations database failed</message>
+      <parallel>N</parallel>
+      <xloc>832</xloc>
+      <yloc>320</yloc>
+      <attributes_hac/>
+    </action>
+  </actions>
+  <hops>
+    <hop>
+      <from>START</from>
+      <to>Check p_base_process_name exists</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Check p_base_process_name exists</from>
+      <to>Check process exists</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Check p_base_process_name exists</from>
+      <to>Missing p_base_process_name</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Check process exists</from>
+      <to>Log lock release</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Check process exists</from>
+      <to>Unknown process</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Log lock release</from>
+      <to>Release lock</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Release lock</from>
+      <to>Lock released</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Release lock</from>
+      <to>Release failed</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+  </hops>
+  <notepads>
+  </notepads>
+  <attributes/>
+</workflow>
