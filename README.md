@@ -99,4 +99,16 @@ The table below summarizes the set of base environment variables provided with t
 |serasoft.execution.log.filename|Log file name, attached to the feedback mail|`${PROJECT_HOME}/logs/execution_log_${p_base_process_name}_${serasoft.project.main.workflow}_${v_process_run_timestamp}.log`|'
 |serasoft.execution.file.name|File name with the events recorded, attached to the feedback mail|`${PROJECT_HOME}/temp/execution_file_${p_base_process_name}_${serasoft.project.main.workflow}_${v_process_run_timestamp}.csv`|
 
+## Exit codes
+
+`hop-run` ends a template-based execution with:
+
+| Exit code | Meaning |
+|---|---|
+| `0` | The process ran and terminated successfully (possibly with application errors recorded in `integrations_log_details`, status `X`). |
+| `1` | The process failed, **or it was skipped**: another instance holds the single-instance lock, or the process is paused (`is_active` not `Y`). A skipped execution logs an explicit `SKIPPED: …` error message and still runs the post phase and the feedback email, if enabled for that case. |
+| `2`, `9` | General `hop-run` error / invalid parameters (Hop Run, *Possible exit codes*). |
+
+A skipped execution is reported as a failure on purpose: an orchestrator (cron, Apache Airflow) must not treat "nothing was processed" as success.
+
 ---
