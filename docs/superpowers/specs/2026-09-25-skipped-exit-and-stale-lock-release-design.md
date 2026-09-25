@@ -81,17 +81,29 @@ visible (red task) instead of silent green no-ops.
 
 ### #27 — manual release of a stale lock
 
-New workflow `src/template/commons/tools/locks/release_lock.hwf` (a single
-workflow: parameter check, log, one `SQL` action like `Set is_running flag
-to Y` in `main_pre_job.hwf`), parameter `p_base_process_name`, mandatory:
+New workflow `src/template/commons/tools/locks/release_lock.hwf` (parameter
+check, process check, log, one `SQL` action like `Set is_running flag to Y`
+in `main_pre_job.hwf`) plus the check pipeline
+`src/template/commons/tools/locks/release_lock_check.hpl`, parameter
+`p_base_process_name`, mandatory:
 
-1. log a warning with the process name;
-2. `UPDATE config.integrations_processes SET is_running = 'N' WHERE
-   short_name = <p_base_process_name>`;
+1. stop with an error if no process has that `short_name` (small pipeline
+   `release_lock_check.hpl`: `Table input` → `Detect empty stream` →
+   `Abort`), so a mistyped name is not reported as a successful release.
+   The `EVAL_TABLE_CONTENT` action was rejected: in Hop 2.19 it does not
+   resolve a variable connection name at run time ("No database connection
+   is defined"), although the GUI resolves it while editing;
+2. log a warning with the process name;
 3. mark that process's orphaned rows in `logs.integrations_logs`
    (`proc_status = 'R'`) with the new status **`K`** — manually released,
    instance interrupted — so `MAX(date_started)` over `R` rows is correct
-   again.
+   again;
+4. `UPDATE config.integrations_processes SET is_running = 'N' WHERE
+   short_name = <p_base_process_name>`.
+
+Steps 3 and 4 are two statements of one `SQL` action, each committed on its
+own (not one transaction). The order makes the tool idempotent: if it fails
+between the two, running it again completes the release.
 
 Run with
 `hop-run -j <project> -r local -f ${PROJECT_HOME}/src/template/commons/tools/locks/release_lock.hwf -p p_base_process_name=<name>`.
@@ -110,8 +122,8 @@ future improvement.
 `README.md`:
 - exit codes: 0 success; 1 error **or skipped execution** (`SKIPPED: …` in
   the log); 2/9 as per `hop-run`;
-- process statuses (`R`, `T`, `X`, `E`, `L`, new `K`; `P` exists in the
-  status formula but a paused run creates no log row);
+- process statuses (`R`, `T`, `X`, `E`, `L`, new `K`), and that a paused
+  process is skipped before any row is written;
 - stale locks: how they arise, how to check, how to release them with
   `release_lock.hwf`, and the future automatic expiry (#28).
 

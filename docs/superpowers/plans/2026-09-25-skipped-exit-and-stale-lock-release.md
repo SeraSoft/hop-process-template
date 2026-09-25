@@ -40,7 +40,7 @@
 
 **Files:** Modify `main.hwf`, `README.md`.
 
-- [ ] **Step 1: Baseline (red) on the current code**
+- [x] **Step 1: Baseline (red) on the current code**
 
 ```bash
 H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
@@ -52,7 +52,7 @@ $H/q.sh "update config.integrations_processes set is_active='Y', is_running='N'"
 ```
 Expected: `RC=0` although the process was skipped (log contains `IS LOCKED`). This is the bug.
 
-- [ ] **Step 2: Patch `main.hwf`** — run this script from the repo root (it asserts each anchor is found exactly once):
+- [x] **Step 2: Patch `main.hwf`** — run this script from the repo root (it asserts each anchor is found exactly once):
 
 ```bash
 cd /home/enrico/repositories/serasoft/hop-process-template
@@ -165,7 +165,7 @@ git diff --stat
 ```
 Expected: `patched`, `xml ok`, `main.hwf | 43 +++++-` (about +42/-1).
 
-- [ ] **Step 3: README "Exit codes"** — insert this section right before the final `---` of `README.md` (after the environment-variables table). The exact text is prepared in `$H/readme_exit_codes.md`:
+- [x] **Step 3: README "Exit codes"** — insert this section right before the final `---` of `README.md` (after the environment-variables table). The exact text is prepared in `$H/readme_exit_codes.md`:
 
 ````markdown
 ## Exit codes
@@ -196,7 +196,7 @@ tail -5 README.md
 ```
 Expected: `inserted`; README ends with the new section followed by `---`.
 
-- [ ] **Step 4: Verify (green) on a fresh copy**
+- [x] **Step 4: Verify (green) on a fresh copy**
 
 ```bash
 H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
@@ -214,7 +214,7 @@ Expected:
 - lock: `RC=1`, `ERROR: SKIPPED: process 'default' is locked by an instance started at …` (timestamp empty here, because the lock was set by hand without a running row), `flag=Y last=L` (the other instance's lock is untouched);
 - paused: `RC=1`, `ERROR: SKIPPED: process 'default' is not active`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /home/enrico/repositories/serasoft/hop-process-template
@@ -235,7 +235,7 @@ Refs #26"
 
 **Files:** Create `src/template/commons/tools/locks/release_lock.hwf`; modify `main.hwf` (lock warning text), `README.md`.
 
-- [ ] **Step 1: Baseline (red): a killed run leaves the lock set and there is no release tool**
+- [x] **Step 1: Baseline (red): a killed run leaves the lock set and there is no release tool**
 
 ```bash
 H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
@@ -249,7 +249,7 @@ ls $H/copy/src/template/commons/tools/locks/
 ```
 Expected: `flag=Y last=R` (stale lock); only `check_status_and_lock.hpl` in `locks/`. Leave this stale state in place for Step 5.
 
-- [ ] **Step 2: Create `src/template/commons/tools/locks/release_lock.hwf`** — copy the prototype verified in the lab:
+- [x] **Step 2: Create `src/template/commons/tools/locks/release_lock.hwf`** — copy the prototype verified in the lab:
 
 ```bash
 cd /home/enrico/repositories/serasoft/hop-process-template
@@ -259,7 +259,7 @@ grep -E "<name>|<type>" src/template/commons/tools/locks/release_lock.hwf
 ```
 Expected: `xml ok`; workflow `Release lock` with parameter `p_base_process_name` and actions `START` → `Check p_base_process_name exists` (SIMPLE_EVAL, regexp) → `Log lock release` (WRITE_TO_LOG) → `Release lock` (SQL, two statements, `sendOneStatement=N`: logs rows `R` → `K`, then `is_running='N'`) → `Lock released` (SUCCESS); failures to `Missing p_base_process_name` / `Release failed` (ABORT). Read the file once fully to confirm this.
 
-- [ ] **Step 3: Point the lock warning to the tool** — in `main.hwf`:
+- [x] **Step 3: Point the lock warning to the tool** — in `main.hwf`:
 
 ```bash
 python3 - main.hwf <<'PYEOF'
@@ -275,7 +275,7 @@ PYEOF
 python3 -c "import xml.dom.minidom,sys; xml.dom.minidom.parse(sys.argv[1]); print('xml ok')" main.hwf
 ```
 
-- [ ] **Step 4: README "Process statuses and stale locks"** — insert this section after "Exit codes", before the final `---`. The exact text is prepared in `$H/readme_stale_locks.md`:
+- [x] **Step 4: README "Process statuses and stale locks"** — insert this section after "Exit codes", before the final `---`. The exact text is prepared in `$H/readme_stale_locks.md`:
 
 ````markdown
 ## Process statuses and stale locks
@@ -325,7 +325,7 @@ grep -n "^## " README.md
 ```
 Expected: `inserted`; headings end with `## Exit codes`, `## Process statuses and stale locks`.
 
-- [ ] **Step 5: Verify (green): stale lock → skipped → release → next run succeeds** (the stale state from Step 1 is still in the DB; refresh the copy so it contains the new workflow)
+- [x] **Step 5: Verify (green): stale lock → skipped → release → next run succeeds** (the stale state from Step 1 is still in the DB; refresh the copy so it contains the new workflow)
 
 ```bash
 H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
@@ -344,7 +344,7 @@ Expected:
 - next run: `RC=0`, `flag=N last=T`.
 Also re-run the three Task 1 scenarios (Task 1 Step 4) to confirm no regression.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd /home/enrico/repositories/serasoft/hop-process-template
@@ -361,6 +361,11 @@ Refs #27"
 ```
 
 ---
+
+## Review follow-ups (applied)
+
+- #26: the skip check tests `${v_terminated_successfully}` against `^[23]$` instead of "`v_skip_message` is set" (an inherited `v_skip_message` made a successful run exit 1).
+- #27: `release_lock.hwf` first checks that the process is declared, through the new pipeline `src/template/commons/tools/locks/release_lock_check.hpl` (`Table input` → `Detect empty stream` → `Abort`); a mistyped name now ends with `Unknown process` (exit 1). `EVAL_TABLE_CONTENT` was tried and rejected: Hop 2.19 does not resolve its variable connection name at run time. The two updates now run rows → `K` first, then the flag, so a partial failure is fixed by re-running.
 
 ## After the tasks (controller)
 
