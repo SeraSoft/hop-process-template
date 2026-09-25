@@ -99,4 +99,49 @@ The table below summarizes the set of base environment variables provided with t
 |serasoft.execution.log.filename|Log file name, attached to the feedback mail|`${PROJECT_HOME}/logs/execution_log_${p_base_process_name}_${serasoft.project.main.workflow}_${v_process_run_timestamp}.log`|'
 |serasoft.execution.file.name|File name with the events recorded, attached to the feedback mail|`${PROJECT_HOME}/temp/execution_file_${p_base_process_name}_${serasoft.project.main.workflow}_${v_process_run_timestamp}.csv`|
 
+## Exit codes
+
+`hop-run` ends a template-based execution with:
+
+| Exit code | Meaning |
+|---|---|
+| `0` | The process ran and terminated successfully (possibly with application errors recorded in `integrations_log_details`, status `X`). |
+| `1` | The process failed, **or it was skipped**: another instance holds the single-instance lock, or the process is paused (`is_active` not `Y`). A skipped execution logs an explicit `SKIPPED: …` error message and still runs the post phase and the feedback email, if enabled for that case. |
+| `2`, `9` | General `hop-run` error / invalid parameters (Hop Run, *Possible exit codes*). |
+
+A skipped execution is reported as a failure on purpose: an orchestrator (cron, Apache Airflow) must not treat "nothing was processed" as success.
+
+## Process statuses and stale locks
+
+Each execution writes a row in `logs.integrations_logs` whose `proc_status` is:
+
+| Status | Meaning |
+|---|---|
+| `R` | Running |
+| `T` | Terminated successfully |
+| `X` | Terminated successfully, with application errors in `integrations_log_details` |
+| `E` | Terminated in error |
+| `L` | Skipped: another instance held the lock |
+| `K` | Interrupted execution whose lock was released manually (see below) |
+
+A paused process (`is_active` not `Y`) is skipped before any row is written.
+
+### Stale locks
+
+The single-instance lock is `config.integrations_processes.is_running`: set to `Y` when an execution starts, reset to `N` by the post phase. If an execution is **killed** (timeout of an orchestrator, container or service removed, host restart), the post phase never runs: `is_running` stays `Y` and the execution's row stays `R`. Every later execution is then skipped (exit code `1`, `SKIPPED: process '…' is locked …`).
+
+After checking that **no instance of the process is really running**, release the lock:
+
+```
+hop-run -j <project> -e <environment> -r local \
+  -f ${PROJECT_HOME}/src/template/commons/tools/locks/release_lock.hwf \
+  -p p_base_process_name=<process short name>
+```
+
+The workflow sets `is_running` to `N` and marks the process's rows still in `R` as `K`. It cannot tell a stale lock from a legitimate one: running it while an instance is executing allows a second, parallel execution.
+
+It stops with an error if no process has that short name. The two updates are not one transaction: if the release fails part-way, just run it again (it is idempotent).
+
+**Future improvement** (#28): an optional lock max-age parameter; an orchestrator that enforces its own execution timeout could pass it so that locks older than that timeout, which are necessarily stale, are released automatically.
+
 ---

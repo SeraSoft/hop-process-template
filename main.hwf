@@ -233,8 +233,38 @@
       <type>SUCCESS</type>
       <attributes/>
       <parallel>N</parallel>
+      <xloc>1376</xloc>
+      <yloc>192</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Execution skipped?</name>
+      <description/>
+      <type>SIMPLE_EVAL</type>
+      <attributes/>
+      <comparevalue>^[23]$</comparevalue>
+      <fieldtype>string</fieldtype>
+      <successbooleancondition>false</successbooleancondition>
+      <successcondition>regexp</successcondition>
+      <successnumbercondition>equal</successnumbercondition>
+      <successwhenvarset>N</successwhenvarset>
+      <valuetype>variable</valuetype>
+      <variablename>${v_terminated_successfully}</variablename>
+      <parallel>N</parallel>
       <xloc>1200</xloc>
       <yloc>192</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Skipped</name>
+      <description/>
+      <type>ABORT</type>
+      <attributes/>
+      <always_log_rows>N</always_log_rows>
+      <message>${v_skip_message}</message>
+      <parallel>N</parallel>
+      <xloc>1200</xloc>
+      <yloc>320</yloc>
       <attributes_hac/>
     </action>
     <action>
@@ -248,7 +278,8 @@
 
 Previous instance for base process name '${p_base_process_name}' seems executing and it was started at '${v_last_instance_start_timestamp}'.
 However, maybe previous instance exited abnormally and lock wasn't cleared.
-Please check integration_processes table and eventually uncleand lock.
+If no instance is really running, release the lock with
+src/template/commons/tools/locks/release_lock.hwf (parameter p_base_process_name, see README, "Stale locks").
 
 PROCESS EXITS!
 
@@ -275,6 +306,11 @@ PROCESS EXITS!
           <variable_name>v_email_feedback_enabled</variable_name>
           <variable_type>ROOT_WORKFLOW</variable_type>
           <variable_value>${serasoft.email.lock.feedback.enabled}</variable_value>
+        </field>
+        <field>
+          <variable_name>v_skip_message</variable_name>
+          <variable_type>ROOT_WORKFLOW</variable_type>
+          <variable_value>SKIPPED: process '${p_base_process_name}' is locked by an instance started at ${v_last_instance_start_timestamp}</variable_value>
         </field>
       </fields>
       <file_variable_type>JVM</file_variable_type>
@@ -380,6 +416,11 @@ PROCESS EXITS!
           <variable_type>ROOT_WORKFLOW</variable_type>
           <variable_value>${serasoft.email.notactive.feedback.enabled}</variable_value>
         </field>
+        <field>
+          <variable_name>v_skip_message</variable_name>
+          <variable_type>ROOT_WORKFLOW</variable_type>
+          <variable_value>SKIPPED: process '${p_base_process_name}' is not active</variable_value>
+        </field>
       </fields>
       <file_variable_type>JVM</file_variable_type>
       <replacevars>Y</replacevars>
@@ -482,10 +523,24 @@ PROCESS EXITS!
     </hop>
     <hop>
       <from>Dummy 2</from>
-      <to>Terminated Successfully</to>
+      <to>Execution skipped?</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Execution skipped?</from>
+      <to>Skipped</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Execution skipped?</from>
+      <to>Terminated Successfully</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
     </hop>
     <hop>
       <from>Pre Phase</from>
