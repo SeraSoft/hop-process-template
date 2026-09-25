@@ -92,7 +92,13 @@ in `main_pre_job.hwf`) plus the check pipeline
    `Abort`), so a mistyped name is not reported as a successful release.
    The `EVAL_TABLE_CONTENT` action was rejected: in Hop 2.19 it does not
    resolve a variable connection name at run time ("No database connection
-   is defined"), although the GUI resolves it while editing;
+   is defined"), although the GUI resolves it while editing. Cause:
+   `ActionEvalTableContent.getDatabase()` calls
+   `DatabaseMeta.loadDatabase(getMetadataProvider(), connection)` without
+   `resolve()`, whereas the `SQL` action uses
+   `findDatabase(connection, getVariables())`. Fixed upstream on Hop `main`
+   by commit `3681d375a` (PR apache/hop#8048, milestone 2.20); the pipeline
+   check keeps working on every Hop version;
 2. log a warning with the process name;
 3. mark that process's orphaned rows in `logs.integrations_logs`
    (`proc_status = 'R'`) with the new status **`K`** — manually released,
