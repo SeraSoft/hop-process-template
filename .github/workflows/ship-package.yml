@@ -4,8 +4,8 @@ on:
   release:
     types: [published]  # Triggers when a new release is published
   push:
-    branches:
-      - main
+    # Tags only: a push to a branch has no tag for the release upload
+    # ("GitHub Releases requires a tag").
     tags:
       - '*'             # Also works if you push a tag like v1.0.0
 
