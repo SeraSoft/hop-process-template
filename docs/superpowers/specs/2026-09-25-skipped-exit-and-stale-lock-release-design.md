@@ -58,8 +58,11 @@ to the template for now: in-place change, template style):
 - the end of the success path (after `Post Phase Success` and the optional
   feedback email), currently `Dummy 2 → Terminated Successfully`, becomes
   `Dummy 2 → Execution skipped?` — a `SIMPLE_EVAL` succeeding when
-  `v_skip_message` is set — `→ Skipped` (`Abort`, message `${v_skip_message}`,
-  exit 1) on true, `→ Terminated Successfully` on false.
+  `${v_terminated_successfully}` matches `^[23]$` (the variable is reset to 1
+  by `Init Global Vars` on every run, so a `v_skip_message` inherited from a
+  parent workflow or JVM property cannot turn a success into a failure) —
+  `→ Skipped` (`Abort`, message `${v_skip_message}`, exit 1) on true,
+  `→ Terminated Successfully` on false.
 
 Net +2 actions; no other action or hop changes.
 

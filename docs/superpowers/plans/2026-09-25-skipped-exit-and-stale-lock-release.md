@@ -4,7 +4,7 @@
 
 **Goal:** Make `hop-run` exit 1 (with an explicit `SKIPPED: …` log message) when the template skips an execution because of the single-instance lock or a paused process (#26), and add a manual tool to release a lock left set by a killed execution (#27).
 
-**Architecture:** #26 is an in-place change of `main.hwf`: the two existing skip-marking `SET_VARIABLES` actions also set `v_skip_message`, and the end of the success path goes through a `SIMPLE_EVAL` (variable set?) to an `Abort` instead of straight to `Terminated Successfully`. #27 adds one workflow, `src/template/commons/tools/locks/release_lock.hwf` (parameter check, log, one `SQL` action), and points the existing lock warning to it. Both are verified live against a real `integrations_db` on PostgreSQL.
+**Architecture:** #26 is an in-place change of `main.hwf`: the two existing skip-marking `SET_VARIABLES` actions also set `v_skip_message`, and the end of the success path goes through a `SIMPLE_EVAL` (`${v_terminated_successfully}` matches `^[23]$`, i.e. locked or paused) to an `Abort` instead of straight to `Terminated Successfully`. #27 adds one workflow, `src/template/commons/tools/locks/release_lock.hwf` (parameter check, log, one `SQL` action), and points the existing lock warning to it. Both are verified live against a real `integrations_db` on PostgreSQL.
 
 **Tech Stack:** Apache Hop 2.19.0 workflows (XML), PostgreSQL 16 (`integrations_db` created with the template's Liquibase changelog), Docker (Hop runtime from the lab image `serasoft-lab/ssh-target:2.19.0`, which ships Hop 2.19.0 + JRE 21 in `/opt/hop`).
 
@@ -18,7 +18,7 @@
 - **Do not apply** the `apache-hop-development` skill's `STANDARDS.md` to this repo (user decision): change existing files in place, follow the template's existing style, don't add notepads or rename actions.
 - Hop files are XML; always check well-formedness after an edit: `python3 -c "import xml.dom.minidom,sys; xml.dom.minidom.parse(sys.argv[1]); print('xml ok')" <file>`.
 - `hop-run` exit codes: 0 success, 1 error (also `Abort`), 2 general error, 9 parameter error. A workflow cannot return other codes.
-- **Test harness (outside the repo, already prepared):** `H=/tmp/claude-1000/-home-enrico-repositories-serasoft-airflow-lab/2127bb35-4a4d-46e2-802f-3b98c38aa822/scratchpad/hoptest`
+- **Test harness (outside the repo, already prepared, in the lab's local `lab/` folder — not in git):** `H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test`
   - `$H/make_copy.sh` — makes a fresh throwaway copy of the repo working tree in `$H/copy` (runs write `logs/`, `temp/`, `project-config.json`, `hoprun.log` there — never run against the repo itself) and adds a test-only process `slowtest` whose `start.hwf` runs `SELECT pg_sleep(60)`.
   - `$H/run.sh <copy> <workflow> [params]` — runs `hop-run -e lab -r local -f /project/<workflow> -p '<params>'` in a throwaway container named `hoptest-run` on network `airflow-lab_default`, with project `tpl` = `<copy>` and environment `lab` = `$H/lab-env.json` (the template's variables, DB host `postgres:5432`, all feedback emails disabled). Prints `RC=<exit code>`; the Hop log is `<copy>/hoprun.log`. Default params: `p_base_process_name=default`.
   - `$H/q.sh "<sql>"` — runs one statement on the lab `integrations_db` (tuples only).
@@ -43,7 +43,7 @@
 - [ ] **Step 1: Baseline (red) on the current code**
 
 ```bash
-H=/tmp/claude-1000/-home-enrico-repositories-serasoft-airflow-lab/2127bb35-4a4d-46e2-802f-3b98c38aa822/scratchpad/hoptest
+H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
 $H/make_copy.sh
 $H/q.sh "update config.integrations_processes set is_active='Y', is_running='Y' where id='default'"
 $H/run.sh $H/copy main.hwf
@@ -105,14 +105,14 @@ rep("""      <name>Terminated Successfully</name>
       <description/>
       <type>SIMPLE_EVAL</type>
       <attributes/>
-      <comparevalue/>
+      <comparevalue>^[23]$</comparevalue>
       <fieldtype>string</fieldtype>
       <successbooleancondition>false</successbooleancondition>
-      <successcondition>equal</successcondition>
+      <successcondition>regexp</successcondition>
       <successnumbercondition>equal</successnumbercondition>
-      <successwhenvarset>Y</successwhenvarset>
+      <successwhenvarset>N</successwhenvarset>
       <valuetype>variable</valuetype>
-      <variablename>v_skip_message</variablename>
+      <variablename>${v_terminated_successfully}</variablename>
       <parallel>N</parallel>
       <xloc>1200</xloc>
       <yloc>192</yloc>
@@ -175,7 +175,7 @@ Expected: `patched`, `xml ok`, `main.hwf | 43 +++++-` (about +42/-1).
 | Exit code | Meaning |
 |---|---|
 | `0` | The process ran and terminated successfully (possibly with application errors recorded in `integrations_log_details`, status `X`). |
-| `1` | The process failed, **or it was skipped**: another instance holds the single-instance lock, or the process is paused (`is_active` not `Y`). A skipped execution logs an explicit `SKIPPED: …` error message and still runs the post phase and the feedback email. |
+| `1` | The process failed, **or it was skipped**: another instance holds the single-instance lock, or the process is paused (`is_active` not `Y`). A skipped execution logs an explicit `SKIPPED: …` error message and still runs the post phase and the feedback email, if enabled for that case. |
 | `2`, `9` | General `hop-run` error / invalid parameters (Hop Run, *Possible exit codes*). |
 
 A skipped execution is reported as a failure on purpose: an orchestrator (cron, Apache Airflow) must not treat "nothing was processed" as success.
@@ -183,7 +183,7 @@ A skipped execution is reported as a failure on purpose: an orchestrator (cron, 
 
 ```bash
 cd /home/enrico/repositories/serasoft/hop-process-template
-H=/tmp/claude-1000/-home-enrico-repositories-serasoft-airflow-lab/2127bb35-4a4d-46e2-802f-3b98c38aa822/scratchpad/hoptest
+H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
 python3 - README.md $H/readme_exit_codes.md <<'PYEOF'
 import sys
 p, sec = sys.argv[1], open(sys.argv[2]).read()
@@ -199,7 +199,7 @@ Expected: `inserted`; README ends with the new section followed by `---`.
 - [ ] **Step 4: Verify (green) on a fresh copy**
 
 ```bash
-H=/tmp/claude-1000/-home-enrico-repositories-serasoft-airflow-lab/2127bb35-4a4d-46e2-802f-3b98c38aa822/scratchpad/hoptest
+H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
 $H/make_copy.sh
 $H/q.sh "update config.integrations_processes set is_active='Y', is_running='N'"
 echo "== normal"; $H/run.sh $H/copy main.hwf; grep -E "Execution skipped\?\] \(result|Terminated Successfully\] \(result" $H/copy/hoprun.log
@@ -238,7 +238,7 @@ Refs #26"
 - [ ] **Step 1: Baseline (red): a killed run leaves the lock set and there is no release tool**
 
 ```bash
-H=/tmp/claude-1000/-home-enrico-repositories-serasoft-airflow-lab/2127bb35-4a4d-46e2-802f-3b98c38aa822/scratchpad/hoptest
+H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
 $H/make_copy.sh
 $H/q.sh "update config.integrations_processes set is_active='Y', is_running='N'"
 ( $H/run.sh $H/copy main.hwf p_base_process_name=slowtest > $H/slow.out 2>&1 & )
@@ -253,7 +253,7 @@ Expected: `flag=Y last=R` (stale lock); only `check_status_and_lock.hpl` in `loc
 
 ```bash
 cd /home/enrico/repositories/serasoft/hop-process-template
-cp /tmp/claude-1000/-home-enrico-repositories-serasoft-airflow-lab/2127bb35-4a4d-46e2-802f-3b98c38aa822/scratchpad/hoptest/release_lock.hwf src/template/commons/tools/locks/release_lock.hwf
+cp /home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test/release_lock.hwf src/template/commons/tools/locks/release_lock.hwf
 python3 -c "import xml.dom.minidom,sys; xml.dom.minidom.parse(sys.argv[1]); print('xml ok')" src/template/commons/tools/locks/release_lock.hwf
 grep -E "<name>|<type>" src/template/commons/tools/locks/release_lock.hwf
 ```
@@ -312,7 +312,7 @@ The workflow sets `is_running` to `N` and marks the process's rows still in `R` 
 
 ```bash
 cd /home/enrico/repositories/serasoft/hop-process-template
-H=/tmp/claude-1000/-home-enrico-repositories-serasoft-airflow-lab/2127bb35-4a4d-46e2-802f-3b98c38aa822/scratchpad/hoptest
+H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
 python3 - README.md $H/readme_stale_locks.md <<'PYEOF'
 import sys
 p, sec = sys.argv[1], open(sys.argv[2]).read()
@@ -328,7 +328,7 @@ Expected: `inserted`; headings end with `## Exit codes`, `## Process statuses an
 - [ ] **Step 5: Verify (green): stale lock → skipped → release → next run succeeds** (the stale state from Step 1 is still in the DB; refresh the copy so it contains the new workflow)
 
 ```bash
-H=/tmp/claude-1000/-home-enrico-repositories-serasoft-airflow-lab/2127bb35-4a4d-46e2-802f-3b98c38aa822/scratchpad/hoptest
+H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
 $H/make_copy.sh
 echo "== run while stale"; $H/run.sh $H/copy main.hwf p_base_process_name=slowtest; grep -o "ERROR: SKIPPED[^\"]*" $H/copy/hoprun.log; grep -c "release_lock.hwf" $H/copy/hoprun.log
 echo "== release without parameter"; $H/run.sh $H/copy src/template/commons/tools/locks/release_lock.hwf p_base_process_name=; grep -o "Parameter p_base_process_name is required[^\"]*" $H/copy/hoprun.log
