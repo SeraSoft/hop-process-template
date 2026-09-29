@@ -65,6 +65,12 @@ liquibase changelogSync \
     --password="password"
 ```
 
+PostgreSQL databases created with the former `master-postgresql.xml` changelog have its name recorded in `DATABASECHANGELOG`, so Liquibase would try to run `master.xml` again and fail on the existing tables. Before the first `update` with `master.xml`, record the new name once:
+
+```sql
+UPDATE databasechangelog SET filename = 'master.xml' WHERE filename = 'master-postgresql.xml';
+```
+
 ## Process template environment variables
 
 The table below summarizes the set of base environment variables provided with the template. This set of variables will be the starting point of your application's environment variables. 
