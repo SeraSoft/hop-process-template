@@ -84,11 +84,13 @@ The table below summarizes the set of base environment variables provided with t
 |serasoft.integrations.db.config.schema|Name of the schema containing the configuration tables for the integrations database|`config`|
 |serasoft.integrations.db.log.schema|Name of schema containing the logs tables for the integrations database|`logs`|
 |serasoft.integrations.db.host|Name of the hosts where the integrations database is running. This can be an IP address or a hostname.|`localhost`|
-|serasoft.integrations.db.connection.name|Name of the connection assigned in Apache Hop for the integrations database. This is used to connect to the database during Hop Process execution.|`integrations_db`|
+|serasoft.integrations.db.connection.name|Name of the connection assigned in Apache Hop for the integrations database. This is used to connect to the database during Hop Process execution. One of `integrations_db_postgres`, `integrations_db_mssql`, `integrations_db_sqlite` (environment files `config/template-postgresql.json`, `config/template-mssql.json`, `config/template-sqlite.json`).|`integrations_db_postgres`|
 |serasoft.integrations.db.name|Name of the database containing the configuration and logs tables for the integrations database|`integrations_db`|
-|serasoft.integrations.db.port|Port of the integrations database. This is the port where the database server is listening for connections|`5432`|
+|serasoft.integrations.db.port|Port of the integrations database. This is the port where the database server is listening for connections (`1433` for SQL Server)|`5432`|
 |serasoft.integrations.db.user|Username used to connect to the integrations database. This user must have permissions to read/write in the specified database|`postgres`|
 |serasoft.integrations.db.pwd|Password used to connect to the integrations database. This user must have permissions to read/write in the specified database|`password`|
+|serasoft.integrations.db.mssql.encrypt|SQL Server only: encrypt the connection (JDBC driver option `encrypt`)|`true`|
+|serasoft.integrations.db.mssql.trust.server.certificate|SQL Server only: accept the server certificate without validating it (JDBC driver option `trustServerCertificate`): the connection stays encrypted, but the server identity is not verified. Set to `false` when the server certificate is trusted by the JVM, e.g. issued by a trusted CA|`true`|
 |serasoft.email.success.feedback.enabled|Flag that enables or disables the sending of success feedback emails after a process execution. Set to 1 to enable, 0 to disable|`0`|
 |serasoft.email.fail.feedback.enabled|Flag that enables or disables the sending of failure feedback emails after a process execution. Set to 1 to enable, 0 to disable|`1`|
 |serasoft.email.application.error.feedback.enabled|Flag that enables or disables the sending of feedback emails after a process execution if application error. Set to 1 to enable, 0 to disable|`1`|
