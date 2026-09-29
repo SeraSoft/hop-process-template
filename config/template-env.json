@@ -177,8 +177,8 @@
     },
     {
       "name" : "serasoft.application.error.mail.text",
-      "value" : "<p>During process ${p_base_process_name}'s execution we collected some exceptions on integrations_log_details.</p><p>Process ${p_base_process_name}'s log attached to this email.</p><p>Process ${p_base_process_name}'s exceptions have been collected in the .csv file attached to this email.</p><p>Execution log file available at: ${p_log_filename}</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>>",
-      "description" : "Sample text message used when an application error occurs. It includes the log file name and mentions that detailed exceptions are in the attachment."
+      "value" : "<p>During process ${p_base_process_name}'s execution we collected some exceptions on integrations_log_details.</p><p>Process ${p_base_process_name}'s log and the .csv file with the collected exceptions are in the logs.zip file attached to this email.</p><p>Execution log file available at: ${p_log_filename}</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>",
+      "description" : "Sample text message used when an application error occurs. It includes the log file name and mentions that detailed exceptions are in the .csv file inside the logs.zip attachment."
     },
     {
       "name" : "serasoft.notactive.mail.text",
