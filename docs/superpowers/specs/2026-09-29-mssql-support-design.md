@@ -58,7 +58,9 @@ Connection `integrations_db_mssql`, plugin `MSSQLNATIVE`, access type native:
 **Fallback:** if Hop 2.19 does not resolve variables in extra options, the
 connection uses a manual URL built from the same variables
 (`jdbc:sqlserver://${serasoft.integrations.db.host}:${serasoft.integrations.db.port};databaseName=${serasoft.integrations.db.name};encrypt=${serasoft.integrations.db.mssql.encrypt};trustServerCertificate=${serasoft.integrations.db.mssql.trust.server.certificate}`).
-The environment file does not change.
+The environment file does not change. Not needed in the end: the
+`trust.server.certificate=false` run fails with `PKIX path building failed`,
+so Hop 2.19 resolves the variables in the extra options.
 
 ### `config/template-mssql.json`
 
@@ -73,8 +75,9 @@ variables (`true`, `true`), each with a description.
   `serasoft.integrations.db.connection.name` row lists the three connections
   (`integrations_db_postgres`, `integrations_db_sqlite`,
   `integrations_db_mssql`); the port row mentions `1433` for SQL Server.
-- A short note on encryption: when the server certificate is trusted, set
-  `serasoft.integrations.db.mssql.trust.server.certificate` to `false`.
+- In the description of `serasoft.integrations.db.mssql.trust.server.certificate`:
+  the connection stays encrypted but the server identity is not verified; set it
+  to `false` when the server certificate is trusted.
 
 No pipeline or workflow is changed. If a test shows a SQL Server
 incompatibility, it is reported to the user before any fix.
@@ -88,8 +91,9 @@ as for #26/#27), extended with a SQL Server environment:
 - SQL Server 2022 in a throwaway container on the lab network;
   `integrations_db` created with `db/liquibase/master.xml`;
 - Apache Hop 2.19.0 in a throwaway container, environment built from
-  `config/template-mssql.json` with the SQL Server container as host and all
-  feedback emails disabled;
+  `config/template-mssql.json` with the SQL Server container as host;
+  feedback emails disabled except the application-error one, sent to a
+  Mailpit SMTP sink (test container);
 - test-only processes in the throwaway copy of the template: `slowtest`
   (`WAITFOR DELAY` instead of `pg_sleep`) and one that records an application
   event in `integrations_log_events` for the running instance.
@@ -98,7 +102,7 @@ as for #26/#27), extended with a SQL Server environment:
 |---|---|
 | variables in the driver options | with `trust.server.certificate=false` the connection to the container (self-signed certificate) fails with a certificate error; with the template defaults it connects |
 | normal run | exit 0; row `T`; `is_running = 'N'` |
-| application error (event recorded) | exit 0; row `X`; the event is read back by `check_for_soft_errors.hpl` and the feedback file is produced |
+| application error (event recorded) | exit 0; row `X`; the application-error email carries `logs.zip` with the execution CSV holding the event row (read back by the "Get logging_details" query) |
 | lock present (`is_running` set to `'Y'` by hand) | exit 1; `SKIPPED: … is locked`; row `L`; `is_running` still `'Y'` |
 | process paused (`is_active` not `Y`) | exit 1; `SKIPPED: … is not active`; no log row |
 | run killed mid-execution, then `release_lock.hwf` | rows `R` become `K`; `is_running = 'N'`; next run exit 0 |
@@ -108,3 +112,17 @@ as for #26/#27), extended with a SQL Server environment:
 One GitHub issue, one branch from `main`, this spec and the implementation
 plan committed on it, one PR closing the issue. `docs/` is not shipped in the
 release ZIP.
+
+## Results (2026-09-29, SQL Server 2022, Hop 2.19.0)
+
+| Scenario | Result |
+|---|---|
+| baseline, no SQL Server connection | exit 1: `NullPointerException … "this.databaseMeta" is null` in `init_process_id.hpl` |
+| variables in the driver options | `trust.server.certificate=false`: exit 1, `PKIX path building failed`; template defaults connect |
+| normal run | exit 0; `T`; `is_running = 'N'` |
+| application error | exit 0; `X`; 1 event; email `… Terminated successfully with application exceptions.` with `logs.zip` → CSV `SYSTEM EXCEPTION;GENERIC ERROR;5;TEST;row-1;apperrtest application event;` |
+| lock present | exit 1; `SKIPPED: process 'default' is locked …`; `L`; `is_running` still `'Y'` |
+| process paused | exit 1; `SKIPPED: process 'default' is not active`; no new row |
+| killed run + `release_lock.hwf` | `R`/`Y` → release exit 0 → `K`/`N`; next run exit 0, `T` |
+
+No template pipeline or workflow needed changes: the hand-written SQL runs unchanged on SQL Server.

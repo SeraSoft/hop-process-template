@@ -31,7 +31,7 @@
 |---|---|
 | `metadata/rdbms/integrations_db_mssql.json` (create) | Hop connection `integrations_db_mssql`, plugin `MSSQLNATIVE`, all values from environment variables |
 | `config/template-mssql.json` (create) | Template environment for SQL Server (8 DB variables + 2 encryption variables) |
-| `README.md` (modify) | Environment variables table and SQL Server encryption note |
+| `README.md` (modify) | Environment variables table (connection names, SQL Server port, encryption variables) |
 | `$H/lab-env-mssql.json`, `$H/qm.sh`, `$H/make_copy_mssql.sh`, `$H/run.sh` (lab, outside git) | SQL Server test harness |
 
 ---
@@ -40,7 +40,7 @@
 
 **Files (lab only, nothing committed):** create `$H/qm.sh`, `$H/make_copy_mssql.sh`, `$H/lab-env-mssql.json`; modify `$H/run.sh`.
 
-- [ ] **Step 1: Start SQL Server 2022 and Mailpit on the lab network**
+- [x] **Step 1: Start SQL Server 2022 and Mailpit on the lab network**
 
 ```bash
 docker run -d --name lab-mssql --network airflow-lab_default \
@@ -53,7 +53,7 @@ curl -s http://localhost:18025/api/v1/messages | head -c 80; echo
 ```
 Expected: the `CREATE DATABASE` returns without error; Mailpit answers with JSON (`{"total":0,…`).
 
-- [ ] **Step 2: Create `integrations_db` with the repo changelog (Liquibase 4.33.0)**
+- [x] **Step 2: Create `integrations_db` with the repo changelog (Liquibase 4.33.0)**
 
 ```bash
 docker run --rm --network airflow-lab_default \
@@ -64,7 +64,7 @@ docker run --rm --network airflow-lab_default \
 ```
 Expected: `Run: 16`, `Update has been successful` (or `… executed successfully`).
 
-- [ ] **Step 3: Create `$H/qm.sh`** (one SQL Server statement, rows only)
+- [x] **Step 3: Create `$H/qm.sh`** (one SQL Server statement, rows only)
 
 ```bash
 H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
@@ -80,7 +80,7 @@ $H/qm.sh "SELECT id FROM config.integrations_processes ORDER BY id"
 ```
 Expected: `apperrtest`, `default`, `slowtest`.
 
-- [ ] **Step 4: Let `run.sh` take the environment file from `LAB_ENV`**
+- [x] **Step 4: Let `run.sh` take the environment file from `LAB_ENV`**
 
 ```bash
 H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
@@ -97,7 +97,7 @@ PYEOF
 ```
 Expected: `patched`. Without `LAB_ENV` the script behaves as before (PostgreSQL lab).
 
-- [ ] **Step 5: Create `$H/lab-env-mssql.json`** from `lab-env.json`, with the SQL Server values, the two encryption variables and the application-error email sent to Mailpit
+- [x] **Step 5: Create `$H/lab-env-mssql.json`** from `lab-env.json`, with the SQL Server values, the two encryption variables and the application-error email sent to Mailpit
 
 ```bash
 H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
@@ -122,7 +122,7 @@ python3 -c "import json;[print(v['name'],'=',v['value']) for v in json.load(open
 ```
 Expected: `written`; host `lab-mssql`, port `1433`, connection `integrations_db_mssql`, both encryption variables `true`, smtp host `lab-mailpit`, application error feedback `1`.
 
-- [ ] **Step 6: Create `$H/make_copy_mssql.sh`** (fresh copy; `slowtest` with `WAITFOR DELAY`; new `apperrtest` that records one application event for the running instance)
+- [x] **Step 6: Create `$H/make_copy_mssql.sh`** (fresh copy; `slowtest` with `WAITFOR DELAY`; new `apperrtest` that records one application event for the running instance)
 
 ```bash
 H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
@@ -147,7 +147,7 @@ grep -o "<sql>[^<]*</sql>" $H/copy/src/project/main/slowtest/start.hwf $H/copy/s
 ```
 Expected: `mssql copy ready`; slowtest `<sql>WAITFOR DELAY '00:00:40'</sql>`; apperrtest `<sql>INSERT INTO ${serasoft.integrations.db.log.schema}.integrations_log_events (…) VALUES ('${v_process_instance_id}-E', …)</sql>`.
 
-- [ ] **Step 7: Baseline (red): the template has no SQL Server connection**
+- [x] **Step 7: Baseline (red): the template has no SQL Server connection**
 
 ```bash
 H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
@@ -164,7 +164,7 @@ No commit (lab files are outside git).
 
 **Files:** Create `metadata/rdbms/integrations_db_mssql.json`, `config/template-mssql.json`.
 
-- [ ] **Step 1: Create `metadata/rdbms/integrations_db_mssql.json`**
+- [x] **Step 1: Create `metadata/rdbms/integrations_db_mssql.json`**
 
 ```json
 {
@@ -200,7 +200,7 @@ No commit (lab files are outside git).
 
 Validate: `python3 -m json.tool metadata/rdbms/integrations_db_mssql.json >/dev/null && echo OK` → `OK`.
 
-- [ ] **Step 2: Create `config/template-mssql.json`** (same order and descriptions as `config/template-postgresql.json`, plus the two encryption variables)
+- [x] **Step 2: Create `config/template-mssql.json`** (same order and descriptions as `config/template-postgresql.json`, plus the two encryption variables)
 
 ```json
 {
@@ -252,7 +252,7 @@ Validate: `python3 -m json.tool metadata/rdbms/integrations_db_mssql.json >/dev/
 
 Validate: `python3 -m json.tool config/template-mssql.json >/dev/null && echo OK` → `OK`.
 
-- [ ] **Step 3: Verify (green): normal run on SQL Server**
+- [x] **Step 3: Verify (green): normal run on SQL Server**
 
 ```bash
 H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
@@ -266,7 +266,7 @@ Expected: `RC=0`, `Terminated Successfully] (result=[true])`, `flag=N last=T`.
 
 If it fails for a SQL incompatibility (error in a template pipeline/workflow, not in the new files): **stop and report the exact error to the controller**; do not change pipelines or workflows.
 
-- [ ] **Step 4: Verify that the encryption variables reach the driver**
+- [x] **Step 4: Verify that the encryption variables reach the driver**
 
 ```bash
 H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
@@ -282,7 +282,7 @@ grep -m2 -o -i "PKIX[^\"]*\|could not establish a secure connection[^\"]*" $H/co
 ```
 Expected: non-zero `RC` and a certificate error (`PKIX path building failed` / `could not establish a secure connection … SSL`): the variable was resolved and passed to the driver, since the default environment (Step 3) connects. If Step 3 passed and this run also connects, the variables are not applied: switch to the spec fallback — set `"manualUrl": "jdbc:sqlserver://${serasoft.integrations.db.host}:${serasoft.integrations.db.port};databaseName=${serasoft.integrations.db.name};encrypt=${serasoft.integrations.db.mssql.encrypt};trustServerCertificate=${serasoft.integrations.db.mssql.trust.server.certificate}"`, remove the two `EXTRA_OPTION_MSSQLNATIVE.*` attributes, and repeat Steps 3–4.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /home/enrico/repositories/serasoft/hop-process-template
@@ -306,7 +306,7 @@ Refs #35"
 
 **Files:** none (verification only). If a scenario fails because of a template pipeline/workflow, stop and report it; no fix without the user's approval.
 
-- [ ] **Step 1: Application error (status `X`, event read back, feedback file sent)**
+- [x] **Step 1: Application error (status `X`, event read back, email with `logs.zip`)**
 
 ```bash
 H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
@@ -319,14 +319,15 @@ curl -s http://localhost:18025/api/v1/messages | python3 -c "import json,sys;m=j
 ID=$(curl -s http://localhost:18025/api/v1/messages | python3 -c "import json,sys;print(json.load(sys.stdin)['messages'][0]['ID'])")
 curl -s http://localhost:18025/api/v1/message/$ID | python3 -c "import json,sys;print([a['FileName'] for a in json.load(sys.stdin)['Attachments']])"
 ```
-Expected: `RC=0`; `last=X events=1`; one message whose subject ends with `Terminated successfully with application exceptions.`, with a `.csv` attachment (`execution_file_apperrtest_…csv`). Then check the CSV content:
+Expected: `RC=0`; `last=X events=1`; one message whose subject ends with `Terminated successfully with application exceptions.`, with a `logs.zip` attachment that contains `execution_file_apperrtest_…csv` and the execution log. Then check the CSV content:
 ```bash
-PART=$(curl -s http://localhost:18025/api/v1/message/$ID | python3 -c "import json,sys;print([a['PartID'] for a in json.load(sys.stdin)['Attachments'] if a['FileName'].endswith('.csv')][0])")
-curl -s http://localhost:18025/api/v1/message/$ID/part/$PART
+PART=$(curl -s http://localhost:18025/api/v1/message/$ID | python3 -c "import json,sys;print([a['PartID'] for a in json.load(sys.stdin)['Attachments'] if a['FileName']=='logs.zip'][0])")
+curl -s -o /home/enrico/.claude/jobs/229abd6d/tmp/logs.zip http://localhost:18025/api/v1/message/$ID/part/$PART
+python3 -c "import zipfile;z=zipfile.ZipFile('/home/enrico/.claude/jobs/229abd6d/tmp/logs.zip');print(z.namelist());[print(z.read(n).decode()) for n in z.namelist() if n.endswith('.csv')]"
 ```
 Expected: a row with `SYSTEM EXCEPTION`, `GENERIC ERROR`, severity `5`, `TEST`, `row-1`, `apperrtest application event` (this is the "Get logging_details" query, with its three left joins, running on SQL Server).
 
-- [ ] **Step 2: Lock present**
+- [x] **Step 2: Lock present**
 
 ```bash
 H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
@@ -337,7 +338,7 @@ echo "flag=$($H/qm.sh "SELECT is_running FROM config.integrations_processes WHER
 ```
 Expected: `RC=1`; `ERROR: SKIPPED: process 'default' is locked by an instance started at …`; `flag=Y last=L`.
 
-- [ ] **Step 3: Process paused**
+- [x] **Step 3: Process paused**
 
 ```bash
 H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
@@ -350,7 +351,7 @@ $H/qm.sh "UPDATE config.integrations_processes SET is_active='Y', is_running='N'
 ```
 Expected: `RC=1`; `ERROR: SKIPPED: process 'default' is not active`; `before` = `after`.
 
-- [ ] **Step 4: Killed run, then `release_lock.hwf`**
+- [x] **Step 4: Killed run, then `release_lock.hwf`**
 
 ```bash
 H=/home/enrico/repositories/serasoft/airflow-lab/lab/hop-template-test
@@ -365,7 +366,7 @@ echo "next: last=$($H/qm.sh "SELECT TOP 1 proc_status FROM logs.integrations_log
 ```
 Expected: `stale: flag=Y last=R`; release `RC=0`, `released: flag=N last=K`; next run `RC=0` (after ~40 s), `next: last=T`.
 
-- [ ] **Step 5: Report** the RC and outputs of Steps 1–4 to the controller (they go into the PR body). No commit.
+- [x] **Step 5: Report** the RC and outputs of Steps 1–4 to the controller (they go into the PR body). No commit.
 
 ---
 
@@ -373,7 +374,7 @@ Expected: `stale: flag=Y last=R`; release `RC=0`, `released: flag=N last=K`; nex
 
 **Files:** Modify `README.md` (environment variables table).
 
-- [ ] **Step 1: Update the table rows and add the two variables** — run from the repo root (each anchor must be found exactly once):
+- [x] **Step 1: Update the table rows and add the two variables** — run from the repo root (each anchor must be found exactly once):
 
 ```bash
 cd /home/enrico/repositories/serasoft/hop-process-template
@@ -397,7 +398,7 @@ grep -n "db.connection.name\|db.port\|db.mssql" README.md | cut -c1-150
 ```
 Expected: `patched`; the four rows shown.
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add README.md
