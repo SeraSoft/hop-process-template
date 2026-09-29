@@ -65,11 +65,20 @@ liquibase changelogSync \
     --password="password"
 ```
 
-PostgreSQL databases created with the former `master-postgresql.xml` changelog have its name recorded in `DATABASECHANGELOG`, so Liquibase would try to run `master.xml` again and fail on the existing tables. Before the first `update` with `master.xml`, record the new name once:
+PostgreSQL databases created with the former `master-postgresql.xml` changelog have its name recorded in `DATABASECHANGELOG`, so Liquibase would try to run `master.xml` again and fail on the existing tables. Liquibase records the changelog path as it was passed on the command line, so check first how it was recorded (e.g. `master-postgresql.xml` or `changelog/master-postgresql.xml`):
 
 ```sql
-UPDATE databasechangelog SET filename = 'master.xml' WHERE filename = 'master-postgresql.xml';
+SELECT filename, count(*) FROM databasechangelog GROUP BY filename;
 ```
+
+Before the first `update` with `master.xml`, record the new name once:
+
+```sql
+UPDATE databasechangelog SET filename = 'master.xml'
+WHERE filename = 'master-postgresql.xml' OR filename LIKE '%/master-postgresql.xml';
+```
+
+Then `liquibase status` (same options as `update`) must report the database as up to date.
 
 ## Process template environment variables
 
