@@ -23,6 +23,8 @@ To be able to create/update the support database conventionally named *integrati
 TBD
 
 ### Support database creation
+A single changelog, `db/liquibase/master.xml`, creates the support database on PostgreSQL, Microsoft SQL Server and SQLite. Run Liquibase from the `db/liquibase` directory; a properties file for each database is provided there (`liquibase-postgresql.template`, `liquibase-mssql.properties`, `liquibase-sqlite-config.properties`, `liquibase-sqlite-logs.properties`) and can be passed with `--defaults-file`.
+
 Remember, in both cases, replace `url`, `username` and `password` with the actual ones.
 #### Database creation
 In case of brand new database (fresh installation)
@@ -33,6 +35,23 @@ liquibase update \
     --changeLogFile="master.xml" \
     --username="postgres" \
     --password="password" 
+```
+
+On Microsoft SQL Server the database must already exist; the changelog creates the `config` and `logs` schemas:
+
+```powershell
+liquibase update \
+    --url="jdbc:sqlserver://localhost:1433;databaseName=integrations_db;encrypt=true;trustServerCertificate=true" \
+    --changeLogFile="master.xml" \
+    --username="sa" \
+    --password="password"
+```
+
+SQLite has no schemas: `config` and `logs` tables live in two database files (`db/sqlite/data/integrations_db.config` and `integrations_db.logs`, attached as schemas by the `integrations_db_sqlite` Hop connection). Update each file with its properties file, which sets the matching label filter (`config` or `logs`):
+
+```powershell
+liquibase update --defaults-file="liquibase-sqlite-config.properties"
+liquibase update --defaults-file="liquibase-sqlite-logs.properties"
 ```
 
 #### Database update
