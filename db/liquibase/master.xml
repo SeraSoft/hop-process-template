@@ -1,17 +1,37 @@
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" logicalFilePath="master.xml" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
         http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+	<!--
+		Single changelog for PostgreSQL, Microsoft SQL Server and SQLite.
+		SQLite has no schemas: config and logs tables live in two separate database files
+		(integrations_db.config, integrations_db.logs), each updated with its own label filter
+		(labels "config" and "logs"). SQLite does not support adding foreign keys, so they are skipped there.
+	-->
+	<!-- Database-specific values -->
+	<property name="config.schema" value="config" dbms="postgresql,mssql" />
+	<property name="logs.schema" value="logs" dbms="postgresql,mssql" />
+	<property name="config.schema" value="" dbms="sqlite" />
+	<property name="logs.schema" value="" dbms="sqlite" />
+	<!-- CURRENT_DATE is kept on PostgreSQL so that the checksums of existing installations do not change -->
+	<property name="current.timestamp" value="CURRENT_DATE" dbms="postgresql" />
+	<property name="current.timestamp" value="CURRENT_TIMESTAMP" dbms="mssql,sqlite" />
 	<!-- Create Schemas -->
-	<changeSet id="create-schemas" author="serasoft">
+	<changeSet id="create-schemas" author="serasoft" dbms="postgresql">
 		<sql>
 			CREATE SCHEMA IF NOT EXISTS config;
 			CREATE SCHEMA IF NOT EXISTS logs;
 		</sql>
 	</changeSet>
+	<changeSet id="create-schemas-mssql" author="serasoft" dbms="mssql">
+		<sql>
+			IF SCHEMA_ID('config') IS NULL EXEC('CREATE SCHEMA config');
+			IF SCHEMA_ID('logs') IS NULL EXEC('CREATE SCHEMA logs');
+		</sql>
+	</changeSet>
 	<!-- Create Tables -->
-	<changeSet id="create-config-events-categories-table" author="serasoft">
-		<createTable schemaName="config" tableName="events_categories" remarks="This table contains the categories of events. Each event must be assigned to a category.">
+	<changeSet id="create-config-events-categories-table" author="serasoft" labels="config">
+		<createTable schemaName="${config.schema}" tableName="events_categories" remarks="This table contains the categories of events. Each event must be assigned to a category.">
 			<column name="id" type="varchar(48)" remarks="Table's surrogate primary key">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
@@ -23,8 +43,8 @@
 			</column>
 		</createTable>
 	</changeSet>
-	<changeSet id="create-config-events-subcategories-table" author="serasoft" >
-		<createTable schemaName="config" tableName="events_subcategories" remarks="This table contains the subcategories of events. Each event must be assigned to a subcategory.">
+	<changeSet id="create-config-events-subcategories-table" author="serasoft" labels="config">
+		<createTable schemaName="${config.schema}" tableName="events_subcategories" remarks="This table contains the subcategories of events. Each event must be assigned to a subcategory.">
 			<column name="id" type="varchar(48)" remarks="Table's surrogate primary key">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
@@ -36,8 +56,8 @@
 			</column>
 		</createTable>
 	</changeSet>
-	<changeSet id="create-config-events-severities-table" author="serasoft" >
-		<createTable schemaName="config" tableName="events_severities" remarks="This table contains the severities of events. Each event must be assigned a severity.">
+	<changeSet id="create-config-events-severities-table" author="serasoft" labels="config">
+		<createTable schemaName="${config.schema}" tableName="events_severities" remarks="This table contains the severities of events. Each event must be assigned a severity.">
 			<column name="id" type="varchar(48)"  remarks="Table's surrogate primary key" >
 				<constraints primaryKey="true" nullable="false"/>
 			</column>
@@ -49,8 +69,8 @@
 			</column>
 		</createTable>
 	</changeSet>
-	<changeSet id="create-config-integrations-processes-table" author="serasoft">
-		<createTable schemaName="config" tableName="integrations_processes" remarks="This table contains the processes that can be executed in HOP. Each process must be assigned to a project and have a code to be started.">
+	<changeSet id="create-config-integrations-processes-table" author="serasoft" labels="config">
+		<createTable schemaName="${config.schema}" tableName="integrations_processes" remarks="This table contains the processes that can be executed in HOP. Each process must be assigned to a project and have a code to be started.">
 			<column name="id" type="varchar(48)" remarks="This is the process code we use to start HOP processes. Passed with p_program_name.">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
@@ -69,8 +89,8 @@
 			</column>
 		</createTable>
 	</changeSet>
-	<changeSet id="create-logs-integrations-logs-table" author="serasoft">
-		<createTable schemaName="logs" tableName="integrations_logs" remarks="This table contains the logs of integration processes.There is a log for each process execution.">
+	<changeSet id="create-logs-integrations-logs-table" author="serasoft" labels="logs">
+		<createTable schemaName="${logs.schema}" tableName="integrations_logs" remarks="This table contains the logs of integration processes.There is a log for each process execution.">
 			<column name="id" type="varchar(48)" remarks="Table's surrogate primary key">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
@@ -92,12 +112,12 @@
 			<column name="host" type="varchar(64)" remarks="THe host where the process run"/>
 		</createTable>
 	</changeSet>
-	<changeSet id="create-logs-integrations-log-events-table" author="serasoft">
-		<createTable schemaName="logs" tableName="integrations_log_events" remarks="This table contains the events raised during the execution of integration processes. Each event must be assigned to a category, subcategory and severity.">
+	<changeSet id="create-logs-integrations-log-events-table" author="serasoft" labels="logs">
+		<createTable schemaName="${logs.schema}" tableName="integrations_log_events" remarks="This table contains the events raised during the execution of integration processes. Each event must be assigned to a category, subcategory and severity.">
 			<column name="id" type="varchar(48)" remarks="Table's surrogate primary key">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="date_event" type="timestamp" defaultValueComputed="CURRENT_DATE" remarks="Event timestamp">
+			<column name="date_event" type="timestamp" defaultValueComputed="${current.timestamp}" remarks="Event timestamp">
 				<constraints nullable="false" />
 			</column>
 			<column name="integrations_logs_id" type="varchar(48)" remarks="Reference to the integration log">
@@ -118,45 +138,45 @@
 		</createTable>
 	</changeSet>
 	<!-- Add Foreign Keys -->
-	<changeSet id="add-fk-events-categories" author="serasoft">
-		<addForeignKeyConstraint baseTableSchemaName="config" baseTableName="events_subcategories" baseColumnNames="event_category_id" constraintName="fk_event_category" referencedTableSchemaName="config" referencedTableName="events_categories" referencedColumnNames="id" />
+	<changeSet id="add-fk-events-categories" author="serasoft" dbms="!sqlite" labels="config">
+		<addForeignKeyConstraint baseTableSchemaName="${config.schema}" baseTableName="events_subcategories" baseColumnNames="event_category_id" constraintName="fk_event_category" referencedTableSchemaName="${config.schema}" referencedTableName="events_categories" referencedColumnNames="id" />
 	</changeSet>
-	<changeSet id="add-fk-integrations-log-events-logs" author="serasoft">
-		<addForeignKeyConstraint baseTableSchemaName="logs" baseTableName="integrations_log_events" baseColumnNames="integrations_logs_id" constraintName="integrations_log_details_integrations_logs_id_fkey" referencedTableSchemaName="logs" referencedTableName="integrations_logs" referencedColumnNames="id" />
+	<changeSet id="add-fk-integrations-log-events-logs" author="serasoft" dbms="!sqlite" labels="logs">
+		<addForeignKeyConstraint baseTableSchemaName="${logs.schema}" baseTableName="integrations_log_events" baseColumnNames="integrations_logs_id" constraintName="integrations_log_details_integrations_logs_id_fkey" referencedTableSchemaName="${logs.schema}" referencedTableName="integrations_logs" referencedColumnNames="id" />
 	</changeSet>
-	<changeSet id="add-fk-integrations-log-events-subcategories" author="serasoft">
-		<addForeignKeyConstraint baseTableSchemaName="logs" baseTableName="integrations_log_events" baseColumnNames="event_subcategory_id" constraintName="fk_integrations_log_events_event_subcategories" referencedTableSchemaName="config" referencedTableName="events_subcategories" referencedColumnNames="id" />
+	<changeSet id="add-fk-integrations-log-events-subcategories" author="serasoft" dbms="!sqlite" labels="logs">
+		<addForeignKeyConstraint baseTableSchemaName="${logs.schema}" baseTableName="integrations_log_events" baseColumnNames="event_subcategory_id" constraintName="fk_integrations_log_events_event_subcategories" referencedTableSchemaName="${config.schema}" referencedTableName="events_subcategories" referencedColumnNames="id" />
 	</changeSet>
-	<changeSet id="add-fk-integrations-log-events-severities" author="serasoft">
-		<addForeignKeyConstraint baseTableSchemaName="logs" baseTableName="integrations_log_events" baseColumnNames="event_severity_id" constraintName="fk_integrations_log_events_event_severities" referencedTableSchemaName="config" referencedTableName="events_severities" referencedColumnNames="id" />
+	<changeSet id="add-fk-integrations-log-events-severities" author="serasoft" dbms="!sqlite" labels="logs">
+		<addForeignKeyConstraint baseTableSchemaName="${logs.schema}" baseTableName="integrations_log_events" baseColumnNames="event_severity_id" constraintName="fk_integrations_log_events_event_severities" referencedTableSchemaName="${config.schema}" referencedTableName="events_severities" referencedColumnNames="id" />
 	</changeSet>
-	<changeSet id="add-fk-integrations-logs-processes" author="serasoft">
-		<addForeignKeyConstraint baseTableSchemaName="logs" baseTableName="integrations_logs" baseColumnNames="integrations_processes_id" constraintName="fk_integrations_logs_integrations_processes" referencedTableSchemaName="config" referencedTableName="integrations_processes" referencedColumnNames="id" />
+	<changeSet id="add-fk-integrations-logs-processes" author="serasoft" dbms="!sqlite" labels="logs">
+		<addForeignKeyConstraint baseTableSchemaName="${logs.schema}" baseTableName="integrations_logs" baseColumnNames="integrations_processes_id" constraintName="fk_integrations_logs_integrations_processes" referencedTableSchemaName="${config.schema}" referencedTableName="integrations_processes" referencedColumnNames="id" />
 	</changeSet>
 	<!-- Insert Data -->
-	<changeSet id="insert-initial-events-categories" author="serasoft">
-		<insert schemaName="config" tableName="events_categories">
+	<changeSet id="insert-initial-events-categories" author="serasoft" labels="config">
+		<insert schemaName="${config.schema}" tableName="events_categories">
 			<column name="id" value="SYS001" />
 			<column name="type" value="E" />
 			<column name="name" value="SYSTEM EXCEPTION" />
 		</insert>
 	</changeSet>
-	<changeSet id="insert-initial-events-subcategories" author="serasoft">
-		<insert schemaName="config" tableName="events_subcategories">
+	<changeSet id="insert-initial-events-subcategories" author="serasoft" labels="config">
+		<insert schemaName="${config.schema}" tableName="events_subcategories">
 			<column name="id" value="SYSGE001" />
 			<column name="name" value="GENERIC ERROR" />
 			<column name="event_category_id" value="SYS001" />
 		</insert>
 	</changeSet>
-	<changeSet id="insert-initial-events-severities" author="serasoft">
-		<insert schemaName="config" tableName="events_severities">
+	<changeSet id="insert-initial-events-severities" author="serasoft" labels="config">
+		<insert schemaName="${config.schema}" tableName="events_severities">
 			<column name="id" value="MEDIUM" />
 			<column name="code" value="MEDIUM" />
 			<column name="severity" value="5" />
 		</insert>
 	</changeSet>
-	<changeSet id="insert-initial-integration_processes" author="serasoft">
-		<insert schemaName="config" tableName="integrations_processes">
+	<changeSet id="insert-initial-integration_processes" author="serasoft" labels="config">
+		<insert schemaName="${config.schema}" tableName="integrations_processes">
 			<column name="id" value="default" />
 			<column name="short_name" value="default" />
 			<column name="description" value="Default process to show Hop Process Template" />
