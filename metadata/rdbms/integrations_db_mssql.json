@@ -1,0 +1,29 @@
+{
+  "rdbms": {
+    "MSSQLNATIVE": {
+      "databaseName": "${serasoft.integrations.db.name}",
+      "pluginId": "MSSQLNATIVE",
+      "accessType": 0,
+      "hostname": "${serasoft.integrations.db.host}",
+      "password": "${serasoft.integrations.db.pwd}",
+      "pluginName": "MS SQL Server (Native)",
+      "port": "${serasoft.integrations.db.port}",
+      "usingIntegratedSecurity": false,
+      "attributes": {
+        "SUPPORTS_TIMESTAMP_DATA_TYPE": "Y",
+        "QUOTE_ALL_FIELDS": "N",
+        "EXTRA_OPTION_MSSQLNATIVE.encrypt": "${serasoft.integrations.db.mssql.encrypt}",
+        "EXTRA_OPTION_MSSQLNATIVE.trustServerCertificate": "${serasoft.integrations.db.mssql.trust.server.certificate}",
+        "SUPPORTS_BOOLEAN_DATA_TYPE": "Y",
+        "FORCE_IDENTIFIERS_TO_LOWERCASE": "N",
+        "PRESERVE_RESERVED_WORD_CASE": "Y",
+        "SQL_CONNECT": "",
+        "FORCE_IDENTIFIERS_TO_UPPERCASE": "N",
+        "PREFERRED_SCHEMA_NAME": ""
+      },
+      "manualUrl": "",
+      "username": "${serasoft.integrations.db.user}"
+    }
+  },
+  "name": "integrations_db_mssql"
+}
