@@ -158,6 +158,26 @@ A skipped execution is reported as a failure on purpose: an orchestrator (cron, 
 
 Nothing is written for a normal run or a failure: the orchestrator must remove the file before the run, and give each run its own file if runs can overlap. If the variable is not set (cron, manual runs) nothing changes. A failure while writing the file still ends the execution with exit code `1`. Serasoft's Airflow library uses this marker to report the two cases with dedicated exit codes (76 and 77, SeraSoft/airflow-dags#40).
 
+### Checking whether a process can run
+
+`src/template/commons/tools/check_state.hwf` tells an orchestrator whether a process can run, without starting it. It reads the same state as the pre-job of `main.hwf` and writes nothing: no row in `logs.integrations_logs`, `is_running` untouched, no feedback email, no post phase.
+
+```
+hop-run -j <project> -e <environment> -r local \
+  -f ${PROJECT_HOME}/src/template/commons/tools/check_state.hwf \
+  -p p_base_process_name=<process short name>
+```
+
+| Result | Exit code | Marker (`SERASOFT_RESULT_FILE`) | Log |
+|---|---|---|---|
+| can run | `0` | none | `Process '…' can run` |
+| paused (`is_active` not `Y`) | `1` | `skipped_paused` | `SKIPPED: process '…' is not active` |
+| locked (`is_running` = `Y`) | `1` | `skipped_locked` | `SKIPPED: process '…' is locked by an instance started at …` |
+| not declared | `1` | none | `ERROR: process '…' is not declared` |
+| state not readable (database error) | `1` | none | `ERROR: could not read the state of process '…'` |
+
+The check is not atomic: another instance can take the lock between the check and the run, so `main.hwf` keeps its own lock check. Serasoft's Airflow library runs this workflow before `main.hwf` (SeraSoft/airflow-dags#41).
+
 ## Process statuses and stale locks
 
 Each execution writes a row in `logs.integrations_logs` whose `proc_status` is:
