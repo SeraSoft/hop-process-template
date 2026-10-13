@@ -147,6 +147,17 @@ The table below summarizes the set of base environment variables provided with t
 
 A skipped execution is reported as a failure on purpose: an orchestrator (cron, Apache Airflow) must not treat "nothing was processed" as success.
 
+### Result marker for orchestrators
+
+`hop-run` cannot return codes other than 0/1/2/9, so a skipped execution exits `1` like a failure. An orchestrator that needs to tell them apart sets the variable `SERASOFT_RESULT_FILE` (for example `hop-run … -s SERASOFT_RESULT_FILE=/tmp/serasoft-result`) to the path of a file. When an execution is skipped, the template writes a single token, without a trailing newline, to that file (overwriting it; the parent directory must exist), just before ending with exit code `1`:
+
+| Content | Meaning |
+|---|---|
+| `skipped_locked` | another instance holds the single-instance lock |
+| `skipped_paused` | the process is paused (`is_active` not `Y`) |
+
+Nothing is written for a normal run or a failure: the orchestrator must remove the file before the run, and give each run its own file if runs can overlap. If the variable is not set (cron, manual runs) nothing changes. A failure while writing the file still ends the execution with exit code `1`. Serasoft's Airflow library uses this marker to report the two cases with dedicated exit codes (76 and 77, SeraSoft/airflow-dags#40).
+
 ## Process statuses and stale locks
 
 Each execution writes a row in `logs.integrations_logs` whose `proc_status` is:

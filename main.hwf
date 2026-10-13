@@ -264,6 +264,39 @@
       <message>${v_skip_message}</message>
       <parallel>N</parallel>
       <xloc>1200</xloc>
+      <yloc>448</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Result file requested?</name>
+      <description/>
+      <type>SIMPLE_EVAL</type>
+      <attributes/>
+      <comparevalue/>
+      <fieldtype>string</fieldtype>
+      <successbooleancondition>false</successbooleancondition>
+      <successcondition>equal</successcondition>
+      <successnumbercondition>equal</successnumbercondition>
+      <successwhenvarset>Y</successwhenvarset>
+      <valuetype>variable</valuetype>
+      <variablename>${SERASOFT_RESULT_FILE}</variablename>
+      <parallel>N</parallel>
+      <xloc>1200</xloc>
+      <yloc>320</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
+      <name>Write result file</name>
+      <description/>
+      <type>WRITE_TO_FILE</type>
+      <attributes/>
+      <filename>${SERASOFT_RESULT_FILE}</filename>
+      <createParentFolder>N</createParentFolder>
+      <appendFile>N</appendFile>
+      <content>${v_skip_result}</content>
+      <encoding>UTF-8</encoding>
+      <parallel>N</parallel>
+      <xloc>1376</xloc>
       <yloc>320</yloc>
       <attributes_hac/>
     </action>
@@ -311,6 +344,11 @@ PROCESS EXITS!
           <variable_name>v_skip_message</variable_name>
           <variable_type>ROOT_WORKFLOW</variable_type>
           <variable_value>SKIPPED: process '${p_base_process_name}' is locked by an instance started at ${v_last_instance_start_timestamp}</variable_value>
+        </field>
+        <field>
+          <variable_name>v_skip_result</variable_name>
+          <variable_type>ROOT_WORKFLOW</variable_type>
+          <variable_value>skipped_locked</variable_value>
         </field>
       </fields>
       <file_variable_type>JVM</file_variable_type>
@@ -421,6 +459,11 @@ PROCESS EXITS!
           <variable_type>ROOT_WORKFLOW</variable_type>
           <variable_value>SKIPPED: process '${p_base_process_name}' is not active</variable_value>
         </field>
+        <field>
+          <variable_name>v_skip_result</variable_name>
+          <variable_type>ROOT_WORKFLOW</variable_type>
+          <variable_value>skipped_paused</variable_value>
+        </field>
       </fields>
       <file_variable_type>JVM</file_variable_type>
       <replacevars>Y</replacevars>
@@ -530,10 +573,31 @@ PROCESS EXITS!
     </hop>
     <hop>
       <from>Execution skipped?</from>
-      <to>Skipped</to>
+      <to>Result file requested?</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Result file requested?</from>
+      <to>Write result file</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Result file requested?</from>
+      <to>Skipped</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Write result file</from>
+      <to>Skipped</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
     </hop>
     <hop>
       <from>Execution skipped?</from>
