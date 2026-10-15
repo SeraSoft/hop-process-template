@@ -125,7 +125,8 @@
 FROM ${serasoft.integrations.db.log.schema}.integrations_logs
 WHERE 
 	integrations_processes_id = ? AND
-	proc_status = 'R'</sql>
+	proc_status = 'R'
+HAVING MAX(date_started) IS NOT NULL</sql>
     <variables_active>Y</variables_active>
     <attributes/>
     <GUI>
@@ -284,6 +285,7 @@ WHERE
     </partitioning>
     <fields>
       <field>
+        <default_value>unknown time (no running instance recorded)</default_value>
         <field_name>last_instance_started_at_timestamp</field_name>
         <variable_name>v_last_instance_start_timestamp</variable_name>
         <variable_type>ROOT_WORKFLOW</variable_type>
