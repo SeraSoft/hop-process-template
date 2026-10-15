@@ -176,6 +176,8 @@ hop-run -j <project> -e <environment> -r local \
 | not declared | `1` | none | `ERROR: process '…' is not declared` |
 | state not readable (database error) | `1` | none | `ERROR: could not read the state of process '…'` |
 
+When the lock is set but no execution of the process is recorded as running (no `R` row, for example a lock set by hand), the start time in the locked message, in the lock warning of `main.hwf` and in the lock email reads `unknown time (no running instance recorded)`.
+
 The check is not atomic: another instance can take the lock between the check and the run, so `main.hwf` keeps its own lock check. Serasoft's Airflow library runs this workflow before `main.hwf` (SeraSoft/airflow-dags#41).
 
 ## Process statuses and stale locks
