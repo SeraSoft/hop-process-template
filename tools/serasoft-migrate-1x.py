@@ -121,6 +121,7 @@ class Report:
     moved: list = field(default_factory=list)
     rewrites: dict = field(default_factory=dict)
     old_env_files_removed: list = field(default_factory=list)
+    local_config_ignored: list = field(default_factory=list)
 
     def manual(self):
         return any([self.customised, self.unresolved, self.removed_refs, self.events, self.paths, self.deployment])
@@ -475,7 +476,139 @@ def phase_removal(plan):
     commit(plan, "Migration: remove template 1.0.x")
 
 
-PHASES = [phase_structure, phase_rewrites, phase_removal]   # phases 1-3; 4-6 added by the following tasks
+SEED_FILES = ("db/sqlite/data/integrations_db", "db/sqlite/data/integrations_db.config",
+              "db/sqlite/data/integrations_db.logs")
+
+
+def phase_template(plan):
+    if git(plan.dest, "status", "--porcelain"):
+        fail("unexpected changes before the sync")
+    out = run([str(TEMPLATE_REPO / "tools" / "serasoft-sync.sh"), "--tag", plan.tag, "--dest", str(plan.dest)])
+    manifest = (plan.dest / "SERASOFT_MANIFEST.sha256").read_text(encoding="utf-8").splitlines()
+    owned = [line.split(None, 1)[1].lstrip("*") for line in manifest if line.strip()]
+    seeds = [p for p in SEED_FILES if (plan.dest / p).exists()]
+    # template files hidden by the project .gitignore must be committed all the same
+    git(plan.dest, "add", "-f", "--", *owned, *seeds, "SERASOFT_VERSION", "SERASOFT_MANIFEST.sha256")
+    run([str(plan.dest / "tools" / "serasoft-verify.sh")], cwd=plan.dest)
+    commit(plan, f"Migration: hop-process-template {plan.tag}")
+    return out
+
+
+def env_entry(name, value, description):
+    return {"name": name, "value": value, "description": description}
+
+
+def write_json(path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+
+def read_variables(path):
+    return json.loads(path.read_text(encoding="utf-8"))["variables"]
+
+
+IGNORED_CONFIG = {"config", "config/", "/config", "/config/", "config/*", "/config/*", "config/**", "/config/**"}
+
+
+def phase_config(plan):
+    d, p = plan.dest, plan.project
+    defaults = {}
+    for f in ("config/template-env.json", f"config/template-{plan.db}.json"):
+        for v in read_variables(d / f):
+            defaults[v["name"]] = v.get("value", "")
+    old_defaults = {}   # template 1.0.x defaults: a value equal to one of them was not customised
+    for tag in REFERENCE_TAGS:
+        for v in json.loads(template_show(tag, "config/project-config.json") or "{}").get("config", {}).get("variables", []):
+            old_defaults.setdefault(v["name"], set()).add(v.get("value", "") or "")
+    secrets = []
+
+    def classify_into(variables, origin):
+        """Template names mapped, obsolete and runtime names dropped, credentials only named (secrets)."""
+        out = []
+        for v in variables:
+            name, value = v["name"], v.get("value", "") or ""
+            kind, new = classify(name)
+            if kind == "drop":
+                continue
+            if kind == "runtime":
+                plan.report.runtime_dropped.append((origin, name))
+                continue
+            if kind == "secret":
+                if new not in secrets:
+                    secrets.append(new)
+                continue
+            if kind == "template" and value in old_defaults.get(name, ()):
+                continue
+            value, _ = rewrite_vars(value)
+            if kind == "template" and defaults.get(new) == value:
+                continue
+            if PATH_RE.match(value):
+                plan.report.paths.append((origin, new, value))
+            out.append(env_entry(new, value, f"From {name} ({origin})"))
+        return out
+
+    template_pc = template_show(plan.tag, "config/project-config.json")
+    if template_pc is None:
+        fail(f"config/project-config.json not found in tag {plan.tag}")
+    (d / "config").mkdir(parents=True, exist_ok=True)
+    (d / "config/project-config.json").write_text(template_pc, encoding="utf-8")
+    written = ["config/project-config.json", f"config/{p}.json", "config/secrets-example.json"]
+    old_vars = (plan.old_project_config or {}).get("config", {}).get("variables", [])
+    write_json(d / f"config/{p}.json", {"variables": classify_into(old_vars, "config/project-config.json")})
+    for r in plan.roots:
+        if r.params:
+            lines = [f"# Defaults of the extra parameters of {r.path} (template 1.0.x);",
+                     "# override per execution with p_process_params (README.md, Process parameters)."]
+            lines += [f"{k}={v}" for k, v in r.params.items()]
+            (d / f"config/{r.short_name}.properties").write_text("\n".join(lines) + "\n", encoding="utf-8")
+            written.append(f"config/{r.short_name}.properties")
+    runtime = {
+        "serasoft.execution.log.filename": f"/tmp/{p}/logs/execution_log_${{p_base_process_name}}_"
+                                           "${serasoft.project.main.workflow}_${v_process_run_timestamp}.log",
+        "serasoft.execution.file.name": f"/tmp/{p}/temp/execution_file_${{p_base_process_name}}_"
+                                        "${serasoft.project.main.workflow}_${v_process_run_timestamp}.csv",
+    }
+    tracked_files = set(git(d, "ls-files").split("\n"))
+    for env, path in sorted(plan.envs.items()):
+        variables = [v for v in classify_into(read_variables(path), f"{env} environment")
+                     if v["name"] not in runtime]
+        variables += [env_entry(k, v, "Writable path outside the read-only project folder") for k, v in runtime.items()]
+        write_json(d / f"config/{p}-{env}.json", {"variables": variables})
+        written += [f"config/{p}-{env}.json", f"config/env/{env}.list"]
+        (d / "config/env").mkdir(parents=True, exist_ok=True)
+        (d / f"config/env/{env}.list").write_text(
+            f"# Hop environment files for {env}, in load order: a later file overrides an earlier one.\n"
+            f"# Read by the Serasoft Airflow platform; cron: tools/serasoft-register-env.sh --env {env}\n"
+            f"config/template-env.json\nconfig/template-{plan.db}.json\nconfig/{p}.json\nconfig/{p}-{env}.json\n"
+            f"/run/secrets/{p}_{env}\n", encoding="utf-8")
+        rel = Path(os.path.relpath(path, d)).as_posix()
+        if not rel.startswith("..") and rel in tracked_files:
+            git(d, "rm", "-q", "--", rel)
+            plan.report.old_env_files_removed.append(rel)
+    write_json(d / "config/secrets-example.json",
+               {"variables": [env_entry(n, "", f"Credential: set it in the Docker secret {p}_<env>") for n in secrets]})
+    plan.report.secrets = secrets
+    gi = d / ".gitignore"
+    lines = gi.read_text(encoding="utf-8").splitlines() if gi.exists() else []
+    lines = [line for line in lines if line.strip() not in IGNORED_CONFIG]
+    lines += ["", "# Template 3.x: config/ is distributed and must be committed",
+              "!config/", "!config/**", "config/*-local.json", "config/*secret*.json", "!config/secrets-example.json"]
+    gi.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    # Local files under config/ that the old .gitignore hid (often with credentials) must never be
+    # committed: they stay on disk, ignored by name.
+    local = sorted(set(git(d, "ls-files", "--others", "--exclude-standard", "--", "config").split("\n"))
+                   - set(written) - {""})
+    if local:
+        lines += ["", "# Local files of the 1.0.x setup, left out of the repository by the migration", *local]
+        gi.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        print(f"WARNING: local files under config/ not committed (ignored by name in .gitignore): "
+              f"{' '.join(local)}", file=sys.stderr)
+        plan.report.local_config_ignored = local
+    git(d, "add", "-f", "--", ".gitignore", *written)
+    git(d, "commit", "-q", "-m", "Migration: configuration for the Serasoft Airflow platform")
+
+
+PHASES = [phase_structure, phase_rewrites, phase_removal, phase_template, phase_config]   # phase 6 added by Task 4
 
 
 def parse_args(argv):

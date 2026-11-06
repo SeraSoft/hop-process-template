@@ -6,7 +6,7 @@ import subprocess
 
 import pytest
 
-from fixtures_1x import (GIT_ENV, ROOT, fixture_101, fixture_pre101, fixture_starterjob, git,
+from fixtures_1x import (GIT_ENV, ROOT, env_file, fixture_101, fixture_pre101, fixture_starterjob, git,
                          pipeline, pipeline_action, root_workflow, transform, workflow, write)
 
 TOOL = ROOT / "tools" / "serasoft-migrate-1x.py"
@@ -328,3 +328,76 @@ def test_rewrite_report_and_template_references(tmp_path, monkeypatch):
     assert rep.rewrites["connections"] == 1 and rep.rewrites["paths"] == 3 and rep.rewrites["variables"] == 4
     mod.commit(plan, "phase without changes")   # a phase with nothing to change still gets its commit
     assert git(d, "log", "-1", "--format=%s") == "phase without changes"
+
+
+def test_template_and_configuration(tmp_path):
+    fx = fixture_101(tmp_path)
+    r = migrate(fx, "--stop-after", "5")
+    assert r.returncode == 0, r.stderr
+    d = fx["dest"]
+    assert subprocess.run(["tools/serasoft-verify.sh"], cwd=d, capture_output=True).returncode == 0
+    files = tracked(d)
+    assert {"main.hwf", "src/template/pre/main_pre_job.hwf", "config/template-env.json",
+            "config/env/dev.list", "config/env/prod.list", "config/fixture-101.json",
+            "config/fixture-101-dev.json", "config/secrets-example.json", "config/load_sales.properties"} <= files
+    assert (d / "config/env/prod.list").read_text().splitlines()[-5:] == [
+        "config/template-env.json", "config/template-postgresql.json", "config/fixture-101.json",
+        "config/fixture-101-prod.json", "/run/secrets/fixture-101_prod"]
+    dev = {v["name"]: v["value"] for v in json.loads((d / "config/fixture-101-dev.json").read_text())["variables"]}
+    assert dev["serasoft.integrations.db.host"] == "db-dev.example.invalid"
+    assert dev["sales.db.host"] == "sales-dev.example.invalid"
+    assert dev["serasoft.mail.subject.error"] == "${serasoft.mail.subject} error"
+    assert dev["serasoft.execution.log.filename"].startswith("/tmp/fixture-101/logs/")
+    assert not any(k in dev for k in ("lock.dir", "db.type", "base.tmp.dir", "serasoft.integrations.db.connection.name"))
+    assert not any(SECRET in json.dumps(dev) for SECRET in ("pw-dev", "smtp-dev", "sales-dev\""))
+    secrets = {v["name"] for v in json.loads((d / "config/secrets-example.json").read_text())["variables"]}
+    assert secrets == {"serasoft.integrations.db.pwd", "serasoft.smtp.mail.psw", "sales.db.password"}
+    assert (d / "config/load_sales.properties").read_text().strip().endswith("p_period_type=M")
+    pc = json.loads((d / "config/project-config.json").read_text())
+    assert pc["config"]["variables"] == []
+
+
+def test_starterjob_configuration(tmp_path):
+    fx = fixture_starterjob(tmp_path)
+    assert migrate(fx, "--stop-after", "5").returncode == 0
+    d = fx["dest"]
+    common = {v["name"]: v["value"] for v in json.loads((d / "config/fixture-starterjob.json").read_text())["variables"]}
+    assert common == {"items.per.batch": "10"}
+    assert "config/dev-env.json" not in tracked(d)
+    secrets = {v["name"] for v in json.loads((d / "config/secrets-example.json").read_text())["variables"]}
+    assert "api.token" in secrets
+    for f in ("config/fixture-starterjob.json", "config/fixture-starterjob-dev.json"):
+        assert "tok-123" not in (d / f).read_text() and "pw-dev" not in (d / f).read_text()
+
+
+def test_configuration_never_commits_local_credentials(tmp_path):
+    """Ignored local files under config/ (credentials of the old setup) stay untracked after phase 5."""
+    fx = fixture_101(tmp_path)
+    d = fx["dest"]
+    (d / ".gitignore").write_text("config/dev-local.json\nconfig/*\n!config/project-config.json\n")
+    git(d, "commit", "-qam", "ignore config")
+    env_file(d / "config" / "dev-local.json", {"integrations.db.db.password": "local-secret-1"})
+    env_file(d / "config" / "old-prod-env.json", {"sales.db.password": "local-secret-2"})
+    r = migrate(fx, "--stop-after", "5")
+    assert r.returncode == 0, r.stderr
+    files = tracked(d)
+    assert "config/dev-local.json" not in files and "config/old-prod-env.json" not in files
+    assert "config/old-prod-env.json" in r.stderr   # named, left to the operator
+    for secret in ("local-secret-1", "local-secret-2", "pw-dev", "pw-prod", "smtp-dev", "sales-prod\""):
+        assert subprocess.run(["git", "grep", "-q", secret, "HEAD"], cwd=d).returncode == 1, secret
+    assert git(d, "status", "--porcelain", "--untracked-files=no") == ""
+
+
+def test_common_file_omits_unchanged_1x_defaults(tmp_path):
+    fx = fixture_101(tmp_path)
+    p = fx["dest"] / "config/project-config.json"
+    pc = json.loads(p.read_text())
+    pc["config"]["variables"].append({"name": "sales.batch.size", "value": "500"})
+    for v in pc["config"]["variables"]:
+        if v["name"] == "mail.from.displayname":
+            v["value"] = "Sales ETL"
+    p.write_text(json.dumps(pc, indent=2) + "\n")
+    git(fx["dest"], "commit", "-qam", "x")
+    assert migrate(fx, "--stop-after", "5").returncode == 0
+    common = {v["name"]: v["value"] for v in json.loads((fx["dest"] / "config/fixture-101.json").read_text())["variables"]}
+    assert common == {"sales.batch.size": "500", "serasoft.mail.from.displayname": "Sales ETL"}
