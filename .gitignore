@@ -3,3 +3,5 @@ db/sqlite/data/*
 logs/*
 .serena/
 tests/hop/work/
+__pycache__/
+.pytest_cache/
