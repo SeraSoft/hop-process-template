@@ -294,7 +294,7 @@ The table below summarizes the set of base environment variables provided with t
 |serasoft.integrations.db.host|Name of the hosts where the integrations database is running. This can be an IP address or a hostname.|`localhost`|
 |serasoft.integrations.db.connection.name|Name of the connection assigned in Apache Hop for the integrations database. This is used to connect to the database during Hop Process execution. One of `integrations_db_postgres`, `integrations_db_mssql`, `integrations_db_sqlite` (environment files `config/template-postgresql.json`, `config/template-mssql.json`, `config/template-sqlite.json`).|`integrations_db_postgres`|
 |serasoft.integrations.db.name|Name of the database containing the configuration and logs tables for the integrations database|`integrations_db`|
-|serasoft.integrations.db.port|Port of the integrations database. This is the port where the database server is listening for connections (`1433` for SQL Server)|`54321`|
+|serasoft.integrations.db.port|Port of the integrations database. This is the port where the database server is listening for connections (`1433` for SQL Server)|`5432`|
 |serasoft.integrations.db.user|Username used to connect to the integrations database. This user must have permissions to read/write in the specified database|`postgres`|
 |serasoft.integrations.db.pwd|Password used to connect to the integrations database. This user must have permissions to read/write in the specified database|`password`|
 |serasoft.integrations.db.mssql.encrypt|SQL Server only: encrypt the connection (JDBC driver option `encrypt`)|`true`|

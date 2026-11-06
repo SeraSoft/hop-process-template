@@ -22,7 +22,7 @@
       "description" : "Name of the database containing the configuration and logs tables for the integrations database."
     }, {
       "name" : "serasoft.integrations.db.port",
-      "value" : "54321",
+      "value" : "5432",
       "description" : "Port of the integrations database. This is the port where the database server is listening for connections."
     }, {
       "name" : "serasoft.integrations.db.user",
