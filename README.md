@@ -137,6 +137,85 @@ INSERT INTO config.integrations_processes (id, short_name, description, project,
 VALUES ('<unique id>', '<short name>', '<description>', '<project>', 'Y', 'N');
 ```
 
+## Template updates
+
+A project gets the template files from an **annotated release tag** of hop-process-template with `tools/serasoft-sync.sh`, and checks them with `tools/serasoft-verify.sh`. The project does not share the template's Git history.
+
+### Who owns what
+
+| Category | Paths | Sync | Verify |
+|---|---|---|---|
+| Template | `main.hwf`, `src/template/**`, `config/template-*.json`, `metadata/rdbms/integrations_db_*.json`, `metadata/workflow-log/workflow_log.json`, `metadata/pipeline-run-configuration/local.json`, `metadata/workflow-run-configuration/local.json`, `db/liquibase/**`, `tools/serasoft-verify.sh`, and this README as `src/template/README.md` | copied, overwritten | checked |
+| SQLite seed | `db/sqlite/data/integrations_db`, `integrations_db.config`, `integrations_db.logs` | copied only when missing, never overwritten | not checked |
+| Project | everything else: `src/project/**`, `config/project-config.json`, the project environment files, `README.md`, `.gitignore`, … | never touched | not checked |
+
+Two files at the root of the project record the version: `SERASOFT_VERSION` (`<tag> <commit>`) and `SERASOFT_MANIFEST.sha256` (one `sha256sum` line per template file).
+
+### Creating or updating a project
+
+From a checkout of hop-process-template with the tags (`git fetch --tags`), on a clean checkout of the project (a dedicated branch, e.g. `template/3.2.0`):
+
+```
+tools/serasoft-sync.sh --tag 3.2.0 --dest ../myproject
+```
+
+The sync:
+
+- refuses an unknown or lightweight tag, a destination that is not the root of a Git work tree or has uncommitted changes;
+- copies the template files from the tag (never from the working copy), refusing to overwrite a project file: a template file may already exist in the project only if the previous manifest lists it;
+- removes the template files of the previous version that the new one no longer has;
+- copies the SQLite seed files only when missing, and prints `WARNING: kept local <file>` when a local one differs;
+- prints `WARNING: db/liquibase/master.xml changed: run liquibase update …` when the database changelog changed: update every project database (see "Support database creation");
+- rewrites `SERASOFT_VERSION` and `SERASOFT_MANIFEST.sha256` and prints `OK serasoft-sync tag=… commit=… added=… changed=… removed=… adopted=… forced=…`.
+
+It does not commit: review the diff, commit (e.g. `Template 3.2.0`), open the pull/merge request with the release notes of the tag (`git tag -n99 3.2.0` in the template).
+
+### Checking a project
+
+From the project root, by hand or in its CI:
+
+```
+tools/serasoft-verify.sh
+```
+
+It fails (exit code `1`, offending files listed) when a template file was modified or removed, when `src/template/` or `db/liquibase/` hold a file the manifest does not list (or are symlinks), or when `SERASOFT_VERSION` is missing or empty. A GitLab CI job:
+
+```yaml
+serasoft-verify:
+  image: alpine:3.20
+  script:
+    - apk add --no-cache bash coreutils
+    - tools/serasoft-verify.sh
+```
+
+Recommended in the project repository:
+
+- a code-owner or approval rule on `main.hwf`, `src/template/`, `config/template-*.json`, `db/liquibase/`, `metadata/` and `SERASOFT_*`, so that template files change only through a template update;
+- a `.gitattributes` keeping the template files with LF line endings (with `core.autocrlf=true` a Windows checkout converts them to CRLF and a local verify fails):
+
+  ```
+  *.hwf  text eol=lf
+  *.hpl  text eol=lf
+  *.json text eol=lf
+  *.xml  text eol=lf
+  *.sh   text eol=lf
+  SERASOFT_* text eol=lf
+  ```
+
+- a `.gitignore` with at least `logs/`, `temp/` and the environment files that hold credentials.
+
+## Releasing the template
+
+1. Merge the changes into `main`.
+2. Create an **annotated** tag `X.Y.Z` on `main`, with the release notes in the message, and push it:
+
+   ```
+   git tag -a 3.2.0 -m "3.2.0: <release notes>"
+   git push origin 3.2.0
+   ```
+
+`tools/serasoft-sync.sh` refuses lightweight tags (`git tag 3.2.0` without `-a`).
+
 ## Supported Apache Hop versions
 
 The template is verified on **Apache Hop 2.16** and **Apache Hop 2.19** with the lab described in "Testing the template".
