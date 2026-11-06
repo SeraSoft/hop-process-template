@@ -2,3 +2,4 @@ config/*
 db/sqlite/data/*
 logs/*
 .serena/
+tests/hop/work/

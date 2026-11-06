@@ -80,6 +80,23 @@ WHERE filename = 'master-postgresql.xml' OR filename LIKE '%/master-postgresql.x
 
 Then `liquibase status` (same options as `update`) must report the database as up to date.
 
+## Supported Apache Hop versions
+
+The template is verified on **Apache Hop 2.16** and **Apache Hop 2.19** with the lab described in "Testing the template".
+
+## Testing the template
+
+The workflow tests run `hop-run` from the official `apache/hop` Docker images against a PostgreSQL 16 created with `db/liquibase/master.xml`, on a throw-away copy of the working tree (`tests/hop/work/copy`, git-ignored): the repository itself is never used as a Hop project. Docker is the only prerequisite.
+
+```
+tests/hop/lab.sh up               # PostgreSQL + Liquibase + test processes
+tests/hop/scenarios.sh 2.16.0     # all scenarios on Hop 2.16
+tests/hop/scenarios.sh 2.19.0     # all scenarios on Hop 2.19
+tests/hop/lab.sh down             # remove containers, network and tests/hop/work
+```
+
+`tests/hop/lab.sh run <hop version> <file> [<params> [<variables>]]` runs a single workflow (e.g. `tests/hop/lab.sh run 2.16.0 main.hwf p_base_process_name=default`), prints `RC=<exit code>` and writes the Hop log to `tests/hop/work/hoprun.log`; call `tests/hop/lab.sh copy` first to refresh the copy. The lab environment (`tests/hop/lab-env.json`) disables every feedback email. Test processes: `vartest` and `uuidtest` (internal `id` different from `short_name`), both running `tests/hop/fixtures/start.hwf`, which logs the variables it receives.
+
 ## Process template environment variables
 
 The table below summarizes the set of base environment variables provided with the template. This set of variables will be the starting point of your application's environment variables. 

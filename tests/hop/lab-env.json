@@ -1,0 +1,11 @@
+{
+  "variables" : [
+    { "name" : "serasoft.integrations.db.host", "value" : "hoptpl-pg", "description" : "Lab PostgreSQL container" },
+    { "name" : "serasoft.integrations.db.port", "value" : "5432", "description" : "Lab PostgreSQL port" },
+    { "name" : "serasoft.email.success.feedback.enabled", "value" : "0", "description" : "No mail in the lab" },
+    { "name" : "serasoft.email.fail.feedback.enabled", "value" : "0", "description" : "No mail in the lab" },
+    { "name" : "serasoft.email.application.error.feedback.enabled", "value" : "0", "description" : "No mail in the lab" },
+    { "name" : "serasoft.email.notactive.feedback.enabled", "value" : "0", "description" : "No mail in the lab" },
+    { "name" : "serasoft.email.lock.feedback.enabled", "value" : "0", "description" : "No mail in the lab" }
+  ]
+}
