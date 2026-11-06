@@ -51,6 +51,7 @@ SHIPPED = sorted([
     "src/template/README.md",
     "src/template/post/old_post.hwf",
     "src/template/pre/main_pre_job.hwf",
+    "tools/serasoft-register-env.sh",
     "tools/serasoft-verify.sh",
 ])
 PROJECT_FILES = {
@@ -85,6 +86,7 @@ def template(tmp_path):
     (up / "tools").mkdir()
     shutil.copy2(SYNC, up / "tools" / "serasoft-sync.sh")
     shutil.copy2(VERIFY, up / "tools" / "serasoft-verify.sh")
+    shutil.copy2(ROOT / "tools" / "serasoft-register-env.sh", up / "tools" / "serasoft-register-env.sh")
     git(up, "init", "-q", "-b", "main")
     commit_all(up, "v1")
     git(up, "tag", "-a", "3.2.0", "-m", "3.2.0 release notes")
@@ -126,7 +128,7 @@ def test_creation(template, project):
     r = sync(template, "--tag", "3.2.0", "--dest", str(project))
     assert r.returncode == 0, r.stderr
     assert r.stdout.startswith("OK serasoft-sync tag=3.2.0 commit=")
-    assert "added=15 changed=0 removed=0 adopted=0 forced=0" in r.stdout
+    assert "added=16 changed=0 removed=0 adopted=0 forced=0" in r.stdout
     assert from_template(project) == sorted(SHIPPED + SEEDS)
     manifest = (project / "SERASOFT_MANIFEST.sha256").read_text().splitlines()
     assert [line.split("  ", 1)[1] for line in manifest] == SHIPPED
@@ -294,6 +296,7 @@ def template_with_legacy(tmp_path):
     (up / "tools").mkdir(exist_ok=True)
     shutil.copy2(SYNC, up / "tools" / "serasoft-sync.sh")
     shutil.copy2(VERIFY, up / "tools" / "serasoft-verify.sh")
+    shutil.copy2(ROOT / "tools" / "serasoft-register-env.sh", up / "tools" / "serasoft-register-env.sh")
     commit_all(up, "v1")
     git(up, "tag", "-a", "3.2.0", "-m", "3.2.0")
     return up
