@@ -23,9 +23,15 @@ To be able to create/update the support database conventionally named *integrati
 TBD
 
 ### Support database creation
-A single changelog, `db/liquibase/master.xml`, creates the support database on PostgreSQL, Microsoft SQL Server and SQLite. Run Liquibase from the `db/liquibase` directory; a properties file for each database is provided there (`liquibase-postgresql.template`, `liquibase-mssql.properties`, `liquibase-sqlite-config.properties`, `liquibase-sqlite-logs.properties`) and can be passed with `--defaults-file`.
+A single changelog, `db/liquibase/master.xml`, creates the support database on PostgreSQL, Microsoft SQL Server and SQLite. Run Liquibase from the `db/liquibase` directory; a properties file for each database is provided there (`liquibase-postgresql.template`, `liquibase-mssql.properties`, `liquibase-sqlite-config.properties`, `liquibase-sqlite-logs.properties`) as a reference.
 
-Remember, in both cases, replace `url`, `username` and `password` with the actual ones.
+`db/liquibase/**` is owned by the template: do not edit those files in a project (a template update overwrites them and `tools/serasoft-verify.sh` fails on a modified or extra file). Pass the actual `url`, `username` and `password` on the command line, as in the examples below, or keep a project-owned defaults file **outside** `db/liquibase/` (e.g. `config/liquibase-<env>.properties`; do not commit it when it holds credentials) and use it with `--defaults-file`, adding `--search-path` so that Liquibase still finds the changelog:
+
+```powershell
+liquibase update --defaults-file="../../config/liquibase-dev.properties" --search-path="."
+```
+
+Remember, in both cases, to use the actual `url`, `username` and `password`.
 #### Database creation
 In case of brand new database (fresh installation)
 
@@ -80,46 +86,6 @@ WHERE filename = 'master-postgresql.xml' OR filename LIKE '%/master-postgresql.x
 
 Then `liquibase status` (same options as `update`) must report the database as up to date.
 
-## Process parameters (`p_process_params`)
-
-`main.hwf` declares only the template parameters: `p_base_process_name`, `p_log_filename` and `p_process_params`. Hop silently ignores a `-p` value for a parameter the workflow does not declare, so the values specific to a process are passed through `p_process_params`:
-
-```
-hop-run -j <project> -e <environment> -r local -f '${PROJECT_HOME}/main.hwf' \
-  -p 'p_base_process_name=<short name>,p_process_params=p_period_type=S;p_reference_date=20261031'
-```
-
-- **Format**: `key=value` pairs separated by `;`. Spaces around keys and values are removed, empty pairs (for example a trailing `;`) are ignored, and the value is everything after the first `=` (`p_filter=a=b` gives `a=b`).
-- **Limits**: a value cannot contain `;` (the pair separator) or `,` (`hop-run -p` separates parameters with commas).
-- **Keys** must match `^[A-Za-z_][A-Za-z0-9_.]*$` and appear once.
-- Each pair becomes a **variable of the root workflow**: `start.hwf` and everything it runs see it as `${key}`. The pre-phase logs the names of the keys it set (`p_process_params: set p_period_type, p_reference_date`), never their values.
-- **Precedence** (the last one wins): environment files → `config/<short name>.properties` → `p_process_params`. Put the defaults of a process in its `.properties` file and override them per execution with `p_process_params`.
-- **Errors**: an invalid entry stops the execution in the pre-phase, before the process starts, with exit code `1` and the message `ERROR: invalid p_process_params entry '<entry>': <reason>`, where the reason is `missing '='`, `invalid key '<key>'` or `key '<key>' given more than once`.
-- **Do not declare these keys as parameters** of `start.hwf` or of the workflows and pipelines it runs: since Hop 2.20 a declared parameter with a default ignores a variable of the same name set by the caller (apache/hop#8101), so the value passed in `p_process_params` would be lost. Use them as plain variables.
-
-From cron, quote the whole `-p` value so that the shell does not split it on `;`:
-
-```
-0 6 * * * /opt/hop/hop-run.sh -j myproject -e prod -r local -f '${PROJECT_HOME}/main.hwf' -p 'p_base_process_name=load_sales,p_process_params=p_period_type=M'
-```
-
-From an orchestrator (e.g. Apache Airflow), pass `p_process_params` like any other `-p` parameter of `main.hwf`.
-
-## Environments
-
-The environment of a template-based project is a list of configuration files read in this order, a later file overriding an earlier one:
-
-1. `config/template-env.json`: the template variables and their defaults (template-owned, never edited);
-2. `config/template-<database>.json`, with `<database>` one of `postgresql`, `mssql`, `sqlite` (template-owned, never edited);
-3. one project file per environment, e.g. `config/<project>-<environment>-env.json`: the project's own variables and the real values of the `serasoft.*` variables for that environment (database host and credentials, SMTP, mail addresses). Keep the files with credentials out of Git.
-
-```
-hop-conf.sh -ec -e prod -ep myproject \
-  -eg /opt/projects/myproject/config/template-env.json,/opt/projects/myproject/config/template-postgresql.json,/etc/hop/myproject-prod-env.json
-```
-
-Never add project variables to the template files: `tools/serasoft-sync.sh` overwrites them at every template update and `tools/serasoft-verify.sh` reports them as modified.
-
 ## Process identity
 
 A process is identified everywhere by its **short name**, the `short_name` column of `config.integrations_processes`. The short name is:
@@ -137,7 +103,51 @@ INSERT INTO config.integrations_processes (id, short_name, description, project,
 VALUES ('<unique id>', '<short name>', '<description>', '<project>', 'Y', 'N');
 ```
 
+## Environments
+
+The environment of a template-based project is a list of configuration files read in this order, a later file overriding an earlier one:
+
+1. `config/template-env.json`: the template variables and their defaults (template-owned, never edited);
+2. `config/template-<database>.json`, with `<database>` one of `postgresql`, `mssql`, `sqlite` (template-owned, never edited);
+3. one project file per environment, e.g. `config/<project>-<environment>-env.json`: the project's own variables and the real values of the `serasoft.*` variables for that environment (database host and credentials, SMTP, mail addresses). Keep the files with credentials out of Git.
+
+```
+hop-conf.sh -ec -e prod -ep myproject \
+  -eg /opt/projects/myproject/config/template-env.json,/opt/projects/myproject/config/template-postgresql.json,/etc/hop/myproject-prod-env.json
+```
+
+Never add project variables to the template files: `tools/serasoft-sync.sh` overwrites them at every template update and `tools/serasoft-verify.sh` reports them as modified.
+
+## Process parameters (`p_process_params`)
+
+`main.hwf` declares only the template parameters: `p_base_process_name`, `p_log_filename` and `p_process_params`. Hop silently ignores a `-p` value for a parameter the workflow does not declare, so the values specific to a process are passed through `p_process_params`:
+
+```
+hop-run -j <project> -e <environment> -r local -f '${PROJECT_HOME}/main.hwf' \
+  -p 'p_base_process_name=<short name>,p_process_params=p_period_type=S;p_reference_date=20261031'
+```
+
+- **Format**: `key=value` pairs separated by `;`. Spaces around keys and values are removed, empty pairs (for example a trailing `;`) are ignored, and the value is everything after the first `=` (`p_filter=a=b` gives `a=b`).
+- **Limits**: a value cannot contain `;` (the pair separator) or `,` (`hop-run -p` separates parameters with commas).
+- **Keys** must match `^[A-Za-z_][A-Za-z0-9_.]*$` and appear once.
+- Each pair becomes a **variable of the root workflow**: `start.hwf` and everything it runs see it as `${key}`. The pre-phase logs the names of the keys it set (`p_process_params: set p_period_type, p_reference_date`), never their values.
+- **Logging of rejected entries**: a rejected entry is logged as given, so it may contain a value.
+- **Reserved names**: keys can override any variable, including template ones such as `p_base_process_name` or `PROJECT_HOME`: do not use template variable names.
+- **Precedence** (the last one wins): environment files → `config/<short name>.properties` → `p_process_params`. Put the defaults of a process in its `.properties` file and override them per execution with `p_process_params`.
+- **Errors**: an invalid entry stops the execution in the pre-phase, before the process starts, with exit code `1` and the message `ERROR: invalid p_process_params entry '<entry>': <reason>`, where the reason is `missing '='`, `invalid key '<key>'` or `key '<key>' given more than once`.
+- **Do not declare these keys as parameters** of `start.hwf` or of the workflows and pipelines it runs: since Hop 2.20 a declared parameter with a default ignores a variable of the same name set by the caller (apache/hop#8101), so the value passed in `p_process_params` would be lost. Use them as plain variables.
+
+From cron, quote the whole `-p` value so that the shell does not split it on `;`:
+
+```
+0 6 * * * /opt/hop/hop-run.sh -j myproject -e prod -r local -f '${PROJECT_HOME}/main.hwf' -p 'p_base_process_name=load_sales,p_process_params=p_period_type=M'
+```
+
+From an orchestrator (e.g. Apache Airflow), pass `p_process_params` like any other `-p` parameter of `main.hwf`.
+
 ## Template updates
+
+The scripts need Bash 4+ and GNU coreutils: Linux, WSL, or Git Bash on Windows (on macOS install GNU coreutils).
 
 A project gets the template files from an **annotated release tag** of hop-process-template with `tools/serasoft-sync.sh`, and checks them with `tools/serasoft-verify.sh`. The project does not share the template's Git history.
 
@@ -162,10 +172,11 @@ tools/serasoft-sync.sh --tag 3.2.0 --dest ../myproject
 The sync:
 
 - refuses an unknown or lightweight tag, a destination that is not the root of a Git work tree or has uncommitted changes;
-- copies the template files from the tag (never from the working copy), refusing to overwrite a project file: a template file may already exist in the project only if the previous manifest lists it;
+- copies the template files from the tag (never from the working copy), refusing to overwrite a project file: a template file may already exist in the project only if the previous manifest lists it (a first sync without `--adopt-from` also refuses extra files in `src/template/` and `db/liquibase/`);
 - removes the template files of the previous version that the new one no longer has;
 - copies the SQLite seed files only when missing, and prints `WARNING: kept local <file>` when a local one differs;
 - prints `WARNING: db/liquibase/master.xml changed: run liquibase update …` when the database changelog changed: update every project database (see "Support database creation");
+- prints `WARNING: ignored by .gitignore in <dest>: <files> …` when the project `.gitignore` hides written template files or seeds: add them with `git add -f` or un-ignore them (see the recommendations below);
 - rewrites `SERASOFT_VERSION` and `SERASOFT_MANIFEST.sha256` and prints `OK serasoft-sync tag=… commit=… added=… changed=… removed=… adopted=… forced=…`.
 
 It does not commit: review the diff, commit (e.g. `Template 3.2.0`), open the pull/merge request with the release notes of the tag (`git tag -n99 3.2.0` in the template).
@@ -180,9 +191,10 @@ tools/serasoft-sync.sh --tag 3.2.0 --dest ../myproject --adopt-from auto
 ```
 
 - Every template file of the project is compared with the same file in the starting tag (`2.1.2`, which may be a lightweight tag). Identical files are adopted and replaced by the new version; the files of the starting tag that the new version no longer has (for example `config/default-*.json`, `db/liquibase/master-postgresql.xml`) are removed.
-- Files that differ from the starting tag, and files in `src/template/` or `db/liquibase/` that the starting tag does not have, are **local changes**: the sync lists them and stops. Move the project's own content out of the template files (project variables to the project environment file, see "Environments"), then run again; or add `--force` to overwrite or remove them.
+- Files that differ from the starting tag, and files in `src/template/` or `db/liquibase/` that the starting tag does not have, are **local changes**: the sync lists them and stops. Move the project's own content out of the template files, then run again: typical local changes are edited `db/liquibase/*.properties` files (keep them in a project-owned file outside `db/liquibase/`, see "Support database creation") and project variables added to `config/template-env.json` (move them to the project environment file, see "Environments"). A project file at a path the new version owns (e.g. `config/template-env.json`) is refused too; or add `--force` to overwrite or remove them.
 - `--adopt-from auto` picks the tag with the most identical files and prints it (`adopt-from auto: 2.1.2 (5/6 files identical)`): check it before committing.
 - When `db/liquibase/master.xml` differs from the starting tag the sync prints a warning: for databases created with `master-postgresql.xml` follow "Database update" before running `liquibase update`.
+- A file adopted and then dismissed (because the new version no longer has it) is counted in both `adopted` and `removed` in the summary line.
 - `--adopt-from` is refused when the project already has a manifest.
 
 ### Checking a project
@@ -205,7 +217,7 @@ serasoft-verify:
 
 Recommended in the project repository:
 
-- a code-owner or approval rule on `main.hwf`, `src/template/`, `config/template-*.json`, `db/liquibase/`, `metadata/` and `SERASOFT_*`, so that template files change only through a template update;
+- a code-owner or approval rule on `main.hwf`, `src/template/`, `config/template-*.json`, `db/liquibase/`, `SERASOFT_*`, and the template metadata files (`metadata/rdbms/integrations_db_*.json`, `metadata/workflow-log/workflow_log.json`, `metadata/pipeline-run-configuration/local.json`, `metadata/workflow-run-configuration/local.json`), so that template files change only through a template update;
 - a `.gitattributes` keeping the template files with LF line endings (with `core.autocrlf=true` a Windows checkout converts them to CRLF and a local verify fails):
 
   ```
@@ -215,11 +227,15 @@ Recommended in the project repository:
   *.xml  text eol=lf
   *.sh   text eol=lf
   SERASOFT_* text eol=lf
+  src/template/** text eol=lf
+  db/liquibase/** text eol=lf
   ```
 
-- a `.gitignore` with at least `logs/`, `temp/` and the environment files that hold credentials.
+- a `.gitignore` with at least `logs/`, `temp/` and the environment files that hold credentials. It must not ignore template-owned paths: after a rule such as `config/*` add `!config/template-*.json` (and likewise for `db/sqlite/data/*` seeds), otherwise the written files are left out of the commit and the verify fails on a fresh clone.
 
 ## Releasing the template
+
+This section applies to the hop-process-template repository itself, not to projects.
 
 1. Merge the changes into `main`.
 2. Create an **annotated** tag `X.Y.Z` on `main`, with the release notes in the message, and push it:
@@ -236,6 +252,8 @@ Recommended in the project repository:
 The template is verified on **Apache Hop 2.16** and **Apache Hop 2.19** with the lab described in "Testing the template".
 
 ## Testing the template
+
+This section applies to the hop-process-template repository itself, not to projects.
 
 The workflow tests run `hop-run` from the official `apache/hop` Docker images against a PostgreSQL 16 created with `db/liquibase/master.xml`, on a throw-away copy of the working tree (`tests/hop/work/copy`, git-ignored): the repository itself is never used as a Hop project. Docker is the only prerequisite.
 
