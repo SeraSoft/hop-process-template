@@ -28,6 +28,7 @@ jobs:
           cp -r integration-tests/ hop-process-template/
           cp -r db/ hop-process-template/
           cp -r config/ hop-process-template/
+          cp -r tools/ hop-process-template/
         #  cp -r docs/ hop-process-template/
 
       - name: Set version variable
