@@ -278,6 +278,95 @@ Then:
 hop_runner.sh main.hwf -prj:<project> -env:<project>-prod -param:p_base_process_name=<process>
 ```
 
+## Migrating a template 1.0.x project
+
+`tools/serasoft-migrate-1x.py` migrates a project built on template 1.0.x (`src/pre/main_pre_job.hwf`, `src/main/`, `config/project-config.json`) to a template tag and to the Serasoft Airflow platform layout. It works on a clean checkout of the project, creates the branch `migration/template-<tag>` and makes one commit per phase. It never pushes: review the branch, then push and open the merge request yourself.
+
+After a read-only analysis (phase 0, nothing written) the phases and their commits are:
+
+| Phase | Commit message |
+|---|---|
+| 1 structure: processes and project folders moved under `src/project/` (`start.hwf` per process) | `Migration: project structure for template <tag>` |
+| 2 rewrites: file references, template variables (`serasoft.*`), runtime variables, connection name | `Migration: paths and variables for template <tag>` |
+| 3 old template files and root workflows removed | `Migration: remove template 1.0.x` |
+| 4 new template: `tools/serasoft-sync.sh --tag <tag>`, then `tools/serasoft-verify.sh` must pass | `Migration: hop-process-template <tag>` |
+| 5 platform configuration | `Migration: configuration for the Serasoft Airflow platform` |
+| 6 database seed and report | `Migration: DB seed and report` |
+
+The tool stops at the first error; the commits of the completed phases stay on the branch and the message names the failed phase.
+
+### Prerequisites
+
+- A checkout of this repository with the target annotated tag and the tags `1.0` and `1.0.1` (the tool compares the old template files with them): `git fetch --tags`. Run the tool from that checkout.
+- Python 3.10 or later (standard library only) and Git.
+- A clean checkout of the project (root of the work tree, no uncommitted change).
+- The old environment files of the project (one per environment) and a CSV export of the old configuration (below).
+
+### Exporting the old configuration
+
+The process names, event categories and subcategories come from the old integrations database, not from the files. Run the export on it (PostgreSQL, 1.0.x model):
+
+```
+psql "<connection>" -v ON_ERROR_STOP=1 --csv -f tools/serasoft-migrate-1x-export.sql > export.csv
+```
+
+The CSV has a `kind` column (`process`, `category`, `subcategory`). Every root workflow of the project must correspond to a `process` row, otherwise the tool stops.
+
+### Running the tool
+
+```
+tools/serasoft-migrate-1x.py --dest ../myproject --tag 3.3.0 \
+  --processes export.csv \
+  --env dev=old/dev.json --env prod=old/prod.json
+```
+
+| Option | Default | Meaning |
+|---|---|---|
+| `--dest` | mandatory | clean Git checkout of the project |
+| `--tag` | mandatory | annotated tag of the target template |
+| `--processes` | mandatory | CSV produced by the export query |
+| `--env NAME=FILE` | at least one | old environment file (JSON) of the environment `NAME` (`dev`, `test`, `prod`, ...); repeat for every environment |
+| `--project` | name of the `--dest` folder | project name, used in file names and in `/tmp/<project>` |
+| `--db` | `postgresql` | database of the integrations DB (`postgresql`, `mssql`, `sqlite`): selects `config/template-<db>.json` and the seed dialect |
+| `--stop-after PHASE` | `6` | stop after this phase (`0` = analysis only, nothing written) |
+
+To review phase by phase, run with `--stop-after 0` first, then check each commit. A stopped run leaves the branch, so remove it (`git checkout - && git branch -D migration/template-<tag>`) before running again.
+
+Exit codes:
+
+| Code | Meaning |
+|---|---|
+| `0` | migration complete, nothing left to do by hand |
+| `2` | migration complete with manual work listed in the report; this is what a real project gets (secrets to create, credentials to rotate) |
+| `1` | stopped: the message names the phase and the cause |
+| `64` | usage error |
+
+### What is generated
+
+- `config/env/<env>.list`, the manifest read by the platform, in load order (a later file overrides an earlier one): `config/template-env.json`, `config/template-<db>.json`, `config/<project>.json`, `config/<project>-<env>.json`, `/run/secrets/<project>_<env>`.
+- `config/<project>.json`: the project variables common to all environments (taken from the old `config/project-config.json`).
+- `config/<project>-<env>.json` per environment: the template variables renamed to `serasoft.*`, values equal to the template default omitted, obsolete variables dropped, project variables unchanged. Log and temporary file names point to `/tmp/<project>/logs` and `/tmp/<project>/temp`.
+- `config/secrets-example.json`: every credential variable (names containing `password`, `pwd`, `psw`, `secret` or `token`) with an empty value. Credentials are never copied into the repository; the real file is the Docker secret named in the manifest.
+- `config/<process>.properties` for the extra parameters of a root workflow that have a default (the template loads it); extra parameters without a default are only named in the report.
+- `db/seed/<project>_config.sql`: idempotent seed of the processes, event categories and subcategories that are not part of the template.
+
+### Report and operator checklist
+
+`docs/migration-report.md` (committed in phase 6) lists the inputs, the process map, the moves, the rewrite counts, template files that differ from 1.0.1 (possible customisations), unresolved references, event-writing steps, variables (mapped, dropped, credentials, project, filesystem paths), and project deployment files (`Dockerfile`, `.gitlab-ci.yml`, `other/hop-config.json`, ...), which are reported and not removed. It ends with the checklist to complete before cut-over:
+
+1. Create the secrets (one per environment, from `config/secrets-example.json`).
+2. Create the database with Liquibase and load `db/seed/<project>_config.sql`.
+3. Register the project: DAG and `hop_projects.yaml` on the platform, or `tools/serasoft-register-env.sh` where cron starts the project (see "Running with cron").
+4. Rotate the credentials that were in the old environment files or in the repository history.
+5. Cut over from the old deployment.
+
+### What the tool does not do
+
+- It does not convert steps that write events directly (for example a "Table output" on `integrations_log_events`) to `EventsTraceTransform`; they are listed in the report with pipeline, transform and upstream source, and the seed prepares their categories.
+- It does not migrate 2.x projects: use `tools/serasoft-sync.sh --adopt-from` for those.
+- It does not create the database or the secrets.
+- It only rewrites workflows, pipelines and metadata (`.hwf`, `.hpl`, `metadata/**/*.json`); references in any other file are reported, not changed.
+
 ## Releasing the template
 
 This section applies to the hop-process-template repository itself, not to projects.
