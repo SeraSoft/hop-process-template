@@ -6,7 +6,7 @@ import subprocess
 
 import pytest
 
-from fixtures_1x import (GIT_ENV, ROOT, env_file, fixture_101, fixture_pre101, fixture_starterjob, git,
+from fixtures_1x import (GIT_ENV, ROOT, env_file, fixture_101, fixture_pre101, fixture_starterjob, git, log_action,
                          pipeline, pipeline_action, root_workflow, transform, workflow, write)
 
 TOOL = ROOT / "tools" / "serasoft-migrate-1x.py"
@@ -544,3 +544,204 @@ def test_seed_escapes_quotes(tmp_path):
     assert migrate(fx).returncode == 2
     seed = (fx["dest"] / "db/seed/fixture-101_config.sql").read_text()
     assert "'Load O''Brien''s sales'" in seed
+
+
+# --- Fix round: manual-work exit code, robust rewrites and I/O ---
+
+def _run_phases(fx, monkeypatch, n):
+    for k, v in GIT_ENV.items():
+        monkeypatch.setenv(k, v)
+    mod = _module()
+    argv = ["--dest", str(fx["dest"]), "--tag", TAG, "--processes", str(fx["csv"])]
+    for name, path in fx["envs"].items():
+        argv += ["--env", f"{name}={path}"]
+    plan = mod.analyse(mod.parse_args(argv))
+    for phase in mod.PHASES[:n]:
+        phase(plan)
+    return mod, plan
+
+
+def test_manual_work_includes_open_items():
+    mod = _module()
+    assert not mod.Report().manual()
+    for name in ("history_credentials", "old_env_files_removed", "params_without_default",
+                 "unknown_processes", "local_config_ignored", "check_by_hand"):
+        assert mod.Report(**{name: [("x", ["y"])]}).manual(), name
+
+
+def test_exit_code_2_when_only_history_credentials(tmp_path, monkeypatch):
+    mod, plan = _run_phases(fixture_101(tmp_path), monkeypatch, 5)
+    history = plan.report.history_credentials
+    assert history
+    plan.report = mod.Report(history_credentials=history)
+    assert mod.phase_seed_report(plan) == 2
+    assert "Exit code: 2" in (plan.dest / "docs/migration-report.md").read_text(encoding="utf-8")
+
+
+def _seed_db(seed):
+    import sqlite3
+    c = sqlite3.connect(":memory:")
+    c.execute("ATTACH DATABASE ':memory:' AS config")
+    c.executescript(
+        "CREATE TABLE config.integrations_processes (id varchar(48) PRIMARY KEY NOT NULL, short_name varchar(32) "
+        "NOT NULL, description varchar(1024), project varchar(64) NOT NULL, is_active char(1) DEFAULT 'Y' NOT NULL, "
+        "is_running char(1) DEFAULT 'N' NOT NULL);\n"
+        "CREATE TABLE config.events_categories (id varchar(48) PRIMARY KEY NOT NULL, type char(1) NOT NULL, "
+        "name varchar(64) NOT NULL);\n"
+        "CREATE TABLE config.events_subcategories (id varchar(48) PRIMARY KEY NOT NULL, event_category_id "
+        "varchar(48) NOT NULL, name varchar(64) NOT NULL);\n")
+    c.executescript(seed)
+    c.executescript(seed)   # idempotent
+    return {t: c.execute(f"SELECT * FROM config.{t} ORDER BY id").fetchall()
+            for t in ("integrations_processes", "events_categories", "events_subcategories")}
+
+
+def test_seed_runs_twice_on_sqlite_and_files_end_with_newline(tmp_path):
+    fx = fixture_101(tmp_path)
+    assert migrate(fx).returncode == 2
+    d = fx["dest"]
+    seed = (d / "db/seed/fixture-101_config.sql").read_text(encoding="utf-8")
+    assert seed.endswith(";\n") and (d / "docs/migration-report.md").read_text(encoding="utf-8").endswith("\n")
+    assert _seed_db(seed) == {
+        "integrations_processes": [("load_sales", "load_sales", "Load sales", "fixture-101", "Y", "N")],
+        "events_categories": [("APP001", "E", "APPLICATION EXCEPTION")],
+        "events_subcategories": [("APPDT001", "APP001", "DATA ERROR")]}
+
+
+@pytest.mark.parametrize("value,expected", [("true", "Y"), ("YES", "Y"), ("1", "Y"),
+                                            ("n", "N"), ("False", "N"), ("0", "N"), ("no", "N")])
+def test_is_active_normalised(tmp_path, value, expected):
+    fx = fixture_101(tmp_path)
+    fx["csv"].write_text(fx["csv"].read_text().replace("Load sales,Y,", f"Load sales,{value},"))
+    r = migrate(fx)
+    assert r.returncode == 2, r.stderr
+    rows = _seed_db((fx["dest"] / "db/seed/fixture-101_config.sql").read_text(encoding="utf-8"))
+    assert rows["integrations_processes"][0][4] == expected
+
+
+def test_is_active_invalid_stops(tmp_path):
+    fx = fixture_101(tmp_path)
+    head = git(fx["dest"], "rev-parse", "HEAD")
+    fx["csv"].write_text(fx["csv"].read_text().replace("Load sales,Y,", "Load sales,maybe,"))
+    r = migrate(fx)
+    assert r.returncode == 1 and "load_sales" in r.stderr and "is_active" in r.stderr
+    assert git(fx["dest"], "rev-parse", "HEAD") == head and git(fx["dest"], "branch", "--show-current") == "main"
+
+
+def test_report_lists_variables_by_name_per_file(tmp_path):
+    fx = fixture_101(tmp_path)
+    assert migrate(fx).returncode == 2
+    report = (fx["dest"] / "docs/migration-report.md").read_text(encoding="utf-8")
+    section = report.split("## Variables carried over", 1)[1].split("\n## ", 1)[0]
+    dev = next(line for line in section.splitlines() if "`config/fixture-101-dev.json`" in line)
+    assert "`integrations.db.db.host` → `serasoft.integrations.db.host`" in dev
+    assert "`sales.db.host`" in dev and "`sales.export.dir`" in dev
+    props = next(line for line in section.splitlines() if "`config/load_sales.properties`" in line)
+    assert "`p_period_type`" in props
+    assert "db-dev.example.invalid" not in section and "/opt/data/export" not in section
+
+
+def test_references_with_backslashes_and_xml_entities(tmp_path, monkeypatch):
+    fx = fixture_101(tmp_path)
+    d = fx["dest"]
+    write(d, "src/main/load_sales_folder/win.hwf", workflow("win", [
+        log_action("Log", "call &quot;${PROJECT_HOME}/src/main/load_sales_folder/read_sales.hpl&quot;"),
+        pipeline_action("Read", "${PROJECT_HOME}\\src\\main\\load_sales_folder\\read_sales.hpl"),
+    ], ["START", "Log", "Read"]))
+    git(d, "add", "-A")
+    git(d, "commit", "-qm", "x")
+    _, plan = _run_phases(fx, monkeypatch, 2)
+    text = (d / "src/project/main/load_sales/win.hwf").read_text(encoding="utf-8")
+    assert "&quot;${PROJECT_HOME}/src/project/main/load_sales/read_sales.hpl&quot;" in text
+    assert "<filename>${PROJECT_HOME}/src/project/main/load_sales/read_sales.hpl</filename>" in text
+    assert plan.report.unresolved == []
+
+
+def test_event_writers_found_in_sql_and_schema_qualified_tables(tmp_path, monkeypatch):
+    from fixtures_1x import _action
+    fx = fixture_101(tmp_path)
+    d = fx["dest"]
+    write(d, "src/main/load_sales_folder/ev_schema.hpl", pipeline("ev_schema", [
+        transform("Ins events", "TableOutput", 100, "    <table>logs.integrations_log_events</table>\n")],
+        ["Ins events"]))
+    write(d, "src/main/load_sales_folder/ev_sql.hwf", workflow("ev_sql", [
+        _action("Sql", "SQL", 300, 100, "      <sql>INSERT INTO logs.INTEGRATIONS_LOG_EVENTS (id) VALUES ('x');\n"
+                "DELETE FROM logs.integrations_log_events WHERE 1 = 0</sql>\n")], ["START", "Sql"]))
+    git(d, "add", "-A")
+    git(d, "commit", "-qm", "x")
+    _, plan = _run_phases(fx, monkeypatch, 2)
+    paths = [e[0] for e in plan.report.events]
+    assert sorted(paths) == ["src/project/main/load_sales/ev_schema.hpl", "src/project/main/load_sales/ev_sql.hwf",
+                             "src/project/main/load_sales/write_event.hpl"]
+    assert ("src/project/main/load_sales/ev_schema.hpl", "Ins events",
+            "event_subcategory_id, gravity from: not found upstream") in plan.report.events
+
+
+def test_paths_counter_counts_changed_references_only(tmp_path, monkeypatch):
+    base = fixture_101(tmp_path / "a")
+    _, plan = _run_phases(base, monkeypatch, 2)
+    expected = plan.report.rewrites["paths"]
+    fx = fixture_101(tmp_path / "b")
+    write(fx["dest"], "src/main/load_sales_folder/keep.hwf", workflow("keep", [
+        pipeline_action("Conn", "${PROJECT_HOME}/metadata/rdbms/sales_db.json")], ["START", "Conn"]))
+    git(fx["dest"], "add", "-A")
+    git(fx["dest"], "commit", "-qm", "x")
+    _, plan = _run_phases(fx, monkeypatch, 2)
+    assert plan.report.rewrites["paths"] == expected
+
+
+def test_failed_phase_is_named(tmp_path, monkeypatch, capsys):
+    fx = fixture_101(tmp_path)
+    for k, v in GIT_ENV.items():
+        monkeypatch.setenv(k, v)
+    mod = _module()
+    mod.PHASES[1] = lambda plan: mod.run(["false"])   # fresh module: no restore needed
+    argv = ["--dest", str(fx["dest"]), "--tag", TAG, "--processes", str(fx["csv"])]
+    for name, path in fx["envs"].items():
+        argv += ["--env", f"{name}={path}"]
+    with pytest.raises(SystemExit) as e:
+        mod.main(argv)
+    assert e.value.code == 1
+    out, err = capsys.readouterr()
+    assert "phase 1: project structure" in out and "phase 2: paths and variables" in out
+    assert err.startswith("ERROR: phase 2 (paths and variables): false failed")
+
+
+def test_crlf_files_keep_their_line_endings(tmp_path, monkeypatch):
+    fx = fixture_101(tmp_path)
+    d = fx["dest"]
+    start = d / "src/main/load_sales_folder/start.hwf"
+    original = start.read_bytes().replace(b"\n", b"\r\n")
+    start.write_bytes(original)
+    git(d, "commit", "-qam", "crlf")
+    _run_phases(fx, monkeypatch, 2)
+    new = (d / "src/project/main/load_sales/start.hwf").read_bytes()
+    old_lines, new_lines = original.split(b"\r\n"), new.split(b"\r\n")
+    assert len(old_lines) == len(new_lines) and b"\n" not in b"".join(new_lines)
+    changed = [(a, b) for a, b in zip(old_lines, new_lines) if a != b]
+    assert len(changed) == 2 and all(b"${" in a for a, _ in changed)   # the log message and the pipeline path
+
+
+def test_other_moved_files_with_old_references_are_reported(tmp_path, monkeypatch):
+    fx = fixture_101(tmp_path)
+    d = fx["dest"]
+    sql = "SELECT '${integrations.db.db.host}';\n"
+    write(d, "src/main/load_sales_folder/query.sql", sql)
+    write(d, "src/main/load_sales_folder/notes.txt", "see ${PROJECT_HOME}/src/main/load_sales_folder/start.hwf\n")
+    write(d, "src/main/load_sales_folder/plain.properties", "batch=10\n")
+    git(d, "add", "-A")
+    git(d, "commit", "-qm", "x")
+    _, plan = _run_phases(fx, monkeypatch, 2)
+    assert [p for p, _ in plan.report.check_by_hand] == ["src/project/main/load_sales/notes.txt",
+                                                        "src/project/main/load_sales/query.sql"]
+    assert (d / "src/project/main/load_sales/query.sql").read_text() == sql
+
+
+@pytest.mark.parametrize("n", [1, 2])
+def test_stop_after_1_and_2(tmp_path, n):
+    fx = fixture_101(tmp_path)
+    r = migrate(fx, "--stop-after", str(n))
+    assert r.returncode == 0, r.stderr
+    d = fx["dest"]
+    assert git(d, "status", "--porcelain") == ""
+    assert len(git(d, "log", "--format=%s", "main..HEAD").split("\n")) == n

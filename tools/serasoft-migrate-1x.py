@@ -66,15 +66,33 @@ DROPPED_VARS = {"base.tmp.dir", "lock.dir", "db.type", "hop.project.code", "enab
 SECRET_RE = re.compile(r"password|pwd|psw|secret|token", re.IGNORECASE)
 PATH_RE = re.compile(r"^(/|[A-Za-z]:[\\/])")
 REF_RE = re.compile(r"\$\{(PROJECT_HOME|Internal\.Entry\.Current\.Folder|Internal\.Workflow\.Filename\.Folder|"
-                    r"Internal\.Pipeline\.Filename\.Directory)\}/([^<>\"'\s;,]+)")
+                    r"Internal\.Pipeline\.Filename\.Directory)\}[/\\]([^<>\"'\s;,&]+)")
 DEPLOYMENT_FILES = ("Dockerfile", ".gitlab-ci.yml", "Jenkinsfile", "docker-compose.yml", "docker-compose.yaml")
 ROOT_PARAMS = {"p_base_process_name", "p_logfile_name", "p_process_code"}
+IS_ACTIVE = {"y": "Y", "true": "Y", "1": "Y", "yes": "Y", "n": "N", "false": "N", "0": "N", "no": "N"}
 CSV_COLUMNS = ("kind", "id", "short_name", "description", "is_active", "event_category_id", "event_type", "name")
 
 
+CURRENT_PHASE = ""   # "phase N (title): " while a phase runs, to name it in errors
+
+
 def fail(message):
-    print(f"ERROR: {message}", file=sys.stderr)
+    print(f"ERROR: {CURRENT_PHASE}{message}", file=sys.stderr)
     sys.exit(1)
+
+
+def read_text(path):
+    """UTF-8 text with its line endings unchanged (CRLF files stay CRLF)."""
+    try:
+        with open(path, encoding="utf-8", newline="") as fh:
+            return fh.read()
+    except UnicodeDecodeError as e:
+        fail(f"{path}: not UTF-8 text ({e})")
+
+
+def write_text(path, text):
+    with open(path, "w", encoding="utf-8", newline="") as fh:
+        fh.write(text)
 
 
 def run(cmd, cwd=None):
@@ -123,9 +141,13 @@ class Report:
     old_env_files_removed: list = field(default_factory=list)
     local_config_ignored: list = field(default_factory=list)
     history_credentials: list = field(default_factory=list)   # (file, credential names): rotate them
+    check_by_hand: list = field(default_factory=list)   # (moved file not rewritten, what it still contains)
+    variables: list = field(default_factory=list)       # (written file, origin, ["old → new"], [project names])
 
     def manual(self):
-        return any([self.customised, self.unresolved, self.removed_refs, self.events, self.paths, self.deployment])
+        return any([self.customised, self.unresolved, self.removed_refs, self.events, self.paths, self.deployment,
+                    self.history_credentials, self.old_env_files_removed, self.params_without_default,
+                    self.unknown_processes, self.local_config_ignored, self.check_by_hand])
 
 
 @dataclass
@@ -191,6 +213,7 @@ def logic_signature(text):
 
 
 def resolve_ref(var, rel, old_file):
+    rel = rel.replace("\\", "/")
     if var == "PROJECT_HOME":
         target = os.path.normpath(rel)
     else:
@@ -205,7 +228,7 @@ def find_root_workflows(dest, files):
             root = ET.parse(dest / path).getroot()
         except ET.ParseError as e:
             fail(f"{path}: invalid XML ({e})")
-        targets = [(a.findtext("filename") or "").strip() for a in root.iter("action")
+        targets = [(a.findtext("filename") or "").strip().replace("\\", "/") for a in root.iter("action")
                    if (a.findtext("type") or "") == "WORKFLOW"]
         if not any(t.endswith("src/pre/main_pre_job.hwf") for t in targets):
             continue
@@ -282,8 +305,8 @@ def analyse(args):
         if name in envs:
             fail(f"--env {spec}: environment {name} given more than once")
         try:
-            json.loads(p.read_text())["variables"]
-        except (ValueError, KeyError, TypeError):
+            json.loads(p.read_text(encoding="utf-8"))["variables"]
+        except (ValueError, KeyError, TypeError, UnicodeDecodeError):
             fail(f"--env {spec}: not a Hop environment file")
         envs[name] = p
     processes, categories, subcategories = read_csv(args.processes)
@@ -301,6 +324,10 @@ def analyse(args):
             fail(f"{r.path}: process {r.short_name} is not in {args.processes}")
         if r.params_without_default:
             report.params_without_default.append((r.short_name, r.params_without_default))
+        active = (processes[r.short_name].get("is_active") or "").strip().lower()
+        if active not in IS_ACTIVE:
+            fail(f"{args.processes}: process {r.short_name} has is_active={active!r} (expected Y/N, true/false, 1/0, yes/no)")
+        processes[r.short_name]["is_active"] = IS_ACTIVE[active]
     report.unknown_processes = sorted(set(processes) - {r.short_name for r in roots})
 
     entries = {r.target for r in roots}
@@ -314,7 +341,7 @@ def analyse(args):
         if f.endswith((".hwf", ".hpl")) and f in TEMPLATE_1X_FILES and f not in root_paths:
             refs = [t for t in (template_show(tag, f) for tag in REFERENCE_TAGS) if t]
             try:
-                sig = logic_signature((dest / f).read_text())
+                sig = logic_signature(read_text(dest / f))
                 if refs and all(logic_signature(ref) != sig for ref in refs):
                     report.customised.append(f)
             except ET.ParseError:
@@ -363,7 +390,7 @@ def analyse(args):
                    if f.startswith("src/") and "src/template/" + f[len("src/"):] in tag_files}
     old_pc = None
     if "config/project-config.json" in files:
-        old_pc = json.loads((dest / "config/project-config.json").read_text())
+        old_pc = json.loads(read_text(dest / "config/project-config.json"))
     for f in sorted(files):
         if os.path.basename(f) in DEPLOYMENT_FILES or f.endswith("hop-config.json"):
             report.deployment.append(f)
@@ -410,8 +437,10 @@ def rewrite_refs(plan, text, old_file):
         else:
             plan.report.unresolved.append((old_file, m.group(0)))
             return m.group(0)
-        count(plan, "paths")
-        return "${PROJECT_HOME}/" + new
+        new = "${PROJECT_HOME}/" + new
+        if new != m.group(0):
+            count(plan, "paths")
+        return new
     return REF_RE.sub(repl, text)
 
 
@@ -426,7 +455,8 @@ def event_steps(root):
     transforms = {(t.findtext("name") or "").strip(): t for t in root.iter("transform")}
     steps = []
     for name, t in sorted(transforms.items()):
-        if (t.findtext("table") or "").strip() != "integrations_log_events":
+        table = (t.findtext("table") or "").strip().strip('"[]`').lower()
+        if table.rsplit(".", 1)[-1].strip('"[]`') != "integrations_log_events":
             continue
         seen, todo, sources = set(), [name], []
         while todo:
@@ -442,6 +472,25 @@ def event_steps(root):
     return steps
 
 
+OLD_PATH_RE = re.compile(r"\bsrc[/\\](main|pre|post|commons)[/\\]")
+
+
+def check_by_hand(plan, path, f):
+    """Moved files the tool does not rewrite (.sql, .properties, ...) that still name old variables or paths."""
+    try:
+        with open(f, encoding="utf-8", newline="") as fh:
+            text = fh.read()
+    except (UnicodeDecodeError, OSError):
+        return   # binary or not UTF-8: not checked
+    found = []
+    if rewrite_vars(text)[1]:
+        found.append("template 1.0.x variables")
+    if REF_RE.search(text) or OLD_PATH_RE.search(text):
+        found.append("1.0.x paths")
+    if found:
+        plan.report.check_by_hand.append((path, " and ".join(found) + ": check by hand"))
+
+
 def phase_rewrites(plan):
     reverse = {new: old for old, new in plan.moves.items()}
     current = set(git(plan.dest, "ls-files").split("\n")) - {""}
@@ -450,24 +499,31 @@ def phase_rewrites(plan):
         old = reverse.get(path, path)
         if old in removed:     # old template files and root workflows: removed in phase 3
             continue
-        if not (path.endswith((".hwf", ".hpl")) or (path.startswith("metadata/") and path.endswith(".json"))):
-            continue
         f = plan.dest / path
-        text = f.read_text()
+        if not (path.endswith((".hwf", ".hpl")) or (path.startswith("metadata/") and path.endswith(".json"))):
+            if old != path:
+                check_by_hand(plan, path, f)
+            continue
+        text = read_text(f)
         new = rewrite_refs(plan, text, old)
         new, n = rewrite_vars(new)
         count(plan, "variables", n)
         new, n = re.subn(r"<connection>\s*integrations_db\s*</connection>",
                          "<connection>${serasoft.integrations.db.connection.name}</connection>", new)
         count(plan, "connections", n)
+        steps = []
         if path.endswith(".hpl"):
             try:
-                for name, sources in event_steps(ET.fromstring(new)):
-                    plan.report.events.append((path, name, sources))
+                steps = event_steps(ET.fromstring(new))
             except ET.ParseError:
                 plan.report.unresolved.append((path, "not a valid XML file"))
+        for name, sources in steps:
+            plan.report.events.append((path, name, sources))
+        if (not steps and path.endswith((".hwf", ".hpl")) and not path.startswith("src/template/")
+                and "integrations_log_events" in new.lower()):
+            plan.report.events.append((path, "-", "integrations_log_events named in SQL or another step: check by hand"))
         if new != text:
-            f.write_text(new)
+            write_text(f, new)
     commit(plan, f"Migration: paths and variables for template {plan.tag}")
 
 
@@ -502,11 +558,11 @@ def env_entry(name, value, description):
 
 def write_json(path, data):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    write_text(path, json.dumps(data, indent=2, ensure_ascii=False) + "\n")
 
 
 def read_variables(path):
-    return json.loads(path.read_text(encoding="utf-8"))["variables"]
+    return json.loads(read_text(path))["variables"]
 
 
 def gitignore_entry(rel):
@@ -539,10 +595,12 @@ def phase_config(plan):
         if name not in secrets:
             secrets.append(name)
 
-    def classify_into(variables, origin, overridden=()):
+    def classify_into(variables, origin, target, overridden=()):
         """Template names mapped, obsolete and runtime names dropped, credentials only named (secrets).
-        A template default is omitted unless it overrides a name of an earlier layer (overridden)."""
-        out = []
+        A template default is omitted unless it overrides a name of an earlier layer (overridden).
+        The names carried over into target are listed in the report."""
+        out, mapped, project = [], [], []
+        plan.report.variables.append((target, origin, mapped, project))
         for v in variables:
             name, value = v["name"], v.get("value", "") or ""
             kind, new = classify(name)
@@ -563,16 +621,20 @@ def phase_config(plan):
             if PATH_RE.match(value):
                 plan.report.paths.append((origin, new, value))
             out.append(env_entry(new, value, f"From {name} ({origin})"))
+            if kind == "template":
+                mapped.append((name, new))
+            else:
+                project.append(name)
         return out
 
     template_pc = template_show(plan.tag, "config/project-config.json")
     if template_pc is None:
         fail(f"config/project-config.json not found in tag {plan.tag}")
     (d / "config").mkdir(parents=True, exist_ok=True)
-    (d / "config/project-config.json").write_text(template_pc, encoding="utf-8")
+    write_text(d / "config/project-config.json", template_pc)
     written = ["config/project-config.json", f"config/{p}.json", "config/secrets-example.json"]
     old_vars = (plan.old_project_config or {}).get("config", {}).get("variables", [])
-    common = classify_into(old_vars, "config/project-config.json")
+    common = classify_into(old_vars, "config/project-config.json", f"config/{p}.json")
     write_json(d / f"config/{p}.json", {"variables": common})
     common_names = {v["name"] for v in common}
     if credential_names(old_vars):
@@ -588,7 +650,8 @@ def phase_config(plan):
             lines = [f"# Defaults of the extra parameters of {r.path} (template 1.0.x);",
                      "# override per execution with p_process_params (README.md, Process parameters)."]
             lines += [f"{k}={v}" for k, v in params.items()]
-            (d / f"config/{r.short_name}.properties").write_text("\n".join(lines) + "\n", encoding="utf-8")
+            write_text(d / f"config/{r.short_name}.properties", "\n".join(lines) + "\n")
+            plan.report.variables.append((f"config/{r.short_name}.properties", r.path, [], list(params)))
             written.append(f"config/{r.short_name}.properties")
     runtime = {
         "serasoft.execution.log.filename": f"/tmp/{p}/logs/execution_log_${{p_base_process_name}}_"
@@ -599,17 +662,18 @@ def phase_config(plan):
     tracked_files = set(git(d, "ls-files").split("\n"))
     for env, path in sorted(plan.envs.items()):
         old_env_vars = read_variables(path)
-        variables = [v for v in classify_into(old_env_vars, f"{env} environment", common_names)
+        variables = [v for v in classify_into(old_env_vars, f"{env} environment", f"config/{p}-{env}.json",
+                                              common_names)
                      if v["name"] not in runtime]
         variables += [env_entry(k, v, "Writable path outside the read-only project folder") for k, v in runtime.items()]
         write_json(d / f"config/{p}-{env}.json", {"variables": variables})
         written += [f"config/{p}-{env}.json", f"config/env/{env}.list"]
         (d / "config/env").mkdir(parents=True, exist_ok=True)
-        (d / f"config/env/{env}.list").write_text(
+        write_text(d / f"config/env/{env}.list",
             f"# Hop environment files for {env}, in load order: a later file overrides an earlier one.\n"
             f"# Read by the Serasoft Airflow platform; cron: tools/serasoft-register-env.sh --env {env}\n"
             f"config/template-env.json\nconfig/template-{plan.db}.json\nconfig/{p}.json\nconfig/{p}-{env}.json\n"
-            f"/run/secrets/{p}_{env}\n", encoding="utf-8")
+            f"/run/secrets/{p}_{env}\n")
         rel = Path(os.path.relpath(path, d)).as_posix()
         if not rel.startswith("..") and rel in tracked_files:
             git(d, "rm", "-q", "--", rel)
@@ -619,11 +683,11 @@ def phase_config(plan):
                {"variables": [env_entry(n, "", f"Credential: set it in the Docker secret {p}_<env>") for n in secrets]})
     plan.report.secrets = secrets
     gi = d / ".gitignore"
-    lines = gi.read_text(encoding="utf-8").splitlines() if gi.exists() else []
+    lines = read_text(gi).splitlines() if gi.exists() else []
     lines = [line for line in lines if line.strip() not in IGNORED_CONFIG]
     lines += ["", "# Template 3.x: config/ is distributed and must be committed",
               "!config/", "!config/**", "config/*-local.json", "config/*secret*.json", "!config/secrets-example.json"]
-    gi.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    write_text(gi, "\n".join(lines) + "\n")
     # Local files under config/ that the old .gitignore hid (often with credentials) must never be
     # committed: they stay on disk, ignored by name.
     local = sorted(set(git(d, "ls-files", "-z", "--others", "--exclude-standard", "--", "config").split("\0"))
@@ -631,7 +695,7 @@ def phase_config(plan):
     if local:
         lines += ["", "# Local files of the 1.0.x setup, left out of the repository by the migration",
                   *map(gitignore_entry, local)]
-        gi.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        write_text(gi, "\n".join(lines) + "\n")
         print(f"WARNING: local files under config/ not committed (ignored by name in .gitignore): "
               f"{' '.join(local)}", file=sys.stderr)
         plan.report.local_config_ignored = local
@@ -674,7 +738,7 @@ def write_seed(plan):
                      f"{sql(s['event_category_id'])}, {sql(s['name'])}\n"
                      f"WHERE NOT EXISTS (SELECT 1 FROM config.events_subcategories WHERE id = {sql(s['id'])});\n")
     (plan.dest / "db/seed").mkdir(parents=True, exist_ok=True)
-    (plan.dest / f"db/seed/{p}_config.sql").write_text("\n".join(lines), encoding="utf-8")
+    write_text(plan.dest / f"db/seed/{p}_config.sql", "\n".join(lines).rstrip("\n") + "\n")
 
 
 def md_item(item):
@@ -708,6 +772,13 @@ def write_report(plan, exit_code):
     md += md_section("Steps writing template events directly: replace with EventsTraceTransform "
                      "(categories and subcategories are in the seed)", rep.events)
     md += md_section(f"Variables with filesystem paths: use a writable path or /tmp/{p}", rep.paths)
+    md += ["## Variables carried over (names only: file · origin · template names mapped · project names)", ""]
+    md += [f"- `{target}` · {origin} · mapped: "
+           + (", ".join(f"`{old}` → `{new}`" for old, new in mapped) or "none") + " · project: "
+           + (", ".join(f"`{n}`" for n in project) or "none")
+           for target, origin, mapped, project in rep.variables] or ["None."]
+    md += [""]
+    md += md_section("Moved files not rewritten that still name 1.0.x variables or paths", rep.check_by_hand)
     md += md_section("Runtime variables not carried over", rep.runtime_dropped)
     md += md_section("Extra root-workflow parameters without default (not carried over)", rep.params_without_default)
     md += md_section(f"Credentials (config/secrets-example.json, Docker secret {p}_<env>)", rep.secrets)
@@ -725,7 +796,7 @@ def write_report(plan, exit_code):
            "- [ ] Rotate the credentials found in the old environment files and in the Git history",
            "- [ ] Cut-over: stop the old deployment before the first run of the new one", ""]
     (plan.dest / "docs").mkdir(exist_ok=True)
-    (plan.dest / "docs/migration-report.md").write_text("\n".join(md), encoding="utf-8")
+    write_text(plan.dest / "docs/migration-report.md", "\n".join(md).rstrip("\n") + "\n")
 
 
 def phase_seed_report(plan):
@@ -737,6 +808,8 @@ def phase_seed_report(plan):
 
 
 PHASES = [phase_structure, phase_rewrites, phase_removal, phase_template, phase_config, phase_seed_report]
+PHASE_TITLES = ["project structure", "paths and variables", "removal of template 1.0.x", "template sync",
+                "platform configuration", "DB seed and report"]
 
 
 def parse_args(argv):
@@ -759,11 +832,15 @@ def main(argv=None):
     args = parse_args(sys.argv[1:] if argv is None else argv)
     plan = analyse(args)
     print(f"analysis OK: {len(plan.roots)} process(es), {len(plan.moves)} move(s), {len(plan.removals)} removal(s)")
+    global CURRENT_PHASE
     exit_code = 0
-    for number, phase in enumerate(PHASES, 1):
+    for number, (phase, title) in enumerate(zip(PHASES, PHASE_TITLES), 1):
         if number > args.stop_after:
             break
+        print(f"phase {number}: {title}", flush=True)
+        CURRENT_PHASE = f"phase {number} ({title}): "
         exit_code = phase(plan) or 0
+        CURRENT_PHASE = ""
         print(f"phase {number} done")
     if args.stop_after == len(PHASES):
         print(f"OK serasoft-migrate-1x project={plan.project} processes={len(plan.roots)} exit={exit_code}")
