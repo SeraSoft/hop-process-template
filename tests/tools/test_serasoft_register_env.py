@@ -33,15 +33,17 @@ case "$1" in
   -pc)
     shift
     while [[ $# -gt 0 ]]; do case "$1" in -p) n=$2 ;; -ph) h=$2 ;; esac; shift 2; done
-    if grep -q "^$n|" "$S/projects"; then exit 1; fi
+    if [[ -n "$(awk -F'|' -v n="$n" '$1==n' "$S/projects")" ]]; then exit 1; fi
     echo "$n|$h" >> "$S/projects"
-    if [[ -n "${FAKE_REWRITE:-}" ]]; then echo '{"rewritten": true}' > "$h/config/project-config.json"; fi ;;
+    if [[ -n "${FAKE_REWRITE:-}" ]]; then echo '{"rewritten": true}' > "$h/config/project-config.json"; fi
+    if [[ -n "${FAKE_PC_FAIL:-}" ]]; then echo "fake pc boom" >&2; exit 1; fi ;;
   -ec|-em)
     a=$1; shift
+    if [[ -n "${FAKE_ENV_FAIL:-}" ]]; then echo "fake env boom" >&2; exit 1; fi
     while [[ $# -gt 0 ]]; do case "$1" in -e) n=$2 ;; -ep) p=$2 ;; -eg) f=$2 ;; esac; shift 2; done
-    exists=$(grep -c "^$n|" "$S/envs")
-    if [[ "$a" == -ec && "$exists" != 0 ]] || [[ "$a" == -em && "$exists" == 0 ]]; then exit 1; fi
-    grep -v "^$n|" "$S/envs" > "$S/envs.tmp"; mv "$S/envs.tmp" "$S/envs"
+    exists=$(awk -F'|' -v n="$n" '$1==n' "$S/envs" | wc -l)
+    if [[ "$a" == -ec && "$exists" != 0 ]] || [[ "$a" == -em && "$exists" == 0 ]]; then echo "fake env boom" >&2; exit 1; fi
+    awk -F'|' -v n="$n" '$1!=n' "$S/envs" > "$S/envs.tmp"; mv "$S/envs.tmp" "$S/envs"
     echo "$n|$p|$f" >> "$S/envs" ;;
   *) exit 2 ;;
 esac
@@ -119,6 +121,8 @@ def test_rerun_updates_environment_and_keeps_project(setup):
 
 def test_default_secrets_dir(setup):
     s = setup
+    if Path("/etc/serasoft/secrets/myproj_prod").exists():
+        pytest.skip("host has /etc/serasoft/secrets/myproj_prod")
     r = run(s, "--env", "prod")
     assert r.returncode == 1
     assert "/etc/serasoft/secrets/myproj_prod" in r.stderr
@@ -194,3 +198,64 @@ def test_missing_hop_home(setup):
     r = run(setup, "--env", "prod", env={"HOP_HOME": ""})
     assert r.returncode == 1
     assert "HOP_HOME" in r.stderr
+
+
+def test_relative_secrets_dir_becomes_absolute(setup):
+    s = setup
+    full_env = {**os.environ, "HOP_HOME": str(s["hop"]), "FAKE_HOP_STATE": str(s["state"])}
+    script = s["proj"] / "tools" / "serasoft-register-env.sh"
+    r = subprocess.run([str(script), "--env", "prod", "--secrets-dir", "secrets"], cwd=s["tmp"],
+                       capture_output=True, text=True, env=full_env, check=False)
+    assert r.returncode == 0, r.stderr
+    assert envs(s)[0].endswith(f",{s['secrets'].resolve()}/myproj_prod")
+
+
+def test_project_config_restored_if_pc_fails(setup):
+    s = setup
+    r = run(s, "--env", "prod", "--secrets-dir", str(s["secrets"]),
+            env={"FAKE_REWRITE": "1", "FAKE_PC_FAIL": "1"})
+    assert r.returncode == 1
+    assert "fake pc boom" in r.stderr
+    assert (s["proj"] / "config" / "project-config.json").read_text() == PROJECT_CONFIG
+
+
+def test_env_failure_shows_hop_conf_output(setup):
+    s = setup
+    (s["state"] / "projects").write_text(f"myproj|{s['proj'].resolve()}\n")
+    (s["state"] / "envs").write_text("")
+    r = run(s, "--env", "prod", "--hop-env", "x", "--secrets-dir", str(s["secrets"]), env={"FAKE_ENV_FAIL": "1"})
+    assert r.returncode == 1
+    assert "fake env boom" in r.stderr
+
+
+def test_similar_project_names_not_confused(setup):
+    s = setup
+    for other in ("myproj-old", "my.proj", "xmyproj"):
+        (s["state"] / "projects").write_text(f"{other}|/elsewhere\n")
+        r = run(s, "--env", "prod", "--secrets-dir", str(s["secrets"]))
+        assert r.returncode == 0, (other, r.stderr)
+        assert any(c.startswith("-pc -p myproj ") for c in calls(s)), other
+        (s["state"] / "calls.log").unlink()
+        (s["state"] / "envs").write_text("")
+
+
+def test_dotted_project_name_not_matched_by_regex_name(setup):
+    s = setup
+    (s["state"] / "projects").write_text("my.proj|/elsewhere\n")
+    r = run(s, "--env", "prod", "--project", "myxproj", "--secrets-dir", str(s["secrets"]))
+    assert r.returncode == 0, r.stderr
+    assert any(c.startswith("-pc -p myxproj ") for c in calls(s))
+
+
+def test_project_home_with_space_read_entirely(setup):
+    s = setup
+    proj = s["proj"].resolve()
+    (s["state"] / "projects").write_text(f"myproj|{proj}\n")
+    spaced = s["tmp"] / "my dir"
+    spaced.mkdir()
+    shutil.move(str(s["proj"]), str(spaced / "myproj"))
+    s["proj"] = spaced / "myproj"
+    (s["state"] / "projects").write_text(f"myproj|{s['proj'].resolve()}\n")
+    r = run(s, "--env", "prod", "--secrets-dir", str(s["secrets"]))
+    assert r.returncode == 0, r.stderr
+    assert not any(c.startswith("-pc") for c in calls(s))

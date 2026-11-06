@@ -28,6 +28,8 @@ while [[ $# -gt 0 ]]; do
   shift 2
 done
 [[ -n "$env_name" ]] || usage
+# hop-conf/Hop run from another working directory: make the secrets dir absolute
+[[ "$secrets_dir" == /* ]] || secrets_dir="$PWD/$secrets_dir"
 
 unset CDPATH
 home="$(cd "$(dirname "$0")/.." && pwd -P)"
@@ -69,32 +71,33 @@ done < "$manifest"
 # --- project ---
 project_config="$home/config/project-config.json"
 [[ -f "$project_config" ]] || die "$project_config not found"
-listing="$("$hop_conf" -pl 2>/dev/null)" || die "hop-conf.sh -pl failed"
+listing="$("$hop_conf" -pl)" || die "hop-conf.sh -pl failed"
 registered_home="$(awk -v p="$project" '/^  [^ ]/ && $1 == p && $2 == ":" { sub(/^  [^ ]+ : /, ""); print; exit }' <<<"$listing")"
 if [[ -z "$registered_home" ]]; then
   backup="$(mktemp)"
   trap 'rm -f "$backup"' EXIT
-  cp -p "$project_config" "$backup"
-  "$hop_conf" -pc -p "$project" -ph "$home" -pf config/project-config.json >/dev/null \
-    || die "hop-conf.sh: cannot register project $project"
+  cp "$project_config" "$backup"
+  pc_rc=0
+  pc_out="$("$hop_conf" -pc -p "$project" -ph "$home" -pf config/project-config.json 2>&1)" || pc_rc=$?
   if ! cmp -s "$backup" "$project_config"; then
-    cp -p "$backup" "$project_config"
+    cat "$backup" > "$project_config"
     echo "WARNING: hop-conf.sh rewrote config/project-config.json: original content restored" >&2
   fi
+  [[ $pc_rc -eq 0 ]] || die "hop-conf.sh: cannot register project $project"$'\n'"$pc_out"
 elif [[ "$registered_home" != "$home" ]]; then
   die "project $project is already registered with home $registered_home, not $home (use --project <name>)"
 fi
 
 # --- environment ---
-envs="$("$hop_conf" -el 2>/dev/null)" || die "hop-conf.sh -el failed"
+envs="$("$hop_conf" -el)" || die "hop-conf.sh -el failed"
 joined="$(IFS=,; printf '%s' "${files[*]}")"
 if awk -v e="$hop_env" '/^  [^ ]/ && NF == 1 && $1 == e { found = 1 } END { exit !found }' <<<"$envs"; then
   action=-em
 else
   action=-ec
 fi
-"$hop_conf" "$action" -e "$hop_env" -ep "$project" -eu "$env_name" -eg "$joined" >/dev/null \
-  || die "hop-conf.sh $action: cannot register environment $hop_env"
+em_out="$("$hop_conf" "$action" -e "$hop_env" -ep "$project" -eu "$env_name" -eg "$joined" 2>&1)" \
+  || die "hop-conf.sh $action: cannot register environment $hop_env"$'\n'"$em_out"
 
 echo "OK serasoft-register-env project=$project hop-env=$hop_env files=${#files[@]}"
 echo "  hop_runner.sh main.hwf -prj:$project -env:$hop_env -param:p_base_process_name=<process>"
