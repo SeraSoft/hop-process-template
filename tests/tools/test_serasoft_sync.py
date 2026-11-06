@@ -372,3 +372,21 @@ def test_adopt_unknown_tag(template_with_legacy, project_2x):
 
 def test_force_needs_adopt_from(template, project):
     assert sync(template, "--tag", "3.2.0", "--dest", str(project), "--force").returncode == 64
+
+
+def test_warns_when_template_files_are_ignored(template, project):
+    write(project, ".gitignore", "logs/\nconfig/*\n")
+    commit_all(project, "ignore config")
+    r = sync(template, "--tag", "3.2.0", "--dest", str(project))
+    assert r.returncode == 0, r.stderr
+    warning = [l for l in r.stderr.splitlines() if l.startswith("WARNING: ignored by .gitignore")]
+    assert len(warning) == 1
+    assert "config/template-env.json" in warning[0]
+    assert "config/template-postgresql.json" in warning[0]
+    assert "main.hwf" not in warning[0]
+
+
+def test_no_ignored_warning_without_ignore_rules(template, project):
+    r = sync(template, "--tag", "3.2.0", "--dest", str(project))
+    assert r.returncode == 0, r.stderr
+    assert "ignored by .gitignore" not in r.stderr

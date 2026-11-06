@@ -264,6 +264,13 @@ for f in "${seeds[@]}"; do
     added=$((added + 1))
   fi
 done
+# Template files that the project .gitignore hides would be left out of the
+# commit (and then fail the verify on a fresh clone).
+ignored=()
+while IFS= read -r -d '' f; do ignored+=("$f"); done \
+  < <(git -C "$dest" ls-files --others --ignored --exclude-standard -z -- "${new[@]}" "${seeds[@]}")
+[[ ${#ignored[@]} -eq 0 ]] \
+  || warn "ignored by .gitignore in $dest: ${ignored[*]} (add them with git add -f, or un-ignore them: template files must be committed)"
 (cd "$dest" && sha256sum -- "${new[@]}") > "$dest/$MANIFEST"
 printf '%s %s\n' "$tag" "$commit" > "$dest/SERASOFT_VERSION"
 
