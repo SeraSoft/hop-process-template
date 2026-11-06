@@ -83,3 +83,35 @@ def test_stops_on_unreadable_or_wrong_csv(tmp_path):
     fx["csv"] = tmp_path / "missing.csv"
     r = migrate(fx)
     assert r.returncode == 1 and "missing.csv" in r.stderr and "Traceback" not in r.stderr
+
+
+def _analyse(fx):
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("migrate_1x", TOOL)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    argv = ["--dest", str(fx["dest"]), "--tag", TAG, "--processes", str(fx["csv"])]
+    for name, path in fx["envs"].items():
+        argv += ["--env", f"{name}={path}"]
+    return mod.analyse(mod.parse_args(argv))
+
+
+def test_customisation_ignores_root_workflows(tmp_path):
+    plan = _analyse(fixture_101(tmp_path))
+    assert "main.hwf" not in plan.report.customised
+    assert plan.report.customised == []
+
+
+def test_customisation_accepts_1_0_and_flags_real_changes(tmp_path):
+    fx = fixture_101(tmp_path)
+    soft = "src/post/logging/check_for_soft_errors.hpl"
+    old = subprocess.run(["git", "-C", str(ROOT), "show", f"1.0:{soft}"], check=True,
+                         capture_output=True, text=True).stdout
+    write(fx["dest"], soft, old)
+    pre = fx["dest"] / "src/pre/init/dummy_init_stuff.hwf"
+    pre.write_text(pre.read_text().replace("  </actions>", '    <action>\n      <name>Extra</name>\n'
+                                           "      <type>DUMMY</type>\n    </action>\n  </actions>", 1))
+    git(fx["dest"], "commit", "-qam", "x")
+    plan = _analyse(fx)
+    assert soft not in plan.report.customised
+    assert plan.report.customised == ["src/pre/init/dummy_init_stuff.hwf"]

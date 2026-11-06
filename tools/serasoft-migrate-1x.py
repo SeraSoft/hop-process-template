@@ -18,6 +18,7 @@ import xml.etree.ElementTree as ET
 
 TEMPLATE_REPO = Path(__file__).resolve().parents[1]
 REFERENCE_TAG = "1.0.1"
+REFERENCE_TAGS = ("1.0", REFERENCE_TAG)   # a template file matching either tag is not customised
 
 # Template files of tags 1.0 and 1.0.1 (same paths in both).
 TEMPLATE_1X_FILES = [
@@ -291,11 +292,13 @@ def analyse(args):
     removals += [r.path for r in roots if r.path not in removals]
     if "src/main/starter_job.hwf" in files and "src/main/starter_job.hwf" not in entries:
         removals.append("src/main/starter_job.hwf")
+    root_paths = {r.path for r in roots}   # project copies of main.hwf by design
     for f in removals:
-        if f.endswith((".hwf", ".hpl")) and f in TEMPLATE_1X_FILES:
-            ref = template_show(REFERENCE_TAG, f)
+        if f.endswith((".hwf", ".hpl")) and f in TEMPLATE_1X_FILES and f not in root_paths:
+            refs = [t for t in (template_show(tag, f) for tag in REFERENCE_TAGS) if t]
             try:
-                if ref and logic_signature(ref) != logic_signature((dest / f).read_text()):
+                sig = logic_signature((dest / f).read_text())
+                if refs and all(logic_signature(ref) != sig for ref in refs):
                     report.customised.append(f)
             except ET.ParseError:
                 report.customised.append(f)
