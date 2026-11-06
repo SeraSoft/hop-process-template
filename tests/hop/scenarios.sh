@@ -51,7 +51,29 @@ s_regression() {
   reset
 }
 
-SCENARIOS=(s_default s_regression)
+s_short_name() {
+  echo "process whose id differs from short_name"
+  local id=6f1c2a8e-0d4b-4c39-9a57-3b2f0e5d7c11
+  reset
+  run main.hwf "p_base_process_name=uuidtest"
+  check "exit code 0" rc_is 0
+  check "process started" log_has "VARTEST"
+  check "log row references the internal id" sql_is \
+    "SELECT proc_status FROM logs.integrations_logs WHERE integrations_processes_id='$id' ORDER BY date_started DESC LIMIT 1" T
+  check "lock released" sql_is "SELECT is_running FROM config.integrations_processes WHERE short_name='uuidtest'" N
+  run src/template/commons/tools/check_state.hwf "p_base_process_name=uuidtest"
+  check "check_state: can run" rc_is 0
+  "$LAB" sql "UPDATE config.integrations_processes SET is_running='Y' WHERE short_name='uuidtest'" >/dev/null
+  run src/template/commons/tools/check_state.hwf "p_base_process_name=uuidtest"
+  check "check_state: locked, exit code 1" rc_is 1
+  check "check_state: locked message" log_has "SKIPPED: process 'uuidtest' is locked"
+  run src/template/commons/tools/locks/release_lock.hwf "p_base_process_name=uuidtest"
+  check "release_lock: exit code 0" rc_is 0
+  check "release_lock: flag N" sql_is "SELECT is_running FROM config.integrations_processes WHERE short_name='uuidtest'" N
+  reset
+}
+
+SCENARIOS=(s_default s_regression s_short_name)
 
 "$LAB" copy >/dev/null
 for s in "${SCENARIOS[@]}"; do "$s"; done

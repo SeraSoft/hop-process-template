@@ -80,6 +80,23 @@ WHERE filename = 'master-postgresql.xml' OR filename LIKE '%/master-postgresql.x
 
 Then `liquibase status` (same options as `update`) must report the database as up to date.
 
+## Process identity
+
+A process is identified everywhere by its **short name**, the `short_name` column of `config.integrations_processes`. The short name is:
+
+- the value of `p_base_process_name` when the process is started, checked or unlocked (`main.hwf`, `check_state.hwf`, `release_lock.hwf`);
+- the name of its folder, `src/project/main/<short name>/`, whose `start.hwf` is the entry point (see `serasoft.project.link.ref`);
+- the name of its optional variables file, `config/<short name>.properties`.
+
+The `id` column is internal: it is the key referenced by `logs.integrations_logs.integrations_processes_id` and can be any unique value, for example a UUID. Before 3.2.0 the pre-phase looked the process up by `id`, so `id` and `short_name` had to be equal; since 3.2.0 they are independent.
+
+To declare a process:
+
+```sql
+INSERT INTO config.integrations_processes (id, short_name, description, project, is_active, is_running)
+VALUES ('<unique id>', '<short name>', '<description>', '<project>', 'Y', 'N');
+```
+
 ## Supported Apache Hop versions
 
 The template is verified on **Apache Hop 2.16** and **Apache Hop 2.19** with the lab described in "Testing the template".

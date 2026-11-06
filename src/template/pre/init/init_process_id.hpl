@@ -80,7 +80,7 @@
       <fail_on_multiple>N</fail_on_multiple>
       <key>
         <condition>=</condition>
-        <field>id</field>
+        <field>short_name</field>
         <name>base_process_name</name>
       </key>
       <schema>${serasoft.integrations.db.config.schema}</schema>
