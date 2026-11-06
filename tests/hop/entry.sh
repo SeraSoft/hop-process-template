@@ -4,6 +4,7 @@
 # overrides), then runs hop-run. Exit code: the one of hop-run, 2 if the
 # registration fails.
 # Usage: entry.sh <file relative to /project> <params or ""> <variables or "">
+# LAB_PARAMS_SEPARATOR, when set, is passed to hop-run as -ps (separator of the -p pairs).
 set -uo pipefail
 file="$1" params="${2:-}" vars="${3:-}"
 mkdir -p "$HOP_CONFIG_FOLDER" "$HOP_AUDIT_FOLDER"
@@ -12,6 +13,7 @@ mkdir -p "$HOP_CONFIG_FOLDER" "$HOP_AUDIT_FOLDER"
   -eg /project/config/template-env.json,/project/config/template-postgresql.json,/tests/lab-env.json \
   >/dev/null || exit 2
 args=(-j tpl -e lab -r local -f "/project/$file")
+[[ -n "${LAB_PARAMS_SEPARATOR:-}" ]] && args+=(-ps "$LAB_PARAMS_SEPARATOR")
 [[ -n "$params" ]] && args+=(-p "$params")
 [[ -n "$vars" ]] && args+=(-s "$vars")
 /opt/hop/hop-run.sh "${args[@]}"

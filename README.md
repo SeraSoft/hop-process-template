@@ -120,7 +120,7 @@ Never add project variables to the template files: `tools/serasoft-sync.sh` over
 
 ## Process parameters (`p_process_params`)
 
-`main.hwf` declares only the template parameters: `p_base_process_name`, `p_log_filename` and `p_process_params`. Hop silently ignores a `-p` value for a parameter the workflow does not declare, so the values specific to a process are passed through `p_process_params`:
+`main.hwf` declares only the template parameters: `p_base_process_name`, `p_log_filename` and `p_process_params`. The values specific to a process are passed through `p_process_params`:
 
 ```
 hop-run -j <project> -e <environment> -r local -f '${PROJECT_HOME}/main.hwf' \
@@ -128,12 +128,13 @@ hop-run -j <project> -e <environment> -r local -f '${PROJECT_HOME}/main.hwf' \
 ```
 
 - **Format**: `key=value` pairs separated by `;`. Spaces around keys and values are removed, empty pairs (for example a trailing `;`) are ignored, and the value is everything after the first `=` (`p_filter=a=b` gives `a=b`).
-- **Limits**: a value cannot contain `;` (the pair separator) or `,` (`hop-run -p` separates parameters with commas).
+- **Limits**: a value cannot contain `;` (the pair separator). By default it cannot contain `,` either, because `hop-run -p` separates parameters with commas: see "Values with commas" below.
 - **Keys** must match `^[A-Za-z_][A-Za-z0-9_.]*$` and appear once.
 - Each pair becomes a **variable of the root workflow**: `start.hwf` and everything it runs see it as `${key}`. The pre-phase logs the names of the keys it set (`p_process_params: set p_period_type, p_reference_date`), never their values.
 - **Logging of rejected entries**: a rejected entry is logged as given, so it may contain a value.
 - **Reserved names**: keys can override any variable, including template ones such as `p_base_process_name` or `PROJECT_HOME`: do not use template variable names.
 - **Precedence** (the last one wins): environment files → `config/<short name>.properties` → `p_process_params`. Put the defaults of a process in its `.properties` file and override them per execution with `p_process_params`.
+- **Why not a plain `-p key=value`**: `hop-run` turns a `-p` key that `main.hwf` does not declare into a variable of the root workflow, so `-p p_period_type=S` also reaches `start.hwf`. But the pre-phase loads `config/<short name>.properties` afterwards and overwrites it: a key that is also in the `.properties` file keeps the file's value. `p_process_params` is set after the `.properties` file, validates its entries and logs only their keys.
 - **Errors**: an invalid entry stops the execution in the pre-phase, before the process starts, with exit code `1` and the message `ERROR: invalid p_process_params entry '<entry>': <reason>`, where the reason is `missing '='`, `invalid key '<key>'` or `key '<key>' given more than once`.
 - **Do not declare these keys as parameters** of `start.hwf` or of the workflows and pipelines it runs: since Hop 2.20 a declared parameter with a default ignores a variable of the same name set by the caller (apache/hop#8101), so the value passed in `p_process_params` would be lost. Use them as plain variables.
 
@@ -144,6 +145,17 @@ From cron, quote the whole `-p` value so that the shell does not split it on `;`
 ```
 
 From an orchestrator (e.g. Apache Airflow), pass `p_process_params` like any other `-p` parameter of `main.hwf`.
+
+### Values with commas
+
+To pass a list such as `operations.to.import=972,15004,763,10282`, change the separator of the `-p` pairs with `-ps`, so that `hop-run` does not split the value on its commas:
+
+```
+hop-run -j <project> -e <environment> -r local -f '${PROJECT_HOME}/main.hwf' -ps '#' \
+  -p 'p_base_process_name=<short name>#p_process_params=operations.to.import=972,15004,763,10282'
+```
+
+The process receives `${operations.to.import}` = `972,15004,763,10282`. Do not use `;` as the `-ps` separator (it separates the pairs of `p_process_params`), and avoid regular-expression characters such as `|`: Hop 2.16 uses the separator as a regular expression. Wrapping the value in double quotes (`-p 'key="a,b"'`) keeps the commas only from Hop 2.19 on; on Hop 2.16 use `-ps`.
 
 ## Template updates
 
@@ -264,7 +276,7 @@ tests/hop/scenarios.sh 2.19.0     # all scenarios on Hop 2.19
 tests/hop/lab.sh down             # remove containers, network and tests/hop/work
 ```
 
-`tests/hop/lab.sh run <hop version> <file> [<params> [<variables>]]` runs a single workflow (e.g. `tests/hop/lab.sh run 2.16.0 main.hwf p_base_process_name=default`), prints `RC=<exit code>` and writes the Hop log to `tests/hop/work/hoprun.log`; call `tests/hop/lab.sh copy` first to refresh the copy. The lab environment (`tests/hop/lab-env.json`) disables every feedback email. Test processes: `vartest` and `uuidtest` (internal `id` different from `short_name`), both running `tests/hop/fixtures/start.hwf`, which logs the variables it receives.
+`tests/hop/lab.sh run <hop version> <file> [<params> [<variables>]]` runs a single workflow (e.g. `tests/hop/lab.sh run 2.16.0 main.hwf p_base_process_name=default`), prints `RC=<exit code>` and writes the Hop log to `tests/hop/work/hoprun.log`; call `tests/hop/lab.sh copy` first to refresh the copy. With `LAB_PARAMS_SEPARATOR` set (e.g. `LAB_PARAMS_SEPARATOR="#"`) the run passes it to `hop-run` as `-ps`. The lab environment (`tests/hop/lab-env.json`) disables every feedback email. Test processes: `vartest` and `uuidtest` (internal `id` different from `short_name`), both running `tests/hop/fixtures/start.hwf`, which logs the variables it receives.
 
 ## Process template environment variables
 

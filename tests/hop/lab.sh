@@ -7,6 +7,7 @@
 # Usage: tests/hop/lab.sh up | down | copy | sql "<query>"
 #        tests/hop/lab.sh run <hop version> <file> [<params> [<variables>]]
 #   run prints RC=<hop-run exit code>; the Hop log is tests/hop/work/hoprun.log.
+#   With LAB_PARAMS_SEPARATOR set (e.g. '#'), run passes it to hop-run as -ps.
 set -euo pipefail
 unset CDPATH
 HERE="$(cd "$(dirname "$0")" && pwd -P)"
@@ -70,6 +71,7 @@ case "${1:-}" in
     set +e
     docker run --rm --network "$NET" --user "$(id -u):$(id -g)" \
       -e HOME=/tmp -e HOP_CONFIG_FOLDER=/tmp/hop-config -e HOP_AUDIT_FOLDER=/tmp/hop-audit \
+      -e LAB_PARAMS_SEPARATOR="${LAB_PARAMS_SEPARATOR:-}" \
       -v "$WORK/copy:/project" -v "$HERE:/tests:ro" \
       --entrypoint /bin/bash "apache/hop:$ver" /tests/entry.sh "$file" "$params" "$vars" \
       > "$WORK/hoprun.log" 2>&1

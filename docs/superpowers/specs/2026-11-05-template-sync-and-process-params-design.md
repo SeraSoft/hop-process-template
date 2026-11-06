@@ -40,10 +40,16 @@ developed and verified on Hop 2.19 (Airflow lab).
    `short_name`. Today `p_base_process_name` must equal both `id` and
    `short_name`; no issue ever decoupled them. `init_process_id.hpl` is the only
    place that uses `id`.
-2. **Undeclared parameters do not reach `start.hwf`.**
-   - `hop-run -p key=value` for a parameter the workflow does not declare is
-     silently ignored (`NamedParameters.setParameterValue` does nothing for an
-     unknown key; checked on Hop 2.20.0-rc1 and `main`).
+2. **Undeclared parameters do not reach `start.hwf` as parameters.**
+   - **Errata (2026-11-06, #57)**: the original text said that `hop-run -p
+     key=value` for an undeclared parameter is silently ignored. Wrong:
+     `HopRunBase.parseParametersAndVariables` (2.16, 2.19, `main`) puts an
+     undeclared key in the variables map, so it becomes a variable of the root
+     workflow and reaches `start.hwf`. It is then overwritten by
+     `config/<short_name>.properties`, loaded later by the pre-phase (verified in
+     the lab on 2.16 and 2.19). `p_process_params` remains the mechanism of
+     record because it wins over the `.properties` file, validates its entries
+     and logs keys only; the decisions below are unchanged.
    - `main.hwf` passes to `start.hwf` only its own declared parameters
      (`pass_all_parameters=Y`): `p_base_process_name`, `p_log_filename`.
    - Parameter semantics are changing across Hop versions: since
@@ -52,8 +58,8 @@ developed and verified on Hop 2.19 (Airflow lab).
      caller; apache/hop#9192 (after 2.20.0-rc1) does the same for `hop-run`.
      A mechanism based on declared parameters in `start.hwf` would behave
      differently on 2.16 and 2.20+.
-   - `hop-run -p` splits its value on commas: a single parameter value cannot
-     contain `,`.
+   - `hop-run -p` splits its value on commas by default: `-ps <separator>`
+     changes the separator (quoted values keep their commas only from Hop 2.19).
 3. **Process-level variables already exist** (#13): `main_pre_job.hwf`
    (action "Init Process Context Variables") loads
    `${PROJECT_HOME}/config/${p_base_process_name}.properties`, when present,
