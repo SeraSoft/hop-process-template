@@ -71,11 +71,6 @@ def test_usage_errors(tmp_path):
     assert r.returncode == 64
 
 
-def test_analysis_succeeds(fx):
-    r = migrate(fx)
-    assert r.returncode in (0, 2), r.stderr
-
-
 def test_stops_on_unreadable_or_wrong_csv(tmp_path):
     fx = fixture_101(tmp_path)
     fx["csv"].write_text("kind,id,short_name\nprocess,11,load_sales\n")
@@ -491,3 +486,61 @@ def test_history_credentials_in_report(tmp_path, monkeypatch):
     assert "config/dev-env.json" in hist and "integrations.db.db.password" in hist["config/dev-env.json"]
     assert hist["config/project-config.json"] == ["api.token"]
     assert "tok-123" not in json.dumps(plan.report.history_credentials)
+
+
+def test_full_migration(fx):
+    r = migrate(fx)
+    assert r.returncode in (0, 2), r.stderr
+    d = fx["dest"]
+    assert git(d, "status", "--porcelain") == ""
+    assert len(git(d, "log", "--format=%s", "main..HEAD").split("\n")) == 6
+    assert subprocess.run(["tools/serasoft-verify.sh"], cwd=d, capture_output=True).returncode == 0
+    report = (d / "docs/migration-report.md").read_text()
+    for r_ in ("Process map", "Operator checklist"):
+        assert r_ in report
+    seed = next((d / "db/seed").glob("*_config.sql")).read_text()
+    assert "INSERT INTO config.integrations_processes" in seed and "WHERE NOT EXISTS" in seed
+    assert "SYSGE001" not in seed
+    old = ("${PROJECT_HOME}/src/pre/", "${PROJECT_HOME}/src/post/", "${PROJECT_HOME}/src/main/",
+           "${v_process_id}", "${mail.", "${integrations.db.db.", "Internal.Entry.Current.Folder}/src/")
+    for f in d.rglob("*.h*"):
+        if f.suffix in (".hwf", ".hpl") and "src/template" not in str(f):
+            text = f.read_text()
+            assert not any(o in text for o in old), (f, [o for o in old if o in text])
+
+
+def test_report_and_exit_code_101(tmp_path):
+    fx = fixture_101(tmp_path)
+    r = migrate(fx)
+    assert r.returncode == 2, r.stderr          # event step, Dockerfile, path variable
+    report = (fx["dest"] / "docs/migration-report.md").read_text()
+    assert "write_event.hpl" in report and "Ins integrations_log_events" in report
+    assert "Dockerfile" in report and "sales.export.dir" in report
+    assert "orphan_proc" in report and "p_no_default" in report
+    seed = (fx["dest"] / "db/seed/fixture-101_config.sql").read_text()
+    assert "'load_sales'" in seed and "'APPDT001'" in seed and "'APP001'" in seed
+
+
+def test_report_lists_local_files_history_credentials_and_event_sources(tmp_path):
+    fx = fixture_101(tmp_path)
+    d = fx["dest"]
+    (d / ".gitignore").write_text("config/*\n!config/project-config.json\n")
+    git(d, "commit", "-qam", "ignore config")
+    env_file(d / "config" / "old-prod-env.json", {"sales.db.password": "local-secret-1"})
+    r = migrate(fx)
+    assert r.returncode == 2, r.stderr
+    report = (d / "docs/migration-report.md").read_text(encoding="utf-8")
+    assert "`config/old-prod-env.json`" in report
+    assert "`config/project-config.json` · `integrations.db.db.pwd`" in report   # credentials in the history
+    assert "event_subcategory_id, gravity from: Event fields" in report
+    assert "local-secret-1" not in report and "pw-dev" not in report
+    assert r.stdout.strip().splitlines()[-2].startswith("OK serasoft-migrate-1x project=fixture-101 processes=1 exit=2")
+    assert r.stdout.strip().endswith("docs/migration-report.md")
+
+
+def test_seed_escapes_quotes(tmp_path):
+    fx = fixture_101(tmp_path)
+    fx["csv"].write_text(fx["csv"].read_text().replace("Load sales", "Load O'Brien's sales"))
+    assert migrate(fx).returncode == 2
+    seed = (fx["dest"] / "db/seed/fixture-101_config.sql").read_text()
+    assert "'Load O''Brien''s sales'" in seed
