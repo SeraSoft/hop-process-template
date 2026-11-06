@@ -6,6 +6,7 @@
 # (README.md, "Template updates").
 #
 # Usage: tools/serasoft-sync.sh --tag <X.Y.Z> --dest <project repository>
+#                               [--adopt-from <tag|auto> [--force]]
 set -euo pipefail
 
 MANIFEST=SERASOFT_MANIFEST.sha256
@@ -13,23 +14,28 @@ SEEDS=(db/sqlite/data/integrations_db db/sqlite/data/integrations_db.config db/s
 LIQUIBASE=db/liquibase/master.xml
 
 usage() {
-  echo "usage: tools/serasoft-sync.sh --tag <X.Y.Z> --dest <project repository>" >&2
+  echo "usage: tools/serasoft-sync.sh --tag <X.Y.Z> --dest <project repository> [--adopt-from <tag|auto> [--force]]" >&2
   exit 64
 }
 die() { echo "ERROR: $*" >&2; exit 1; }
 warn() { echo "WARNING: $*" >&2; }
 
-tag="" dest=""
+tag="" dest="" adopt_from="" force=0
 while [[ $# -gt 0 ]]; do
-  [[ $# -ge 2 ]] || usage
   case "$1" in
-    --tag)  tag="$2" ;;
-    --dest) dest="$2" ;;
-    *)      usage ;;
+    --force) force=1; shift; continue ;;
+    --tag|--dest|--adopt-from) [[ $# -ge 2 ]] || usage ;;
+    *) usage ;;
+  esac
+  case "$1" in
+    --tag)        tag="$2" ;;
+    --dest)       dest="$2" ;;
+    --adopt-from) adopt_from="$2" ;;
   esac
   shift 2
 done
 [[ -n "$tag" && -n "$dest" ]] || usage
+[[ "$force" -eq 0 || -n "$adopt_from" ]] || usage
 
 unset CDPATH
 upstream="$(git -C "$(dirname "$0")" rev-parse --show-toplevel)"
@@ -44,6 +50,8 @@ dest="$(cd "$dest" && pwd -P)"
   || die "$dest is not the root of a Git work tree"
 [[ "$dest" != "$(cd "$upstream" && pwd -P)" ]] || die "--dest is the template itself"
 [[ -z "$(git -C "$dest" status --porcelain)" ]] || die "$dest has uncommitted changes"
+[[ -z "$adopt_from" || ! -f "$dest/$MANIFEST" ]] \
+  || die "--adopt-from is for the first sync only: $dest already has $MANIFEST"
 
 # Template-owned paths, as named in the project (spec A3, "Ownership").
 owned_path() {
@@ -103,6 +111,29 @@ remove() {
   (cd "$dest" && rmdir -p --ignore-fail-on-non-empty "$(dirname "$1")" 2>/dev/null) || true
 }
 
+# pick_adopt_tag: sets adopt_from to the tag with the most template-owned files
+# identical to $dest (the most recent one on a tie).
+pick_adopt_tag() {
+  local t c s p n m listing best="" best_n=0 best_m=0
+  while IFS= read -r t; do
+    c="$(git -C "$upstream" rev-parse --verify --quiet "refs/tags/$t^{commit}")" || continue
+    listing="$(tag_files "$c" 1)" || exit 1
+    n=0 m=0
+    while IFS=$'\t' read -r s p; do
+      [[ -n "$s" ]] || continue
+      is_seed "$p" && continue
+      m=$((m + 1))
+      if [[ -f "$dest/$p" ]] && git -C "$upstream" cat-file blob "$c:$s" | cmp -s - "$dest/$p"; then
+        n=$((n + 1))
+      fi
+    done <<<"$listing"
+    if (( n > 0 && n >= best_n )); then best="$t" best_n=$n best_m=$m; fi
+  done < <(git -C "$upstream" for-each-ref --sort=creatordate --format='%(refname:short)' refs/tags)
+  [[ -n "$best" ]] || die "--adopt-from auto: no tag has a template file identical to $dest"
+  echo "adopt-from auto: $best ($best_n/$best_m files identical)" >&2
+  adopt_from="$best"
+}
+
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 extract "$commit" "$tmp/new"
@@ -146,6 +177,50 @@ if [[ -f "$dest/$MANIFEST" ]]; then
   if [[ -n "${old_sum[$LIQUIBASE]:-}" && -f "$tmp/new/$LIQUIBASE" ]] \
       && [[ "$(sha256sum < "$tmp/new/$LIQUIBASE" | cut -d' ' -f1)" != "${old_sum[$LIQUIBASE]}" ]]; then
     warn "$LIQUIBASE changed: run liquibase update on the project databases (src/template/README.md, \"Support database creation\")"
+  fi
+elif [[ -n "$adopt_from" ]]; then
+  # First sync of a project holding template files copied by hand: compare them
+  # with the starting tag. Identical files are adopted; different ones (local
+  # changes, or files in the owned directories that are not from the template)
+  # stop the sync unless --force. Files that the new version no longer has are
+  # removed.
+  [[ "$adopt_from" != auto ]] || pick_adopt_tag
+  from_commit="$(git -C "$upstream" rev-parse --verify --quiet "refs/tags/$adopt_from^{commit}")" \
+    || die "--adopt-from: tag $adopt_from not found in $upstream"
+  listing="$(tag_files "$from_commit" 1)" || exit 1
+  declare -A in_from=()
+  while IFS=$'\t' read -r s p; do
+    [[ -n "$s" ]] || continue
+    is_seed "$p" || in_from["$p"]="$s"
+  done <<<"$listing"
+  declare -A cand=()
+  for f in "${new[@]}"; do cand["$f"]=1; done
+  for f in "${!in_from[@]}"; do cand["$f"]=1; done
+  while IFS= read -r -d '' f; do
+    [[ "$f" != *$'\n'* ]] || die "$dest has a file name with a newline: ${f@Q}"
+    cand["${f#./}"]=1
+  done < <(cd "$dest" && { find ./src/template ./db/liquibase ! -type d -print0 2>/dev/null || true; })
+  mapfile -t cands < <(printf '%s\n' "${!cand[@]}" | LC_ALL=C sort)
+  modified=()
+  for f in "${cands[@]}"; do
+    [[ -e "$dest/$f" || -L "$dest/$f" ]] || continue
+    if [[ -n "${in_from[$f]:-}" ]] \
+        && git -C "$upstream" cat-file blob "$from_commit:${in_from[$f]}" | cmp -s - "$dest/$f"; then
+      adopted=$((adopted + 1))
+    else
+      modified+=("$f")
+    fi
+    [[ -n "${in_new[$f]:-}" ]] || adopt_rm["$f"]=1
+  done
+  if [[ ${#modified[@]} -gt 0 ]]; then
+    [[ "$force" -eq 1 ]] \
+      || die "files differ from template $adopt_from (local changes, or not from the template): ${modified[*]} (review them; --force overwrites or removes them)"
+    forced=${#modified[@]}
+    warn "--force: overwriting or removing files that differ from $adopt_from: ${modified[*]}"
+  fi
+  if [[ -f "$tmp/new/$LIQUIBASE" ]] && { [[ -z "${in_from[$LIQUIBASE]:-}" ]] \
+      || ! git -C "$upstream" cat-file blob "$from_commit:${in_from[$LIQUIBASE]}" | cmp -s - "$tmp/new/$LIQUIBASE"; }; then
+    warn "$LIQUIBASE changed since $adopt_from: run liquibase update on the project databases (src/template/README.md, \"Support database creation\")"
   fi
 else
   clash=()

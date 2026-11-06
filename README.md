@@ -170,6 +170,21 @@ The sync:
 
 It does not commit: review the diff, commit (e.g. `Template 3.2.0`), open the pull/merge request with the release notes of the tag (`git tag -n99 3.2.0` in the template).
 
+### Adopting a project that already holds template files
+
+A project created before the sync existed (template 2.x copied by hand, or a 1.0.x project after its migration) has template files but no `SERASOFT_MANIFEST.sha256`: the plain sync refuses it. Give the version the project starts from:
+
+```
+tools/serasoft-sync.sh --tag 3.2.0 --dest ../myproject --adopt-from 2.1.2
+tools/serasoft-sync.sh --tag 3.2.0 --dest ../myproject --adopt-from auto
+```
+
+- Every template file of the project is compared with the same file in the starting tag (`2.1.2`, which may be a lightweight tag). Identical files are adopted and replaced by the new version; the files of the starting tag that the new version no longer has (for example `config/default-*.json`, `db/liquibase/master-postgresql.xml`) are removed.
+- Files that differ from the starting tag, and files in `src/template/` or `db/liquibase/` that the starting tag does not have, are **local changes**: the sync lists them and stops. Move the project's own content out of the template files (project variables to the project environment file, see "Environments"), then run again; or add `--force` to overwrite or remove them.
+- `--adopt-from auto` picks the tag with the most identical files and prints it (`adopt-from auto: 2.1.2 (5/6 files identical)`): check it before committing.
+- When `db/liquibase/master.xml` differs from the starting tag the sync prints a warning: for databases created with `master-postgresql.xml` follow "Database update" before running `liquibase update`.
+- `--adopt-from` is refused when the project already has a manifest.
+
 ### Checking a project
 
 From the project root, by hand or in its CI:

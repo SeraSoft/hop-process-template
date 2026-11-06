@@ -264,3 +264,111 @@ def test_seed_files_kept_when_present(template, project):
 def test_usage(template, project):
     assert sync(template, "--tag", "3.2.0").returncode == 64
     assert sync(template, "--bogus", "x").returncode == 64
+
+
+LEGACY_FILES = {
+    "main.hwf": "<workflow>v0</workflow>\n",
+    "src/template/pre/main_pre_job.hwf": "pre v0\n",
+    "config/default-env.json": "{\"env\": 0}\n",
+    "config/project-config.json": "{\"project\": 0}\n",
+    "metadata/rdbms/integrations_db_postgres.json": "{\"rdbms\": 1}\n",
+    "db/liquibase/master-postgresql.xml": "<databaseChangeLog>pg</databaseChangeLog>\n",
+    "db/sqlite/data/integrations_db": "seed-old\n",
+    "README.md": "# template v0\n",
+}
+
+
+@pytest.fixture
+def template_with_legacy(tmp_path):
+    """Template whose history starts with a 2.x-like lightweight tag 2.1.2, then 3.2.0."""
+    up = tmp_path / "template"
+    for rel, text in LEGACY_FILES.items():
+        write(up, rel, text)
+    git(up, "init", "-q", "-b", "main")
+    commit_all(up, "v0")
+    git(up, "tag", "2.1.2")
+    for rel in LEGACY_FILES:
+        (up / rel).unlink()
+    for rel, text in TEMPLATE_FILES.items():
+        write(up, rel, text)
+    (up / "tools").mkdir(exist_ok=True)
+    shutil.copy2(SYNC, up / "tools" / "serasoft-sync.sh")
+    shutil.copy2(VERIFY, up / "tools" / "serasoft-verify.sh")
+    commit_all(up, "v1")
+    git(up, "tag", "-a", "3.2.0", "-m", "3.2.0")
+    return up
+
+
+@pytest.fixture
+def project_2x(tmp_path):
+    """A project holding the 2.1.2 template files copied by hand, plus its own files."""
+    proj = tmp_path / "project"
+    for rel, text in LEGACY_FILES.items():
+        if rel != "README.md":
+            write(proj, rel, text)
+    for rel, text in PROJECT_FILES.items():
+        write(proj, rel, text)
+    git(proj, "init", "-q", "-b", "main")
+    commit_all(proj, "2.x project")
+    return proj
+
+
+def test_adopt_identical_files(template_with_legacy, project_2x):
+    r = sync(template_with_legacy, "--tag", "3.2.0", "--dest", str(project_2x), "--adopt-from", "2.1.2")
+    assert r.returncode == 0, r.stderr
+    assert "adopted=5 forced=0" in r.stdout
+    assert not (project_2x / "config/default-env.json").exists()
+    assert not (project_2x / "db/liquibase/master-postgresql.xml").exists()
+    assert (project_2x / "main.hwf").read_text() == "<workflow>v1</workflow>\n"
+    assert (project_2x / "config/project-config.json").read_text() == "{\"mine\": 1}\n"
+    assert (project_2x / "db/sqlite/data/integrations_db").read_text() == "seed-old\n"
+    assert "WARNING: kept local db/sqlite/data/integrations_db" in r.stderr
+    assert "WARNING: db/liquibase/master.xml changed since 2.1.2" in r.stderr
+    assert verify(project_2x).returncode == 0
+
+
+def test_adopt_refuses_locally_modified_file(template_with_legacy, project_2x):
+    write(project_2x, "main.hwf", "<workflow>v0 patched</workflow>\n")
+    commit_all(project_2x, "local patch")
+    r = sync(template_with_legacy, "--tag", "3.2.0", "--dest", str(project_2x), "--adopt-from", "2.1.2")
+    assert r.returncode == 1
+    assert "main.hwf" in r.stderr
+    assert "--force" in r.stderr
+    assert git(project_2x, "status", "--porcelain") == ""
+
+
+def test_adopt_force_overwrites_and_removes(template_with_legacy, project_2x):
+    write(project_2x, "main.hwf", "<workflow>v0 patched</workflow>\n")
+    write(project_2x, "src/template/custom.hwf", "mine\n")
+    commit_all(project_2x, "local changes")
+    r = sync(template_with_legacy, "--tag", "3.2.0", "--dest", str(project_2x),
+             "--adopt-from", "2.1.2", "--force")
+    assert r.returncode == 0, r.stderr
+    assert "forced=2" in r.stdout
+    assert (project_2x / "main.hwf").read_text() == "<workflow>v1</workflow>\n"
+    assert not (project_2x / "src/template/custom.hwf").exists()
+    assert verify(project_2x).returncode == 0
+
+
+def test_adopt_auto_picks_starting_tag(template_with_legacy, project_2x):
+    r = sync(template_with_legacy, "--tag", "3.2.0", "--dest", str(project_2x), "--adopt-from", "auto")
+    assert r.returncode == 0, r.stderr
+    assert "adopt-from auto: 2.1.2 (5/6 files identical)" in r.stderr
+
+
+def test_adopt_refused_with_manifest(template_with_legacy, project):
+    assert sync(template_with_legacy, "--tag", "3.2.0", "--dest", str(project)).returncode == 0
+    commit_all(project, "template 3.2.0")
+    r = sync(template_with_legacy, "--tag", "3.2.0", "--dest", str(project), "--adopt-from", "2.1.2")
+    assert r.returncode == 1
+    assert "first sync only" in r.stderr
+
+
+def test_adopt_unknown_tag(template_with_legacy, project_2x):
+    r = sync(template_with_legacy, "--tag", "3.2.0", "--dest", str(project_2x), "--adopt-from", "0.0.1")
+    assert r.returncode == 1
+    assert "0.0.1" in r.stderr
+
+
+def test_force_needs_adopt_from(template, project):
+    assert sync(template, "--tag", "3.2.0", "--dest", str(project), "--force").returncode == 64
