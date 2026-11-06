@@ -256,8 +256,9 @@ export HOP_HOME=/opt/hop
 
 - Each `/run/secrets/<name>` line of the manifest becomes `/etc/serasoft/secrets/<name>` (the folder the platform uses on its SSH targets; change it with `--secrets-dir`). Keep those files readable only by the user that runs Hop (`chmod 600`).
 - The project is registered with the name of its folder (`--project` to change it) and `config/project-config.json`; the environment is named `<project>-<env>` (`--hop-env` to change it), because environment names are shared by every project of the installation.
-- Every manifest line is checked first (missing or unreadable file, comma in a path, absolute path outside `/run/secrets/`): on error nothing is registered (exit code `1`).
-- Re-run it after a change of the manifest: the existing environment gets the new file list. A project already registered with another folder is an error.
+- Every manifest line is checked first (missing or unreadable file, comma in a path, absolute path outside `/run/secrets/`): on error nothing is registered (exit code `1`; `64` for an unknown option or an invalid name).
+- Re-run it after a change of the manifest: the existing environment gets the new file list. A project already registered with another folder is an error. If `hop-conf` fails after the project was registered, fix the cause and re-run: the project is kept and the environment is created.
+- `hop-conf` writes the `hop-config.json` of the installation (`$HOP_HOME/config`, or `HOP_CONFIG_FOLDER` when set): run the script with the same `HOP_HOME` and `HOP_CONFIG_FOLDER` that `hop_runner.sh` uses.
 
 Then:
 

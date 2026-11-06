@@ -74,7 +74,7 @@ project_config="$home/config/project-config.json"
 listing="$("$hop_conf" -pl)" || die "hop-conf.sh -pl failed"
 registered_home="$(awk -v p="$project" '/^  [^ ]/ && $1 == p && $2 == ":" { sub(/^  [^ ]+ : /, ""); print; exit }' <<<"$listing")"
 if [[ -z "$registered_home" ]]; then
-  backup="$(mktemp)"
+  backup="$(mktemp)" || die "cannot create a temporary file"
   trap 'rm -f "$backup"' EXIT
   cp "$project_config" "$backup"
   pc_rc=0
