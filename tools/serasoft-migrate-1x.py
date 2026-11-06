@@ -371,6 +371,113 @@ def analyse(args):
                 moves, removals, equivalents, old_pc, envs, report)
 
 
+def commit(plan, message):
+    git(plan.dest, "add", "-A")
+    git(plan.dest, "commit", "-q", "--allow-empty", "-m", message)
+
+
+def phase_structure(plan):
+    git(plan.dest, "checkout", "-q", "-b", f"migration/template-{plan.tag}")
+    for old, new in sorted(plan.moves.items()):
+        (plan.dest / new).parent.mkdir(parents=True, exist_ok=True)
+        git(plan.dest, "mv", old, new)
+        plan.report.moved.append((old, new))
+    commit(plan, f"Migration: project structure for template {plan.tag}")
+
+
+def count(plan, kind, n=1):
+    plan.report.rewrites[kind] = plan.report.rewrites.get(kind, 0) + n
+
+
+def rewrite_refs(plan, text, old_file):
+    def repl(m):
+        target = resolve_ref(m.group(1), m.group(2), old_file)
+        if target is None:
+            plan.report.unresolved.append((old_file, m.group(0)))
+            return m.group(0)
+        if target in plan.moves:
+            new = plan.moves[target]
+        elif target in plan.equivalents:
+            new = plan.equivalents[target]
+        elif target in plan.removals:
+            plan.report.removed_refs.append((old_file, m.group(0)))
+            return m.group(0)
+        elif target in plan.files:
+            new = target
+        else:
+            plan.report.unresolved.append((old_file, m.group(0)))
+            return m.group(0)
+        count(plan, "paths")
+        return "${PROJECT_HOME}/" + new
+    return REF_RE.sub(repl, text)
+
+
+EVENT_FIELDS = ("event_subcategory_id", "gravity")
+
+
+def event_steps(root):
+    """Transforms writing integrations_log_events, each with the upstream transforms naming its key fields."""
+    upstream = {}
+    for hop in root.iter("hop"):
+        upstream.setdefault((hop.findtext("to") or "").strip(), set()).add((hop.findtext("from") or "").strip())
+    transforms = {(t.findtext("name") or "").strip(): t for t in root.iter("transform")}
+    steps = []
+    for name, t in sorted(transforms.items()):
+        if (t.findtext("table") or "").strip() != "integrations_log_events":
+            continue
+        seen, todo, sources = set(), [name], []
+        while todo:
+            for prev in sorted(upstream.get(todo.pop(), ())):
+                if prev in seen:
+                    continue
+                seen.add(prev)
+                todo.append(prev)
+                el = transforms.get(prev)
+                if el is not None and any((e.text or "").strip() in EVENT_FIELDS for e in el.iter()):
+                    sources.append(prev)
+        steps.append((name, f"{', '.join(EVENT_FIELDS)} from: {', '.join(sorted(sources)) or 'not found upstream'}"))
+    return steps
+
+
+def phase_rewrites(plan):
+    reverse = {new: old for old, new in plan.moves.items()}
+    current = set(git(plan.dest, "ls-files").split("\n")) - {""}
+    removed = set(plan.removals)
+    for path in sorted(current):
+        old = reverse.get(path, path)
+        if old in removed:     # old template files and root workflows: removed in phase 3
+            continue
+        if not (path.endswith((".hwf", ".hpl")) or (path.startswith("metadata/") and path.endswith(".json"))):
+            continue
+        f = plan.dest / path
+        text = f.read_text()
+        new = rewrite_refs(plan, text, old)
+        new, n = rewrite_vars(new)
+        count(plan, "variables", n)
+        new, n = re.subn(r"<connection>\s*integrations_db\s*</connection>",
+                         "<connection>${serasoft.integrations.db.connection.name}</connection>", new)
+        count(plan, "connections", n)
+        if path.endswith(".hpl"):
+            try:
+                for name, sources in event_steps(ET.fromstring(new)):
+                    plan.report.events.append((path, name, sources))
+            except ET.ParseError:
+                plan.report.unresolved.append((path, "not a valid XML file"))
+        if new != text:
+            f.write_text(new)
+    commit(plan, f"Migration: paths and variables for template {plan.tag}")
+
+
+def phase_removal(plan):
+    present = [f for f in plan.removals if (plan.dest / f).exists()]
+    if present:
+        git(plan.dest, "rm", "-q", *present)
+    commit(plan, "Migration: remove template 1.0.x")
+
+
+PHASES = [phase_structure, phase_rewrites, phase_removal]   # phases 1-3; 4-6 added by the following tasks
+
+
 def parse_args(argv):
     p = argparse.ArgumentParser(description="Migrate a template 1.0.x project (see README.md).")
     p.add_argument("--dest", required=True)
@@ -379,6 +486,8 @@ def parse_args(argv):
     p.add_argument("--env", action="append", required=True, metavar="NAME=FILE")
     p.add_argument("--project")
     p.add_argument("--db", default="postgresql", choices=["postgresql", "mssql", "sqlite"])
+    p.add_argument("--stop-after", type=int, default=6, choices=range(7), metavar="PHASE",
+                   help="stop after this phase (0 = analysis only, 6 = complete; default 6)")
     try:
         return p.parse_args(argv)
     except SystemExit as e:
@@ -388,8 +497,12 @@ def parse_args(argv):
 def main(argv=None):
     args = parse_args(sys.argv[1:] if argv is None else argv)
     plan = analyse(args)
-    # Phases 1-6: added by the following tasks.
     print(f"analysis OK: {len(plan.roots)} process(es), {len(plan.moves)} move(s), {len(plan.removals)} removal(s)")
+    for number, phase in enumerate(PHASES, 1):
+        if number > args.stop_after:
+            break
+        phase(plan)
+        print(f"phase {number} done")
     return 0
 
 

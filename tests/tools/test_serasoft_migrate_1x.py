@@ -7,7 +7,7 @@ import subprocess
 import pytest
 
 from fixtures_1x import (GIT_ENV, ROOT, fixture_101, fixture_pre101, fixture_starterjob, git,
-                         root_workflow, workflow, write)
+                         pipeline, pipeline_action, root_workflow, transform, workflow, write)
 
 TOOL = ROOT / "tools" / "serasoft-migrate-1x.py"
 TAG = "3.2.1"
@@ -229,3 +229,102 @@ def test_root_tools_folder_moves_to_project(tmp_path):
     git(fx["dest"], "commit", "-qm", "x")
     plan = _analyse(fx)
     assert plan.moves["tools/run.sh"] == "src/project/tools/run.sh"
+
+
+def test_phases_1_to_3(tmp_path):
+    fx = fixture_101(tmp_path)
+    r = migrate(fx, "--stop-after", "3")
+    assert r.returncode == 0, r.stderr
+    d = fx["dest"]
+    assert git(d, "branch", "--show-current") == f"migration/template-{TAG}"
+    log = git(d, "log", "--format=%s", "-3").split("\n")
+    assert log == ["Migration: remove template 1.0.x", f"Migration: paths and variables for template {TAG}",
+                   f"Migration: project structure for template {TAG}"]
+    files = tracked(d)
+    assert "src/project/main/load_sales/start.hwf" in files
+    assert "src/project/main/load_sales/write_event.hpl" in files
+    assert not any(f.startswith(("src/pre/", "src/post/", "src/main/")) for f in files)
+    assert "main.hwf" not in files
+    start = (d / "src/project/main/load_sales/start.hwf").read_text()
+    assert "${PROJECT_HOME}/src/project/main/load_sales/read_sales.hpl" in start
+    assert "${v_process_instance_id}" in start and "${serasoft.mail.from.email}" in start
+    event = (d / "src/project/main/load_sales/write_event.hpl").read_text()
+    assert "${serasoft.integrations.db.connection.name}" in event
+
+
+def test_pre101_relative_references(tmp_path):
+    fx = fixture_pre101(tmp_path)
+    assert migrate(fx, "--stop-after", "3").returncode == 0
+    d = fx["dest"]
+    files = tracked(d)
+    assert {"src/project/main/proc_a/start.hwf", "src/project/main/proc_b/start.hwf",
+            "src/project/commons/init.hpl"} <= files
+    a = (d / "src/project/main/proc_a/start.hwf").read_text()
+    assert "${PROJECT_HOME}/src/project/commons/init.hpl" in a
+    b = (d / "src/project/main/proc_b/start.hwf").read_text()
+    assert "Internal.Entry.Current.Folder" not in b
+    assert "${v_process_run_timestamp}" in b
+
+
+def test_starterjob_layout(tmp_path):
+    fx = fixture_starterjob(tmp_path)
+    assert migrate(fx, "--stop-after", "3").returncode == 0
+    files = tracked(fx["dest"])
+    assert {"src/project/main/sj_proc/start.hwf", "src/project/main/sj_proc/step.hpl",
+            "src/project/commons/extra/helper.hpl"} <= files
+    start = (fx["dest"] / "src/project/main/sj_proc/start.hwf").read_text()
+    assert "${PROJECT_HOME}/src/project/main/sj_proc/step.hpl" in start
+    assert "${PROJECT_HOME}/src/project/commons/extra/helper.hpl" in start
+
+
+def test_stop_after_each_phase(tmp_path):
+    fx = fixture_101(tmp_path)
+    d = fx["dest"]
+    head = git(d, "rev-parse", "HEAD")
+    assert migrate(fx, "--stop-after", "0").returncode == 0
+    assert git(d, "branch", "--show-current") == "main" and git(d, "rev-parse", "HEAD") == head
+    assert migrate(fx, "--stop-after", "7").returncode == 64
+
+
+def test_rewrite_report_and_template_references(tmp_path, monkeypatch):
+    """Reports references to missing files and to removed template files without an equivalent, maps
+    template files with an equivalent to src/template/, finds event steps with the source of their fields."""
+    fx = fixture_101(tmp_path)
+    d = fx["dest"]
+    write(d, "src/main/load_sales_folder/extra.hwf", workflow("extra", [
+        pipeline_action("Missing", "${PROJECT_HOME}/src/main/load_sales_folder/missing.hpl"),
+        pipeline_action("Attach", "${PROJECT_HOME}/src/commons/tools/mail_sender_with_attachment.hwf", 700),
+        pipeline_action("Mail", "${PROJECT_HOME}/src/commons/tools/mail_sender.hwf", 900),
+        pipeline_action("Conn", "${Internal.Entry.Current.Folder}/../../../metadata/rdbms/sales_db.json", 1100),
+    ], ["START", "Missing", "Attach", "Mail", "Conn"]))
+    write(d, "src/main/load_sales_folder/read_log.hpl", pipeline("read_log", [transform(
+        "Read", "TableInput", 100, "    <connection>integrations_db</connection>\n    <sql>select 1</sql>\n")], ["Read"]))
+    git(d, "add", "-A")
+    git(d, "commit", "-qm", "x")
+    for k, v in GIT_ENV.items():
+        monkeypatch.setenv(k, v)
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("migrate_1x_phases", TOOL)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    argv = ["--dest", str(d), "--tag", TAG, "--processes", str(fx["csv"])]
+    for name, path in fx["envs"].items():
+        argv += ["--env", f"{name}={path}"]
+    plan = mod.analyse(mod.parse_args(argv))
+    mod.phase_structure(plan)
+    mod.phase_rewrites(plan)
+    mod.phase_removal(plan)
+    extra = (d / "src/project/main/load_sales/extra.hwf").read_text()
+    assert "${PROJECT_HOME}/src/template/commons/tools/mail_sender.hwf" in extra
+    assert "${PROJECT_HOME}/metadata/rdbms/sales_db.json" in extra
+    rep = plan.report
+    assert [ref for _, ref in rep.unresolved] == ["${PROJECT_HOME}/src/main/load_sales_folder/missing.hpl"]
+    assert [ref for _, ref in rep.removed_refs] == ["${PROJECT_HOME}/src/commons/tools/mail_sender_with_attachment.hwf"]
+    assert rep.events == [("src/project/main/load_sales/write_event.hpl", "Ins integrations_log_events",
+                           "event_subcategory_id, gravity from: Event fields")]
+    assert ("src/main/load_sales_folder/start.hwf", "src/project/main/load_sales/start.hwf") in rep.moved
+    assert "<connection>${serasoft.integrations.db.connection.name}</connection>" in (
+        d / "src/project/main/load_sales/read_log.hpl").read_text()
+    assert rep.rewrites["connections"] == 1 and rep.rewrites["paths"] == 3 and rep.rewrites["variables"] == 4
+    mod.commit(plan, "phase without changes")   # a phase with nothing to change still gets its commit
+    assert git(d, "log", "-1", "--format=%s") == "phase without changes"
