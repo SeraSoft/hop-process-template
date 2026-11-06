@@ -116,6 +116,17 @@ hop-conf.sh -ec -e prod -ep myproject \
   -eg /opt/projects/myproject/config/template-env.json,/opt/projects/myproject/config/template-postgresql.json,/etc/hop/myproject-prod-env.json
 ```
 
+**The order matters.** When a variable is defined in more than one file, the value of the file read last wins. Keep the template files first, then the project file, and the credentials last: a project file listed before `config/template-env.json` would be silently overridden by the template defaults. For projects run by the Serasoft Airflow platform the list is the manifest `config/env/<env>.list` (one path per line, in load order, the credentials as `/run/secrets/<name>` on the last line):
+
+```
+config/template-env.json
+config/template-postgresql.json
+config/<project>-<env>.json
+/run/secrets/<project>_<env>
+```
+
+`tools/serasoft-register-env.sh` registers the same list, in the same order, for executions started by cron (see "Running with cron (`hop_runner.sh`)").
+
 Never add project variables to the template files: `tools/serasoft-sync.sh` overwrites them at every template update and `tools/serasoft-verify.sh` reports them as modified.
 
 ## Process parameters (`p_process_params`)
@@ -257,6 +268,7 @@ export HOP_HOME=/opt/hop
 - Each `/run/secrets/<name>` line of the manifest becomes `/etc/serasoft/secrets/<name>` (the folder the platform uses on its SSH targets; change it with `--secrets-dir`). Keep those files readable only by the user that runs Hop (`chmod 600`).
 - The project is registered with the name of its folder (`--project` to change it) and `config/project-config.json`; the environment is named `<project>-<env>` (`--hop-env` to change it), because environment names are shared by every project of the installation.
 - Every manifest line is checked first (missing or unreadable file, comma in a path, absolute path outside `/run/secrets/`): on error nothing is registered (exit code `1`; `64` for an unknown option or an invalid name).
+- The files are registered in the order of the manifest, which is the load order (a later file overrides an earlier one): keep the template files first and the secret last (see "Environments").
 - Re-run it after a change of the manifest: the existing environment gets the new file list. A project already registered with another folder is an error. If `hop-conf` fails after the project was registered, fix the cause and re-run: the project is kept and the environment is created.
 - `hop-conf` writes the `hop-config.json` of the installation (`$HOP_HOME/config`, or `HOP_CONFIG_FOLDER` when set): run the script with the same `HOP_HOME` and `HOP_CONFIG_FOLDER` that `hop_runner.sh` uses.
 
