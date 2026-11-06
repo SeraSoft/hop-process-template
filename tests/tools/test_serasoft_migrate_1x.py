@@ -401,3 +401,93 @@ def test_common_file_omits_unchanged_1x_defaults(tmp_path):
     assert migrate(fx, "--stop-after", "5").returncode == 0
     common = {v["name"]: v["value"] for v in json.loads((fx["dest"] / "config/fixture-101.json").read_text())["variables"]}
     assert common == {"sales.batch.size": "500", "serasoft.mail.from.displayname": "Sales ETL"}
+
+
+def _module():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("migrate_1x_cfg", TOOL)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _run_to_phase_5(fx, monkeypatch):
+    for k, v in GIT_ENV.items():
+        monkeypatch.setenv(k, v)
+    mod = _module()
+    argv = ["--dest", str(fx["dest"]), "--tag", TAG, "--processes", str(fx["csv"])]
+    for name, path in fx["envs"].items():
+        argv += ["--env", f"{name}={path}"]
+    plan = mod.analyse(mod.parse_args(argv))
+    for phase in mod.PHASES[:5]:
+        phase(plan)
+    return plan
+
+
+def test_root_parameter_credentials_never_in_properties(tmp_path):
+    fx = fixture_101(tmp_path)
+    d = fx["dest"]
+    p = d / "main.hwf"
+    p.write_text(p.read_text().replace(
+        "  </parameters>", "    <parameter>\n      <name>p_db_password</name>\n      <default_value>rootpw-xyz"
+        "</default_value>\n      <description/>\n    </parameter>\n    <parameter>\n      <name>p_mail_from</name>\n"
+        "      <default_value>${mail.from.email}</default_value>\n      <description/>\n    </parameter>\n"
+        "  </parameters>", 1))
+    git(d, "commit", "-qam", "x")
+    assert migrate(fx, "--stop-after", "5").returncode == 0
+    assert subprocess.run(["git", "grep", "-q", "rootpw-xyz", "HEAD"], cwd=d).returncode == 1
+    props = (d / "config/load_sales.properties").read_text()
+    assert "p_db_password" not in props and "p_period_type=M" in props
+    assert "p_mail_from=${serasoft.mail.from.email}" in props   # values rewritten like the workflows
+    secrets = {v["name"]: v["value"] for v in json.loads((d / "config/secrets-example.json").read_text())["variables"]}
+    assert secrets["p_db_password"] == ""
+
+
+def test_environment_keeps_defaults_that_override_the_common_file(tmp_path):
+    fx = fixture_101(tmp_path)
+    d = fx["dest"]
+    p = d / "config/project-config.json"
+    pc = json.loads(p.read_text())
+    default = next(v["value"] for v in pc["config"]["variables"] if v["name"] == "mail.from.displayname")
+    for v in pc["config"]["variables"]:
+        if v["name"] == "mail.from.displayname":
+            v["value"] = "CUSTOM"
+    p.write_text(json.dumps(pc, indent=2) + "\n")
+    git(d, "commit", "-qam", "x")
+    env = json.loads(fx["envs"]["dev"].read_text())
+    env["variables"].append({"name": "mail.from.displayname", "value": default, "description": ""})
+    fx["envs"]["dev"].write_text(json.dumps(env))
+    assert migrate(fx, "--stop-after", "5").returncode == 0
+    common = {v["name"]: v["value"] for v in json.loads((d / "config/fixture-101.json").read_text())["variables"]}
+    dev = {v["name"]: v["value"] for v in json.loads((d / "config/fixture-101-dev.json").read_text())["variables"]}
+    prod = {v["name"]: v["value"] for v in json.loads((d / "config/fixture-101-prod.json").read_text())["variables"]}
+    assert common["serasoft.mail.from.displayname"] == "CUSTOM"
+    assert dev["serasoft.mail.from.displayname"] == default
+    assert "serasoft.mail.from.displayname" not in prod
+
+
+def test_local_config_files_with_special_names_stay_ignored(tmp_path):
+    fx = fixture_101(tmp_path)
+    d = fx["dest"]
+    (d / ".gitignore").write_text("config/*\n!config/project-config.json\n")
+    git(d, "commit", "-qam", "ignore config")
+    env_file(d / "config" / "prod-café.json", {"sales.db.password": "cafe-secret"})
+    env_file(d / "config" / "old[1]*?.json", {"sales.db.password": "glob-secret"})
+    env_file(d / "config" / "#notes.json", {"sales.db.password": "hash-secret"})
+    r = migrate(fx, "--stop-after", "5")
+    assert r.returncode == 0, r.stderr
+    assert git(d, "status", "--porcelain") == ""
+    ignored = set(subprocess.run(["git", "-c", "core.quotepath=off", "ls-files", "--others", "--ignored",
+                                  "--exclude-standard", "--", "config"], cwd=d, capture_output=True,
+                                 text=True).stdout.split("\n"))
+    assert {"config/prod-café.json", "config/old[1]*?.json", "config/#notes.json"} <= ignored
+    for secret in ("cafe-secret", "glob-secret", "hash-secret"):
+        assert subprocess.run(["git", "grep", "-q", secret, "HEAD"], cwd=d).returncode == 1
+
+
+def test_history_credentials_in_report(tmp_path, monkeypatch):
+    plan = _run_to_phase_5(fixture_starterjob(tmp_path), monkeypatch)
+    hist = dict(plan.report.history_credentials)
+    assert "config/dev-env.json" in hist and "integrations.db.db.password" in hist["config/dev-env.json"]
+    assert hist["config/project-config.json"] == ["api.token"]
+    assert "tok-123" not in json.dumps(plan.report.history_credentials)

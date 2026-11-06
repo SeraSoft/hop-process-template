@@ -122,6 +122,7 @@ class Report:
     rewrites: dict = field(default_factory=dict)
     old_env_files_removed: list = field(default_factory=list)
     local_config_ignored: list = field(default_factory=list)
+    history_credentials: list = field(default_factory=list)   # (file, credential names): rotate them
 
     def manual(self):
         return any([self.customised, self.unresolved, self.removed_refs, self.events, self.paths, self.deployment])
@@ -507,6 +508,17 @@ def read_variables(path):
     return json.loads(path.read_text(encoding="utf-8"))["variables"]
 
 
+def gitignore_entry(rel):
+    """An anchored .gitignore pattern matching exactly the file rel (glob characters and trailing spaces escaped)."""
+    escaped = re.sub(r"([\\*?\[])", r"\\\1", rel)
+    stripped = escaped.rstrip(" ")
+    return "/" + stripped + "\\ " * (len(escaped) - len(stripped))
+
+
+def credential_names(variables):
+    return [v["name"] for v in variables if SECRET_RE.search(v["name"]) and (v.get("value") or "")]
+
+
 IGNORED_CONFIG = {"config", "config/", "/config", "/config/", "config/*", "/config/*", "config/**", "/config/**"}
 
 
@@ -522,8 +534,13 @@ def phase_config(plan):
             old_defaults.setdefault(v["name"], set()).add(v.get("value", "") or "")
     secrets = []
 
-    def classify_into(variables, origin):
-        """Template names mapped, obsolete and runtime names dropped, credentials only named (secrets)."""
+    def add_secret(name):
+        if name not in secrets:
+            secrets.append(name)
+
+    def classify_into(variables, origin, overridden=()):
+        """Template names mapped, obsolete and runtime names dropped, credentials only named (secrets).
+        A template default is omitted unless it overrides a name of an earlier layer (overridden)."""
         out = []
         for v in variables:
             name, value = v["name"], v.get("value", "") or ""
@@ -534,13 +551,13 @@ def phase_config(plan):
                 plan.report.runtime_dropped.append((origin, name))
                 continue
             if kind == "secret":
-                if new not in secrets:
-                    secrets.append(new)
+                add_secret(new)
                 continue
-            if kind == "template" and value in old_defaults.get(name, ()):
+            default = kind == "template" and new not in overridden
+            if default and value in old_defaults.get(name, ()):
                 continue
             value, _ = rewrite_vars(value)
-            if kind == "template" and defaults.get(new) == value:
+            if default and defaults.get(new) == value:
                 continue
             if PATH_RE.match(value):
                 plan.report.paths.append((origin, new, value))
@@ -554,12 +571,22 @@ def phase_config(plan):
     (d / "config/project-config.json").write_text(template_pc, encoding="utf-8")
     written = ["config/project-config.json", f"config/{p}.json", "config/secrets-example.json"]
     old_vars = (plan.old_project_config or {}).get("config", {}).get("variables", [])
-    write_json(d / f"config/{p}.json", {"variables": classify_into(old_vars, "config/project-config.json")})
+    common = classify_into(old_vars, "config/project-config.json")
+    write_json(d / f"config/{p}.json", {"variables": common})
+    common_names = {v["name"] for v in common}
+    if credential_names(old_vars):
+        plan.report.history_credentials.append(("config/project-config.json", credential_names(old_vars)))
     for r in plan.roots:
-        if r.params:
+        params = {}
+        for k, v in r.params.items():
+            if SECRET_RE.search(k):
+                add_secret(k)    # a credential default: named only, never written
+            else:
+                params[k] = rewrite_vars(v)[0]
+        if params:
             lines = [f"# Defaults of the extra parameters of {r.path} (template 1.0.x);",
                      "# override per execution with p_process_params (README.md, Process parameters)."]
-            lines += [f"{k}={v}" for k, v in r.params.items()]
+            lines += [f"{k}={v}" for k, v in params.items()]
             (d / f"config/{r.short_name}.properties").write_text("\n".join(lines) + "\n", encoding="utf-8")
             written.append(f"config/{r.short_name}.properties")
     runtime = {
@@ -570,7 +597,8 @@ def phase_config(plan):
     }
     tracked_files = set(git(d, "ls-files").split("\n"))
     for env, path in sorted(plan.envs.items()):
-        variables = [v for v in classify_into(read_variables(path), f"{env} environment")
+        old_env_vars = read_variables(path)
+        variables = [v for v in classify_into(old_env_vars, f"{env} environment", common_names)
                      if v["name"] not in runtime]
         variables += [env_entry(k, v, "Writable path outside the read-only project folder") for k, v in runtime.items()]
         write_json(d / f"config/{p}-{env}.json", {"variables": variables})
@@ -585,6 +613,7 @@ def phase_config(plan):
         if not rel.startswith("..") and rel in tracked_files:
             git(d, "rm", "-q", "--", rel)
             plan.report.old_env_files_removed.append(rel)
+            plan.report.history_credentials.append((rel, credential_names(old_env_vars)))
     write_json(d / "config/secrets-example.json",
                {"variables": [env_entry(n, "", f"Credential: set it in the Docker secret {p}_<env>") for n in secrets]})
     plan.report.secrets = secrets
@@ -596,10 +625,11 @@ def phase_config(plan):
     gi.write_text("\n".join(lines) + "\n", encoding="utf-8")
     # Local files under config/ that the old .gitignore hid (often with credentials) must never be
     # committed: they stay on disk, ignored by name.
-    local = sorted(set(git(d, "ls-files", "--others", "--exclude-standard", "--", "config").split("\n"))
+    local = sorted(set(git(d, "ls-files", "-z", "--others", "--exclude-standard", "--", "config").split("\0"))
                    - set(written) - {""})
     if local:
-        lines += ["", "# Local files of the 1.0.x setup, left out of the repository by the migration", *local]
+        lines += ["", "# Local files of the 1.0.x setup, left out of the repository by the migration",
+                  *map(gitignore_entry, local)]
         gi.write_text("\n".join(lines) + "\n", encoding="utf-8")
         print(f"WARNING: local files under config/ not committed (ignored by name in .gitignore): "
               f"{' '.join(local)}", file=sys.stderr)
