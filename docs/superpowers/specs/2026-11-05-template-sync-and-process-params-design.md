@@ -185,13 +185,19 @@ commit: the operator reviews the diff, commits, opens the PR/MR.
    `src/template/README.md`; copies each seed file only if missing, otherwise
    prints `WARNING: kept local <file>`.
 7. Prints `WARNING: db/liquibase/master.xml changed: run liquibase update on
-   the project databases (see src/template/README.md)` when `master.xml`
-   differs from the previous manifest entry (or, on a first sync, from
-   `<adopt-from tag>`).
-8. Rewrites `SERASOFT_VERSION` (`<tag> <commit>`) and
+   the project databases (src/template/README.md, "Support database creation")`
+   when `master.xml` differs from the previous manifest entry; on a first sync
+   with `--adopt-from` the message is `WARNING: db/liquibase/master.xml changed
+   since <adopt-from tag>: run liquibase update …` (same tail), printed when
+   `master.xml` differs from the one of `<adopt-from tag>`.
+8. Prints `WARNING: ignored by .gitignore in <dest>: <files> (add them with git
+   add -f, or un-ignore them: template files must be committed)` when git
+   ignores any written template file or seed (e.g. a 2.x `.gitignore` with
+   `config/*`). It does not fail.
+9. Rewrites `SERASOFT_VERSION` (`<tag> <commit>`) and
    `SERASOFT_MANIFEST.sha256` (`sha256sum` format, sorted by path, template-owned
    files only).
-9. Prints one summary line:
+10. Prints one summary line:
    `OK serasoft-sync tag=<tag> commit=<12 chars> added=<n> changed=<n> removed=<n> adopted=<n> forced=<n>`.
 
 Exit codes: 0 full success, 1 refused/failed (message on stderr), 64 usage.
