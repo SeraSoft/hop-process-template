@@ -745,3 +745,37 @@ def test_stop_after_1_and_2(tmp_path, n):
     d = fx["dest"]
     assert git(d, "status", "--porcelain") == ""
     assert len(git(d, "log", "--format=%s", "main..HEAD").split("\n")) == n
+
+
+def test_old_env_file_at_the_generated_path_is_replaced(tmp_path):
+    """--project dev with the old file config/dev-env.json: the generated file takes its path."""
+    fx = fixture_starterjob(tmp_path)
+    d = fx["dest"]
+    fx["envs"] = {"env": d / "config" / "dev-env.json"}   # generated file: config/dev-env.json
+    r = migrate(fx, "--project", "dev")
+    assert r.returncode in (0, 2), r.stderr
+    assert "pw-dev" not in (d / "config/dev-env.json").read_text()
+    assert "`config/dev-env.json`" in (d / "docs/migration-report.md").read_text()
+
+
+def test_env_file_without_credentials_is_not_in_history_report(tmp_path, monkeypatch):
+    fx = fixture_starterjob(tmp_path)
+    d = fx["dest"]
+    env_file(d / "config" / "dev-env.json", {"sales.db.host": "h.example.invalid"})
+    git(d, "commit", "-qam", "env without credentials")
+    plan = _run_to_phase_5(fx, monkeypatch)
+    assert "config/dev-env.json" in plan.report.old_env_files_removed
+    assert "config/dev-env.json" not in dict(plan.report.history_credentials)
+
+
+def test_report_and_seed_committed_even_if_gitignore_ignores_docs_and_db(tmp_path):
+    fx = fixture_101(tmp_path)
+    d = fx["dest"]
+    (d / ".gitignore").write_text("docs\ndb\n")
+    git(d, "add", "-f", ".gitignore")
+    git(d, "commit", "-qm", "ignore docs")
+    r = migrate(fx)
+    assert r.returncode in (0, 2), r.stderr
+    assert git(d, "ls-files", "docs/migration-report.md") != ""
+    assert "db/seed/fixture-101_config.sql" in tracked(d)
+    assert git(d, "status", "--porcelain", "--untracked-files=no") == ""

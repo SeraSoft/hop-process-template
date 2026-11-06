@@ -299,7 +299,9 @@ The tool stops at the first error; the commits of the completed phases stay on t
 
 - A checkout of this repository with the target annotated tag and the tags `1.0` and `1.0.1` (the tool compares the old template files with them): `git fetch --tags`. Run the tool from that checkout.
 - Python 3.10 or later (standard library only) and Git.
+- The target tag must be 3.3.0 or later: earlier tags lack `tools/serasoft-register-env.sh`, which the generated `config/env/<env>.list` header and the report checklist refer to.
 - A clean checkout of the project (root of the work tree, no uncommitted change).
+- If the project kept the sample `main.hwf` of the template, whose `p_base_process_name` default is `template` (the process name is passed at run time with `-p p_base_process_name=<name>`), the tool stops. Before running it, set the default of `p_base_process_name` in that root workflow to the process short name and commit.
 - The old environment files of the project (one per environment) and a CSV export of the old configuration (below).
 
 ### Exporting the old configuration
@@ -330,7 +332,13 @@ tools/serasoft-migrate-1x.py --dest ../myproject --tag 3.3.0 \
 | `--db` | `postgresql` | database of the integrations DB (`postgresql`, `mssql`, `sqlite`): selects `config/template-<db>.json` and the seed dialect |
 | `--stop-after PHASE` | `6` | stop after this phase (`0` = analysis only, nothing written) |
 
-To review phase by phase, run with `--stop-after 0` first, then check each commit. A stopped run leaves the branch, so remove it (`git checkout - && git branch -D migration/template-<tag>`) before running again.
+To review phase by phase, run with `--stop-after 0` first, then check each commit. A stopped run leaves the branch and possibly uncommitted changes, so recover before running again:
+
+1. `git checkout -f <original branch>` (a plain `git checkout -` would carry the uncommitted changes onto it and the next run would stop on "uncommitted changes").
+2. `git branch -D migration/template-<tag>`.
+3. Delete by hand only the generated untracked files that `git status` lists (`config/<project>*.json`, `config/env/`, `db/seed/`, `config/*.properties`, `docs/migration-report.md`).
+
+Do not use `git clean`: after phase 5 the `.gitignore` no longer hides `config/`, so your local credential files under `config/` appear as untracked and `git clean` would delete them.
 
 Exit codes:
 
@@ -365,7 +373,8 @@ Exit codes:
 - It does not convert steps that write events directly (for example a "Table output" on `integrations_log_events`) to `EventsTraceTransform`; they are listed in the report with pipeline, transform and upstream source, and the seed prepares their categories.
 - It does not migrate 2.x projects: use `tools/serasoft-sync.sh --adopt-from` for those.
 - It does not create the database or the secrets.
-- It only rewrites workflows, pipelines and metadata (`.hwf`, `.hpl`, `metadata/**/*.json`); references in any other file are reported, not changed.
+- It does not support two processes whose entries sit directly in `src/main/` (for example two root workflows both calling `src/main/starter_job.hwf`): the tool stops.
+- It only rewrites workflows, pipelines and metadata (`.hwf`, `.hpl`, `metadata/**/*.json`); references in moved files that are not workflows, pipelines or metadata are reported, not changed.
 
 ## Releasing the template
 

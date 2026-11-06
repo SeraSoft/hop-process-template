@@ -666,6 +666,13 @@ def phase_config(plan):
                                               common_names)
                      if v["name"] not in runtime]
         variables += [env_entry(k, v, "Writable path outside the read-only project folder") for k, v in runtime.items()]
+        # Remove the old file first: it may sit at the path of the generated one.
+        rel = Path(os.path.relpath(path, d)).as_posix()
+        if not rel.startswith("..") and rel in tracked_files:
+            git(d, "rm", "-q", "--", rel)
+            plan.report.old_env_files_removed.append(rel)
+            if credential_names(old_env_vars):
+                plan.report.history_credentials.append((rel, credential_names(old_env_vars)))
         write_json(d / f"config/{p}-{env}.json", {"variables": variables})
         written += [f"config/{p}-{env}.json", f"config/env/{env}.list"]
         (d / "config/env").mkdir(parents=True, exist_ok=True)
@@ -674,11 +681,6 @@ def phase_config(plan):
             f"# Read by the Serasoft Airflow platform; cron: tools/serasoft-register-env.sh --env {env}\n"
             f"config/template-env.json\nconfig/template-{plan.db}.json\nconfig/{p}.json\nconfig/{p}-{env}.json\n"
             f"/run/secrets/{p}_{env}\n")
-        rel = Path(os.path.relpath(path, d)).as_posix()
-        if not rel.startswith("..") and rel in tracked_files:
-            git(d, "rm", "-q", "--", rel)
-            plan.report.old_env_files_removed.append(rel)
-            plan.report.history_credentials.append((rel, credential_names(old_env_vars)))
     write_json(d / "config/secrets-example.json",
                {"variables": [env_entry(n, "", f"Credential: set it in the Docker secret {p}_<env>") for n in secrets]})
     plan.report.secrets = secrets
@@ -803,6 +805,8 @@ def phase_seed_report(plan):
     exit_code = 2 if plan.report.manual() else 0
     write_seed(plan)
     write_report(plan, exit_code)
+    # The project's own .gitignore may hide docs/ or db/: force-add what this phase generates.
+    git(plan.dest, "add", "-f", "--", f"db/seed/{plan.project}_config.sql", "docs/migration-report.md")
     commit(plan, "Migration: DB seed and report")
     return exit_code
 
