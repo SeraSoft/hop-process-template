@@ -198,7 +198,10 @@ def resolve_ref(var, rel, old_file):
 def find_root_workflows(dest, files):
     roots = []
     for path in sorted(f for f in files if "/" not in f and f.endswith(".hwf")):
-        root = ET.parse(dest / path).getroot()
+        try:
+            root = ET.parse(dest / path).getroot()
+        except ET.ParseError as e:
+            fail(f"{path}: invalid XML ({e})")
         targets = [(a.findtext("filename") or "").strip() for a in root.iter("action")
                    if (a.findtext("type") or "") == "WORKFLOW"]
         if not any(t.endswith("src/pre/main_pre_job.hwf") for t in targets):
@@ -228,7 +231,7 @@ def find_root_workflows(dest, files):
 def read_csv(path):
     processes, categories, subcategories = {}, [], []
     try:
-        with open(path, newline="") as fh:
+        with open(path, newline="", encoding="utf-8-sig") as fh:
             reader = csv.DictReader(fh)
             rows = list(reader)
     except (OSError, UnicodeDecodeError, csv.Error) as e:
@@ -237,6 +240,8 @@ def read_csv(path):
         fail(f"{path}: not an export of tools/serasoft-migrate-1x-export.sql")
     for r in rows:
         if r["kind"] == "process":
+            if r["short_name"] in processes:
+                fail(f"{path}: process {r['short_name']} appears more than once")
             processes[r["short_name"]] = r
         elif r["kind"] == "category":
             categories.append(r)
@@ -257,6 +262,10 @@ def analyse(args):
         fail(f"branch {branch} already exists in {dest}")
     if run(["git", "-C", str(TEMPLATE_REPO), "cat-file", "-t", f"refs/tags/{args.tag}"]).strip() != "tag":
         fail(f"tag {args.tag} is not an annotated tag of {TEMPLATE_REPO}")
+    for tag in REFERENCE_TAGS:
+        if subprocess.run(["git", "-C", str(TEMPLATE_REPO), "rev-parse", "--verify", "--quiet", f"refs/tags/{tag}"],
+                          capture_output=True).returncode != 0:
+            fail(f"tags 1.0 and 1.0.1 are needed in {TEMPLATE_REPO}: git fetch --tags")
     files = set(git(dest, "ls-files").split("\n")) - {""}
     if "src/pre/main_pre_job.hwf" not in files:
         fail(f"{dest} is not a template 1.0.x project (no src/pre/main_pre_job.hwf)")
@@ -267,6 +276,8 @@ def analyse(args):
         p = Path(path).resolve()
         if not re.fullmatch(r"[A-Za-z0-9_.-]+", name) or not p.is_file():
             fail(f"--env {spec}: expected <name>=<existing file>")
+        if name in envs:
+            fail(f"--env {spec}: environment {name} given more than once")
         try:
             json.loads(p.read_text())["variables"]
         except (ValueError, KeyError, TypeError):
@@ -280,6 +291,9 @@ def analyse(args):
     for r in roots:
         if not r.short_name:
             fail(f"{r.path}: empty p_base_process_name default")
+        if r.short_name == "template":
+            fail(f"{r.path} is the unchanged template sample (p_base_process_name=template): "
+                 "remove it or set its process name")
         if r.short_name not in processes:
             fail(f"{r.path}: process {r.short_name} is not in {args.processes}")
         if r.params_without_default:
@@ -303,25 +317,30 @@ def analyse(args):
             except ET.ParseError:
                 report.customised.append(f)
 
-    moves = {}
-    def add_move(old, new):
+    moves, owners = {}, {}
+    def add_move(old, new, owner=None):
+        if old in moves and moves[old] != new:
+            names = sorted({n for n in (owners.get(old), owner) if n})
+            fail(f"{old} belongs to more than one process ({', '.join(names)}): "
+                 "a 1.0.x process folder can be migrated for one root workflow only")
         if new in moves.values() or new in files:
             fail(f"two sources for {new} (one of them {old}); check the processes {sorted(r.short_name for r in roots)}")
         moves[old] = new
+        owners[old] = owner
     for r in roots:
         target_dir = f"src/project/main/{r.short_name}"
         old_dir = os.path.dirname(r.target)
         if old_dir == "src/main":
-            add_move(r.target, f"{target_dir}/start.hwf")
+            add_move(r.target, f"{target_dir}/start.hwf", r.short_name)
             for f in sorted(files):
                 if os.path.dirname(f) == "src/main" and f != r.target and f not in TEMPLATE_1X_FILES:
-                    add_move(f, f"{target_dir}/{os.path.basename(f)}")
+                    add_move(f, f"{target_dir}/{os.path.basename(f)}", r.short_name)
         else:
             for f in sorted(f for f in files if f.startswith(old_dir + "/")):
                 new = f"{target_dir}/{f[len(old_dir) + 1:]}"
                 if f == r.target:
                     new = f"{target_dir}/start.hwf"
-                add_move(f, new)
+                add_move(f, new, r.short_name)
     removed = set(removals)
     for f in sorted(files):
         if f in moves or f in removed or f in KEPT_FOR_LATER:

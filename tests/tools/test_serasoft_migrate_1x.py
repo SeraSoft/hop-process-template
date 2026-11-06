@@ -6,7 +6,8 @@ import subprocess
 
 import pytest
 
-from fixtures_1x import GIT_ENV, ROOT, fixture_101, fixture_pre101, fixture_starterjob, git, write
+from fixtures_1x import (GIT_ENV, ROOT, fixture_101, fixture_pre101, fixture_starterjob, git,
+                         root_workflow, workflow, write)
 
 TOOL = ROOT / "tools" / "serasoft-migrate-1x.py"
 TAG = "3.2.1"
@@ -115,3 +116,116 @@ def test_customisation_accepts_1_0_and_flags_real_changes(tmp_path):
     plan = _analyse(fx)
     assert soft not in plan.report.customised
     assert plan.report.customised == ["src/pre/init/dummy_init_stuff.hwf"]
+
+
+def _add_process(fx, short_name):
+    fx["csv"].write_text(fx["csv"].read_text() + f"process,{short_name},{short_name},Added,Y,,,\n")
+
+
+def test_stops_when_a_process_folder_has_two_root_workflows(tmp_path):
+    fx = fixture_101(tmp_path)
+    root_workflow(fx["dest"], "second.hwf", "load_sales_two", "${PROJECT_HOME}/src/main/load_sales_folder/start.hwf")
+    git(fx["dest"], "add", "-A")
+    git(fx["dest"], "commit", "-qm", "x")
+    _add_process(fx, "load_sales_two")
+    r = migrate(fx)
+    assert r.returncode == 1 and "belongs to more than one process" in r.stderr, r.stderr
+    assert "load_sales" in r.stderr and "load_sales_two" in r.stderr
+    assert git(fx["dest"], "branch", "--show-current") == "main"
+
+
+def test_stops_when_two_entries_sit_directly_in_src_main(tmp_path):
+    fx = fixture_starterjob(tmp_path)
+    write(fx["dest"], "src/main/other_entry.hwf", workflow("other_entry", [], ["START"]))
+    root_workflow(fx["dest"], "other.hwf", "sj_two", "${PROJECT_HOME}/src/main/other_entry.hwf")
+    git(fx["dest"], "add", "-A")
+    git(fx["dest"], "commit", "-qm", "x")
+    _add_process(fx, "sj_two")
+    r = migrate(fx)
+    assert r.returncode == 1 and "belongs to more than one process" in r.stderr, r.stderr
+
+
+def test_stops_on_unchanged_template_sample(tmp_path):
+    fx = fixture_101(tmp_path)
+    sample = subprocess.run(["git", "-C", str(ROOT), "show", "1.0.1:main.hwf"], check=True,
+                            capture_output=True, text=True).stdout
+    write(fx["dest"], "sample.hwf", sample)
+    git(fx["dest"], "add", "-A")
+    git(fx["dest"], "commit", "-qm", "x")
+    r = migrate(fx)
+    assert r.returncode == 1 and "sample.hwf is the unchanged template sample (p_base_process_name=template)" in r.stderr
+
+
+def test_stops_on_invalid_root_xml(tmp_path):
+    fx = fixture_101(tmp_path)
+    write(fx["dest"], "broken.hwf", "<workflow>\n")
+    git(fx["dest"], "add", "-A")
+    git(fx["dest"], "commit", "-qm", "x")
+    r = migrate(fx)
+    assert r.returncode == 1 and "broken.hwf" in r.stderr and "Traceback" not in r.stderr
+
+
+def test_stops_on_duplicate_csv_short_name(tmp_path):
+    fx = fixture_101(tmp_path)
+    _add_process(fx, "load_sales")
+    r = migrate(fx)
+    assert r.returncode == 1 and "load_sales" in r.stderr and "more than once" in r.stderr
+
+
+def test_stops_on_duplicate_env_name(tmp_path):
+    fx = fixture_101(tmp_path)
+    r = migrate(fx, "--env", f"dev={fx['envs']['prod']}")
+    assert r.returncode == 1 and "dev" in r.stderr and "more than once" in r.stderr
+
+
+def test_csv_with_bom(tmp_path):
+    fx = fixture_101(tmp_path)
+    fx["csv"].write_bytes(b"\xef\xbb\xbf" + fx["csv"].read_bytes())
+    r = migrate(fx)
+    assert r.returncode in (0, 2), r.stderr
+
+
+def test_stops_without_tags_1_0_and_1_0_1(tmp_path):
+    repo = tmp_path / "template"
+    (repo / "tools").mkdir(parents=True)
+    tool = repo / "tools" / TOOL.name
+    tool.write_text(TOOL.read_text())
+    git(repo, "init", "-q", "-b", "main")
+    git(repo, "add", "-A")
+    git(repo, "commit", "-qm", "x")
+    git(repo, "tag", "-a", TAG, "-m", TAG)
+    fx = fixture_101(tmp_path / "p")
+    args = ["python3", str(tool), "--dest", str(fx["dest"]), "--tag", TAG, "--processes", str(fx["csv"]),
+            "--env", f"dev={fx['envs']['dev']}"]
+    r = subprocess.run(args, capture_output=True, text=True, env={**os.environ, **GIT_ENV})
+    assert r.returncode == 1 and "tags 1.0 and 1.0.1 are needed" in r.stderr and "git fetch --tags" in r.stderr
+
+
+def test_main_action_with_internal_entry_folder(tmp_path):
+    fx = fixture_pre101(tmp_path)
+    p = fx["dest"] / "load_a.hwf"
+    p.write_text(p.read_text().replace("${PROJECT_HOME}/src/main/", "${Internal.Entry.Current.Folder}/src/main/"))
+    git(fx["dest"], "commit", "-qam", "x")
+    assert "${Internal.Entry.Current.Folder}/src/main/folder_a/start.hwf" in p.read_text()
+    plan = _analyse(fx)
+    assert [r.target for r in plan.roots if r.short_name == "proc_a"] == ["src/main/folder_a/start.hwf"]
+    assert plan.moves["src/main/folder_a/start.hwf"] == "src/project/main/proc_a/start.hwf"
+
+
+def test_stops_without_exactly_one_main_action(tmp_path):
+    fx = fixture_101(tmp_path)
+    p = fx["dest"] / "main.hwf"
+    p.write_text(p.read_text().replace("${PROJECT_HOME}/src/main/load_sales_folder/start.hwf",
+                                       "${PROJECT_HOME}/elsewhere/start.hwf"))
+    git(fx["dest"], "commit", "-qam", "x")
+    r = migrate(fx)
+    assert r.returncode == 1 and "main.hwf: cannot find the process workflow" in r.stderr
+
+
+def test_root_tools_folder_moves_to_project(tmp_path):
+    fx = fixture_101(tmp_path)
+    write(fx["dest"], "tools/run.sh", "echo run\n")
+    git(fx["dest"], "add", "-A")
+    git(fx["dest"], "commit", "-qm", "x")
+    plan = _analyse(fx)
+    assert plan.moves["tools/run.sh"] == "src/project/tools/run.sh"
