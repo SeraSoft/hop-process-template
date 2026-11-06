@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pipeline>
+  <info>
+    <name>init_process_params</name>
+    <name_sync_with_filename>Y</name_sync_with_filename>
+    <description>Turns p_process_params (key=value pairs separated by ';') into variables of the root workflow</description>
+    <extended_description/>
+    <pipeline_version/>
+    <pipeline_type>Normal</pipeline_type>
+    <pipeline_status>0</pipeline_status>
+    <parameters>
+    </parameters>
+    <capture_transform_performance>N</capture_transform_performance>
+    <transform_performance_capturing_delay>1000</transform_performance_capturing_delay>
+    <transform_performance_capturing_size_limit/>
+    <created_user>-</created_user>
+    <created_date>2026/11/06 00:00:00.000</created_date>
+    <modified_user>-</modified_user>
+    <modified_date>2026/11/06 00:00:00.000</modified_date>
+  </info>
+  <notepads>
+  </notepads>
+  <order>
+    <hop>
+      <from>Get p_process_params</from>
+      <to>Parse and set p_process_params</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+  <transform>
+    <name>Get p_process_params</name>
+    <type>GetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>process_params</name>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <type>String</type>
+        <variable>${p_process_params}</variable>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>160</xloc>
+      <yloc>64</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Parse and set p_process_params</name>
+    <type>ScriptValueMod</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <optimizationLevel>9</optimizationLevel>
+    <jsScripts>
+      <jsScript>
+        <jsScript_type>0</jsScript_type>
+        <jsScript_name>Script 1</jsScript_name>
+        <jsScript_script><![CDATA[// p_process_params: key=value pairs separated by ';' (README.md, "Process parameters").
+// Every entry is validated before any variable is set.
+function trim(s) { return s.replace(/^\s+|\s+$/g, ""); }
+function fail(piece, reason) {
+  var msg = "ERROR: invalid p_process_params entry '" + piece + "': " + reason;
+  writeToLog("e", msg);
+  throw msg;
+}
+var raw = (process_params == null) ? "" : String(process_params);
+var pieces = raw.split(";");
+var keyRe = /^[A-Za-z_][A-Za-z0-9_.]*$/;
+var keys = [];
+var values = [];
+for (var i = 0; i < pieces.length; i++) {
+  var piece = pieces[i];
+  if (trim(piece) == "") continue;
+  var eq = piece.indexOf("=");
+  if (eq < 0) fail(piece, "missing '='");
+  var key = trim(piece.substring(0, eq));
+  var value = trim(piece.substring(eq + 1));
+  if (!keyRe.test(key)) fail(piece, "invalid key '" + key + "'");
+  if (keys.indexOf(key) >= 0) fail(piece, "key '" + key + "' given more than once");
+  keys.push(key);
+  values.push(value);
+}
+for (var j = 0; j < keys.length; j++) {
+  setVariable(keys[j], values[j], "r");
+}
+if (keys.length > 0) writeToLog("m", "p_process_params: set " + keys.join(", "));
+]]></jsScript_script>
+      </jsScript>
+    </jsScripts>
+    <fields>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>416</xloc>
+      <yloc>64</yloc>
+    </GUI>
+  </transform>
+  <transform_error_handling>
+  </transform_error_handling>
+  <attributes/>
+</pipeline>

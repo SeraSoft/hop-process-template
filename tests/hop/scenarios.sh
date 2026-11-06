@@ -73,7 +73,42 @@ s_short_name() {
   reset
 }
 
-SCENARIOS=(s_default s_regression s_short_name)
+s_params() {
+  echo "p_process_params"
+  reset
+  run main.hwf "p_base_process_name=vartest"
+  check "empty: exit code 0" rc_is 0
+  check "empty: no variable set" log_has 'VARTEST p_tipo_periodo=[${p_tipo_periodo}]'
+  reset
+  run main.hwf "p_base_process_name=vartest,p_process_params= p_tipo_periodo = S ;p_other=a=b;"
+  check "set: exit code 0" rc_is 0
+  check "set: trimmed, split on the first =" log_has "VARTEST p_tipo_periodo=[S] p_other=[a=b]"
+  check "set: keys logged" log_has "p_process_params: set p_tipo_periodo, p_other"
+  check "set: values not logged" log_lacks "p_process_params: set p_tipo_periodo=S"
+  reset
+  printf 'p_tipo_periodo=M\np_other=fromprops\n' > "$COPY/config/vartest.properties"
+  run main.hwf "p_base_process_name=vartest"
+  check "properties only" log_has "VARTEST p_tipo_periodo=[M] p_other=[fromprops]"
+  run main.hwf "p_base_process_name=vartest,p_process_params=p_tipo_periodo=S"
+  check "parameter wins over properties" log_has "VARTEST p_tipo_periodo=[S] p_other=[fromprops]"
+  reset
+}
+
+s_params_invalid() {
+  echo "p_process_params: invalid entries"
+  local e
+  for e in "p_tipo_periodo|missing '='" "1abc=x|invalid key '1abc'" "p_a=1;p_a=2|key 'p_a' given more than once"; do
+    reset
+    run main.hwf "p_base_process_name=vartest,p_process_params=${e%%|*}"
+    check "'${e%%|*}': exit code 1" rc_is 1
+    check "'${e%%|*}': message" log_has "ERROR: invalid p_process_params entry"
+    check "'${e%%|*}': reason" log_has "${e#*|}"
+    check "'${e%%|*}': process not started" log_lacks "VARTEST p_tipo_periodo"
+  done
+  reset
+}
+
+SCENARIOS=(s_default s_regression s_short_name s_params s_params_invalid)
 
 "$LAB" copy >/dev/null
 for s in "${SCENARIOS[@]}"; do "$s"; done

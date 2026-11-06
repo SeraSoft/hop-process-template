@@ -80,6 +80,46 @@ WHERE filename = 'master-postgresql.xml' OR filename LIKE '%/master-postgresql.x
 
 Then `liquibase status` (same options as `update`) must report the database as up to date.
 
+## Process parameters (`p_process_params`)
+
+`main.hwf` declares only the template parameters: `p_base_process_name`, `p_log_filename` and `p_process_params`. Hop silently ignores a `-p` value for a parameter the workflow does not declare, so the values specific to a process are passed through `p_process_params`:
+
+```
+hop-run -j <project> -e <environment> -r local -f '${PROJECT_HOME}/main.hwf' \
+  -p 'p_base_process_name=<short name>,p_process_params=p_period_type=S;p_reference_date=20261031'
+```
+
+- **Format**: `key=value` pairs separated by `;`. Spaces around keys and values are removed, empty pairs (for example a trailing `;`) are ignored, and the value is everything after the first `=` (`p_filter=a=b` gives `a=b`).
+- **Limits**: a value cannot contain `;` (the pair separator) or `,` (`hop-run -p` separates parameters with commas).
+- **Keys** must match `^[A-Za-z_][A-Za-z0-9_.]*$` and appear once.
+- Each pair becomes a **variable of the root workflow**: `start.hwf` and everything it runs see it as `${key}`. The pre-phase logs the names of the keys it set (`p_process_params: set p_period_type, p_reference_date`), never their values.
+- **Precedence** (the last one wins): environment files → `config/<short name>.properties` → `p_process_params`. Put the defaults of a process in its `.properties` file and override them per execution with `p_process_params`.
+- **Errors**: an invalid entry stops the execution in the pre-phase, before the process starts, with exit code `1` and the message `ERROR: invalid p_process_params entry '<entry>': <reason>`, where the reason is `missing '='`, `invalid key '<key>'` or `key '<key>' given more than once`.
+- **Do not declare these keys as parameters** of `start.hwf` or of the workflows and pipelines it runs: since Hop 2.20 a declared parameter with a default ignores a variable of the same name set by the caller (apache/hop#8101), so the value passed in `p_process_params` would be lost. Use them as plain variables.
+
+From cron, quote the whole `-p` value so that the shell does not split it on `;`:
+
+```
+0 6 * * * /opt/hop/hop-run.sh -j myproject -e prod -r local -f '${PROJECT_HOME}/main.hwf' -p 'p_base_process_name=load_sales,p_process_params=p_period_type=M'
+```
+
+From an orchestrator (e.g. Apache Airflow), pass `p_process_params` like any other `-p` parameter of `main.hwf`.
+
+## Environments
+
+The environment of a template-based project is a list of configuration files read in this order, a later file overriding an earlier one:
+
+1. `config/template-env.json`: the template variables and their defaults (template-owned, never edited);
+2. `config/template-<database>.json`, with `<database>` one of `postgresql`, `mssql`, `sqlite` (template-owned, never edited);
+3. one project file per environment, e.g. `config/<project>-<environment>-env.json`: the project's own variables and the real values of the `serasoft.*` variables for that environment (database host and credentials, SMTP, mail addresses). Keep the files with credentials out of Git.
+
+```
+hop-conf.sh -ec -e prod -ep myproject \
+  -eg /opt/projects/myproject/config/template-env.json,/opt/projects/myproject/config/template-postgresql.json,/etc/hop/myproject-prod-env.json
+```
+
+Never add project variables to the template files: `tools/serasoft-sync.sh` overwrites them at every template update and `tools/serasoft-verify.sh` reports them as modified.
+
 ## Process identity
 
 A process is identified everywhere by its **short name**, the `short_name` column of `config.integrations_processes`. The short name is:
