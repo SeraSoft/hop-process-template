@@ -108,7 +108,26 @@ s_params_invalid() {
   reset
 }
 
-SCENARIOS=(s_default s_regression s_short_name s_params s_params_invalid)
+s_params_precedence() {
+  echo "p_process_params: precedence and values with commas"
+  reset
+  run main.hwf "p_base_process_name=vartest,p_tipo_periodo=S"
+  check "undeclared -p key becomes a variable" log_has "VARTEST p_tipo_periodo=[S]"
+  printf 'p_tipo_periodo=M\n' > "$COPY/config/vartest.properties"
+  run main.hwf "p_base_process_name=vartest,p_tipo_periodo=S"
+  check "properties overwrite a direct -p variable" log_has "VARTEST p_tipo_periodo=[M]"
+  run main.hwf "p_base_process_name=vartest,p_process_params=p_tipo_periodo=S"
+  check "p_process_params wins over properties" log_has "VARTEST p_tipo_periodo=[S]"
+  reset
+  export LAB_PARAMS_SEPARATOR='#'
+  run main.hwf "p_base_process_name=vartest#p_process_params=p_tipo_periodo=S;p_other=972,15004,763,10282"
+  unset LAB_PARAMS_SEPARATOR
+  check "comma list with -ps '#': exit code 0" rc_is 0
+  check "comma list with -ps '#': value kept" log_has "VARTEST p_tipo_periodo=[S] p_other=[972,15004,763,10282]"
+  reset
+}
+
+SCENARIOS=(s_default s_regression s_short_name s_params s_params_invalid s_params_precedence)
 
 "$LAB" copy >/dev/null
 for s in "${SCENARIOS[@]}"; do "$s"; done
