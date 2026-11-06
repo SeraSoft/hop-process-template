@@ -25,10 +25,10 @@ TBD
 ### Support database creation
 A single changelog, `db/liquibase/master.xml`, creates the support database on PostgreSQL, Microsoft SQL Server and SQLite. Run Liquibase from the `db/liquibase` directory; a properties file for each database is provided there (`liquibase-postgresql.template`, `liquibase-mssql.properties`, `liquibase-sqlite-config.properties`, `liquibase-sqlite-logs.properties`) as a reference.
 
-`db/liquibase/**` is owned by the template: do not edit those files in a project (a template update overwrites them and `tools/serasoft-verify.sh` fails on a modified or extra file). Pass the actual `url`, `username` and `password` on the command line, as in the examples below, or keep a project-owned defaults file **outside** `db/liquibase/` (e.g. `config/liquibase-<env>.properties`; do not commit it when it holds credentials) and use it with `--defaults-file`, adding `--search-path` so that Liquibase still finds the changelog:
+`db/liquibase/**` is owned by the template: do not edit those files in a project (a template update overwrites them and `tools/serasoft-verify.sh` fails on a modified or extra file). Pass the actual `url`, `username` and `password` on the command line, as in the examples below, or keep a project-owned defaults file **outside** `db/liquibase/` (e.g. `config/liquibase-<env>.properties`; do not commit it when it holds credentials) with `changelogFile=master.xml`, `url`, `username` and `password`, and use it with `--defaults-file`, adding `--search-path` so that Liquibase still finds the changelog (both are global options: put them before the command):
 
 ```powershell
-liquibase update --defaults-file="../../config/liquibase-dev.properties" --search-path="."
+liquibase --defaults-file="../../config/liquibase-dev.properties" --search-path="." update
 ```
 
 Remember, in both cases, to use the actual `url`, `username` and `password`.
