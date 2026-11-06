@@ -10,7 +10,7 @@ Date: 2026-11-05
 Customer Hop projects built on older template versions must be brought to the
 current template. Two families exist:
 
-- **1.0.x** (e.g. UNI projects; BancaFinintGroup/Mercury_ETL as a sample):
+- **1.0.x** (customer projects still on the first template):
   template in `src/commons`, `src/pre`, `src/post`; one root workflow per
   process (a copy of the old `main.hwf`) calling `src/main/<folder>/start.hwf`;
   project variables without the `serasoft.` prefix; old database model.
@@ -133,7 +133,7 @@ Example:
 
 ```
 hop-run -j <project> -e <environment> -r local -f ${PROJECT_HOME}/main.hwf \
-  -p p_base_process_name=mercury_aum_tables,p_process_params="p_tipo_periodo=S;p_data_rif=20261031"
+  -p p_base_process_name=load_sales,p_process_params="p_period_type=S;p_reference_date=20261031"
 ```
 
 ## A3. `tools/serasoft-sync.sh` and `tools/serasoft-verify.sh`
