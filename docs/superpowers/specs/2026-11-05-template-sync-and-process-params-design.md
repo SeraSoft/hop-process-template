@@ -1,7 +1,7 @@
 # Design: template 3.2.0 — short_name lookup, generic process parameters, template sync from a tag
 
 Status: approved in brainstorming, ready for implementation planning
-Tracks: issues to be opened (one per component A1, A2, A3 below), single PR
+Tracks: issues to be opened (one per task of the implementation plan), single PR
 Branch: feat/template-3.2.0
 Date: 2026-11-05
 
