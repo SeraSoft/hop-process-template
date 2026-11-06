@@ -21,6 +21,11 @@
       <default_value/>
       <description>Complete filename of the log file for this instance of execution. If not specified it will be defaulted to "Not available"</description>
     </parameter>
+    <parameter>
+      <name>p_process_params</name>
+      <default_value/>
+      <description>Process parameters as key=value pairs separated by ';' (no ';' or ',' in values). Each pair becomes a variable of the root workflow and overrides config/${p_base_process_name}.properties. See README.md, "Process parameters".</description>
+    </parameter>
   </parameters>
   <actions>
     <action>

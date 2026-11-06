@@ -383,6 +383,32 @@ v_process_active: ${v_process_active}
       <attributes_hac/>
     </action>
     <action>
+      <name>init_process_params.hpl</name>
+      <description>Sets the variables passed with p_process_params (after config/${p_base_process_name}.properties, so they win)</description>
+      <type>PIPELINE</type>
+      <attributes/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <clear_files>N</clear_files>
+      <clear_rows>N</clear_rows>
+      <create_parent_folder>N</create_parent_folder>
+      <exec_per_row>N</exec_per_row>
+      <filename>${PROJECT_HOME}/src/template/pre/init/init_process_params.hpl</filename>
+      <loglevel>Basic</loglevel>
+      <parameters>
+        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>
+      <params_from_previous>N</params_from_previous>
+      <run_configuration>local</run_configuration>
+      <set_append_logfile>N</set_append_logfile>
+      <set_logfile>N</set_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <parallel>N</parallel>
+      <xloc>448</xloc>
+      <yloc>448</yloc>
+      <attributes_hac/>
+    </action>
+    <action>
       <name>File exists</name>
       <description/>
       <type>FILE_EXISTS</type>
@@ -576,7 +602,7 @@ WHERE short_name='${p_base_process_name}'</sql>
     </hop>
     <hop>
       <from>Init Process Context Variables</from>
-      <to>Check p_base_process_name exists</to>
+      <to>init_process_params.hpl</to>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>N</unconditional>
@@ -597,7 +623,7 @@ WHERE short_name='${p_base_process_name}'</sql>
     </hop>
     <hop>
       <from>Log info 3</from>
-      <to>Check p_base_process_name exists</to>
+      <to>init_process_params.hpl</to>
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
       <unconditional>Y</unconditional>
@@ -674,6 +700,20 @@ WHERE short_name='${p_base_process_name}'</sql>
     </hop>
     <hop>
       <from>init_sys_variables.hpl</from>
+      <to>Dummy</to>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>init_process_params.hpl</from>
+      <to>Check p_base_process_name exists</to>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>init_process_params.hpl</from>
       <to>Dummy</to>
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
