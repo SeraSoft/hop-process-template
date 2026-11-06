@@ -79,6 +79,7 @@ function fail(piece, reason) {
   throw msg;
 }
 var raw = (process_params == null) ? "" : String(process_params);
+if (raw === "${p_process_params}") { raw = ""; }
 var pieces = raw.split(";");
 var keyRe = /^[A-Za-z_][A-Za-z0-9_.]*$/;
 var keys = [];
