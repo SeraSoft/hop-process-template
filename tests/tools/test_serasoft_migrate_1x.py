@@ -6,7 +6,7 @@ import subprocess
 
 import pytest
 
-from fixtures_1x import (GIT_ENV, ROOT, env_file, fixture_101, fixture_pre101, fixture_starterjob, git, log_action,
+from fixtures_1x import (GIT_ENV, ROOT, _action, env_file, fixture_101, fixture_pre101, fixture_starterjob, git, log_action,
                          pipeline, pipeline_action, root_workflow, transform, workflow, write)
 
 TOOL = ROOT / "tools" / "serasoft-migrate-1x.py"
@@ -779,3 +779,23 @@ def test_report_and_seed_committed_even_if_gitignore_ignores_docs_and_db(tmp_pat
     assert git(d, "ls-files", "docs/migration-report.md") != ""
     assert "db/seed/fixture-101_config.sql" in tracked(d)
     assert git(d, "status", "--porcelain", "--untracked-files=no") == ""
+
+
+def test_reports_set_variables_loading_the_process_properties(tmp_path):
+    fx = fixture_starterjob(tmp_path)
+    d = fx["dest"]
+    load = ("      <fields>\n</fields>\n      <file_variable_type>ROOT_WORKFLOW</file_variable_type>\n"
+            "      <filename>{}</filename>\n      <replacevars>Y</replacevars>\n")
+    write(d, "src/main/starter_job.hwf", workflow("starter_job", [
+        log_action("Log", "SJPROC batch=${items.per.batch}"),
+        _action("Load Process Variables", "SET_VARIABLES", 600, 100,
+                load.format("${Internal.Entry.Current.Folder}/../../config/sj_proc.properties")),
+        _action("Load Other Variables", "SET_VARIABLES", 700, 100, load.format("${PROJECT_HOME}/config/other.properties")),
+    ], ["START", "Log", "Load Process Variables", "Load Other Variables"]))
+    git(d, "commit", "-qam", "process loads its own properties")
+    r = migrate(fx)
+    assert r.returncode == 2, r.stderr
+    report = (d / "docs/migration-report.md").read_text()
+    assert ("- `src/project/main/sj_proc/start.hwf` · `Load Process Variables` · `config/sj_proc.properties`"
+            in report)
+    assert "Load Other Variables" not in report

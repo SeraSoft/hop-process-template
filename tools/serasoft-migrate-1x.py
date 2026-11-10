@@ -143,11 +143,13 @@ class Report:
     history_credentials: list = field(default_factory=list)   # (file, credential names): rotate them
     check_by_hand: list = field(default_factory=list)   # (moved file not rewritten, what it still contains)
     variables: list = field(default_factory=list)       # (written file, origin, ["old → new"], [project names])
+    properties_loads: list = field(default_factory=list)  # (workflow, action, config/<short name>.properties)
 
     def manual(self):
         return any([self.customised, self.unresolved, self.removed_refs, self.events, self.paths, self.deployment,
                     self.history_credentials, self.old_env_files_removed, self.params_without_default,
-                    self.unknown_processes, self.local_config_ignored, self.check_by_hand])
+                    self.unknown_processes, self.local_config_ignored, self.check_by_hand,
+                    self.properties_loads])
 
 
 @dataclass
@@ -472,6 +474,19 @@ def event_steps(root):
     return steps
 
 
+PROPERTIES_RE = re.compile(r"(?:^|[/\\])config[/\\]([^/\\]+)\.properties$")
+
+
+def properties_loads(root, short_names):
+    """Set variables actions loading config/<short name>.properties, now loaded by the template pre-phase."""
+    loads = []
+    for a in root.iter("action"):
+        m = PROPERTIES_RE.search((a.findtext("filename") or "").strip())
+        if (a.findtext("type") or "").strip() == "SET_VARIABLES" and m and m.group(1) in short_names:
+            loads.append(((a.findtext("name") or "").strip(), f"config/{m.group(1)}.properties"))
+    return loads
+
+
 OLD_PATH_RE = re.compile(r"\bsrc[/\\](main|pre|post|commons)[/\\]")
 
 
@@ -519,6 +534,12 @@ def phase_rewrites(plan):
                 plan.report.unresolved.append((path, "not a valid XML file"))
         for name, sources in steps:
             plan.report.events.append((path, name, sources))
+        if path.endswith(".hwf") and not path.startswith("src/template/"):
+            try:
+                loads = properties_loads(ET.fromstring(new), {r.short_name for r in plan.roots})
+            except ET.ParseError:
+                loads = []
+            plan.report.properties_loads += [(path, name, file) for name, file in loads]
         if (not steps and path.endswith((".hwf", ".hpl")) and not path.startswith("src/template/")
                 and "integrations_log_events" in new.lower()):
             plan.report.events.append((path, "-", "integrations_log_events named in SQL or another step: check by hand"))
@@ -781,6 +802,8 @@ def write_report(plan, exit_code):
            for target, origin, mapped, project in rep.variables] or ["None."]
     md += [""]
     md += md_section("Moved files not rewritten that still name 1.0.x variables or paths", rep.check_by_hand)
+    md += md_section("Set variables actions loading the process properties, now loaded by the template "
+                     "pre-phase: remove them (workflow · action · file)", rep.properties_loads)
     md += md_section("Runtime variables not carried over", rep.runtime_dropped)
     md += md_section("Extra root-workflow parameters without default (not carried over)", rep.params_without_default)
     md += md_section(f"Credentials (config/secrets-example.json, Docker secret {p}_<env>)", rep.secrets)

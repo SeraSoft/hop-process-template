@@ -371,6 +371,7 @@ Exit codes:
 ### What the tool does not do
 
 - It does not convert steps that write events directly (for example a "Table output" on `integrations_log_events`) to `EventsTraceTransform`; they are listed in the report with pipeline, transform and upstream source, and the seed prepares their categories.
+- It does not remove "Set variables" actions that load `config/<short name>.properties` of a process: the template pre-phase now loads that file, so the report lists them (workflow, action, file) for removal by hand.
 - It does not migrate 2.x projects: use `tools/serasoft-sync.sh --adopt-from` for those.
 - It does not create the database or the secrets.
 - It does not support two processes whose entries sit directly in `src/main/` (for example two root workflows both calling `src/main/starter_job.hwf`): the tool stops.
