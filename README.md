@@ -4,23 +4,66 @@ Apache Hop Process template is a mature seed that you can use as a base to devel
 
 Features implemented and enforced by the template are:
 
-- **Clear directory structure** for code, tests, and configuration files. 
-This template gives a Hop project a predefined structure to manage configuration files and process from within a same bundle that can easily be distributed.
-- **Single process execution**: if a process instance, same as the one is trying to start, is already executing the new instance will not start. We are used to say that when   
-- **Single point for errors' management**: as a good methodological approach the template try to force the management of events and errors in a single point
-- **Integration tests enablement**: the template gives you the possibility to easily structure a tests strategy for your code by injecting custom code in your pipelines/workflows structure
-- **Event logs structure enable to operational analysis**
+- **Clear directory structure** for code and configuration files (see "Project structure"): a Hop project gets a predefined structure to manage its processes and configuration files in a single bundle that can easily be distributed.
+- **Single process execution**: if an instance of a process is already running, a new instance of the same process does not start (see "Process statuses and stale locks").
+- **Single point for errors' management**: as a good methodological approach the template tries to force the management of events and errors in a single point
+- **Event logs** structured for operational analysis
 
 We adopt Liquibase in order to keep `config` and `logs` tables up-to-date.
 
 ## Prerequisites
 #### Liquibase installation 
 
-To be able to create/update the support database conventionally named *integrations_db*, you must install liquibase on your computer. To properly install liquibase on your computer please refer to the installation procedure as specified [here]([here](https://docs.liquibase.com/start/install/home.html))
+To be able to create/update the support database conventionally named *integrations_db*, you must install liquibase on your computer. To properly install liquibase on your computer please refer to the [Liquibase installation procedure](https://docs.liquibase.com/start/install/home.html).
 
 ## Getting started
 ### Process template setup
-TBD
+
+A new project gets the template from a release of hop-process-template, in one of two ways.
+
+**With the Serasoft projects plugin for Hop GUI** (a private Serasoft plugin, `hop-process-template-plugins`): create the project with the **Apply Serasoft Template** option. The plugin downloads the release ZIP named by `template.download.url` in `serasoft-hop-config.json`, in the Hop configuration folder; set it to the wanted release, e.g. `https://github.com/SeraSoft/hop-process-template/releases/download/3.3.0/hop-process-template-v3.3.0.zip`. The ZIP does not record the template version: once the project is a Git repository, record it with a one-off adoption from the same release, run from a checkout of hop-process-template (see "Adopting a project that already holds template files"), then commit:
+
+```
+tools/serasoft-sync.sh --tag 3.3.0 --dest ../myproject --adopt-from 3.3.0
+```
+
+**Without the plugin**: create an empty Git repository, copy the template files into it with `tools/serasoft-sync.sh` from a checkout of hop-process-template (see "Creating or updating a project"), and register the project in Hop, which writes `config/project-config.json`:
+
+```
+tools/serasoft-sync.sh --tag 3.3.0 --dest ../myproject
+hop-conf.sh -pc -p myproject -ph /path/to/myproject -pf config/project-config.json
+```
+
+In both cases:
+
+1. Check the project `.gitignore`: it must not hide template-owned files (see the recommendations in "Checking a project"), then commit.
+2. Create the integrations database (see "Support database creation") and declare the processes (see "Process identity").
+3. Write the project environment files (see "Environments").
+4. Add the processes under `src/project/main/<short name>/start.hwf` (see "Project structure").
+5. Run a process with `main.hwf` and its short name:
+
+```
+hop-run.sh -j myproject -e myproject-dev -r local -f /path/to/myproject/main.hwf -p p_base_process_name=<short name>
+```
+
+### Project structure
+
+| Path | Owner | Content |
+|---|---|---|
+| `main.hwf` | template | the only root workflow: pre-phase, the process named by `p_base_process_name`, post-phase, feedback emails |
+| `src/template/` | template | pre- and post-phase, locks, logging, mail tools, `check_state.hwf`, `release_lock.hwf`; never edited in a project |
+| `src/project/main/<short name>/` | project | one folder per process; `start.hwf` is the entry point that `main.hwf` runs |
+| `src/project/commons/` | project | workflows and pipelines shared by the processes |
+| `config/template-*.json` | template | template variables and database defaults (see "Environments") |
+| `config/project-config.json` | project | the Hop project configuration |
+| `config/<project>-<env>.json`, `config/<short name>.properties` | project | project variables per environment, optional variables per process |
+| `config/env/<env>.list` | project | load order of the environment files, for the Serasoft Airflow platform and `tools/serasoft-register-env.sh` |
+| `metadata/` | template and project | Hop metadata: the integrations database connections and run configurations are template-owned, the project adds its own |
+| `db/liquibase/`, `db/sqlite/data/` | template | changelog of the integrations database and SQLite seeds |
+| `tools/` | template | `serasoft-verify.sh`, `serasoft-register-env.sh` |
+| `SERASOFT_VERSION`, `SERASOFT_MANIFEST.sha256` | template | version and checksums of the template files (see "Template updates") |
+
+To add a process: create `src/project/main/<short name>/start.hwf` (the template repository has a minimal example in `src/project/main/default/start.hwf`), declare the short name in `config.integrations_processes`, and put its own variables, if any, in `config/<short name>.properties`.
 
 ### Support database creation
 A single changelog, `db/liquibase/master.xml`, creates the support database on PostgreSQL, Microsoft SQL Server and SQLite. Run Liquibase from the `db/liquibase` directory; a properties file for each database is provided there (`liquibase-postgresql.template`, `liquibase-mssql.properties`, `liquibase-sqlite-config.properties`, `liquibase-sqlite-logs.properties`) as a reference.
@@ -448,10 +491,10 @@ The table below summarizes the set of base environment variables provided with t
 |serasoft.mail.from.email|Email address used in the 'From' field of the email. This is the address that will appear as the sender of the email|`hopexecutor@maildomain.it`|
 |serasoft.mail.subject|First part of the text displayed in the subject of the email. It includes the hostname and the base process name|`[${v_hostname} - ${p_base_process_name}]`|
 |serasoft.mail.subject.error|Text displayed in the subject of the email when an error occurs due to system exceptions. It includes the base process name.|`${serasoft.mail.subject} Failed for system exceptions`|
-|serasoft.mail.subject.success|Text displayed in the subject ot the email when the process execution is successful. It includes the base process name|`${serasoft.mail.subject} Terminated successfully`|
-|serasoft.mail.subject.lock|Text displayed in the subject ot the email when a lock occurs that prevents the process from executing. It includes the base process name|`${serasoft.mail.subject} Same instance is still running. Execution stopped.`|
+|serasoft.mail.subject.success|Text displayed in the subject of the email when the process execution is successful. It includes the base process name|`${serasoft.mail.subject} Terminated successfully`|
+|serasoft.mail.subject.lock|Text displayed in the subject of the email when a lock occurs that prevents the process from executing. It includes the base process name|`${serasoft.mail.subject} Same instance is still running. Execution stopped.`|
 |serasoft.mail.subject.application.error|Text displayed in the subject of the email when application errors occurs during process execution. It includes the base process name.|`${serasoft.mail.subject} Terminated successfully with application exceptions.`|
-|serasoft.mail.subject.notactive|Text displayed in the subject ot the email when the process is paused. It includes the base process name|`${serasoft.mail.subject} This instance is paused. Execution not started.`|
+|serasoft.mail.subject.notactive|Text displayed in the subject of the email when the process is paused. It includes the base process name|`${serasoft.mail.subject} This instance is paused. Execution not started.`|
 |serasoft.default.mail.destination.addresses|Default set of email addresses to included wherever needed. Email addresses are separated by spaces|`destination@maildomain.it`|
 |serasoft.success.mail.destination.addresses|Set of email addresses to send success feedback emails to. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'serasoft.default.mail.destination.addresses'|`${serasoft.default.mail.destination.addresses}`|
 |serasoft.errors.mail.destination.addresses|Set of email addresses to send error feedback emails to. Email addresses are separated by spaces. It can includes the default addresses if needed. It defaults to the value of 'serasoft.default.mail.destination.addresses'|`${serasoft.default.mail.destination.addresses}`|
