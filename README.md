@@ -16,6 +16,21 @@ We adopt Liquibase in order to keep `config` and `logs` tables up-to-date.
 
 To be able to create/update the support database conventionally named *integrations_db*, you must install liquibase on your computer. To properly install liquibase on your computer please refer to the [Liquibase installation procedure](https://docs.liquibase.com/start/install/home.html).
 
+- The template is verified with **Liquibase 4.33.0** (Apache 2.0 license), the version used by the test lab. Liquibase 5.x changed license and is being evaluated (#76): use 4.33.0.
+- Liquibase 4.33.0 bundles the JDBC drivers for PostgreSQL, Microsoft SQL Server and SQLite: nothing else to download.
+- The installers include their own Java; the ZIP/TAR packages need Java on the computer (Java 8 at least, an LTS version 11, 17 or 21 recommended).
+
+Without installing anything, the official Docker image runs the same commands: mount `db/liquibase` and pass the options after the image name, for example from the project root:
+
+```
+docker run --rm -v "$PWD/db/liquibase":/liquibase/changelog:ro liquibase/liquibase:4.33.0 \
+    --search-path=/liquibase/changelog --changelog-file=master.xml \
+    --url="jdbc:postgresql://<host>:5432/integrations_db" --username=<user> --password=<password> \
+    update
+```
+
+`localhost` inside the container is the container itself: use the host name of the database server (or `--network host` on Linux for a database on the same machine).
+
 ## Getting started
 ### Process template setup
 
@@ -128,6 +143,24 @@ WHERE filename = 'master-postgresql.xml' OR filename LIKE '%/master-postgresql.x
 ```
 
 Then `liquibase status` (same options as `update`) must report the database as up to date.
+
+#### Database managed by the customer: SQL scripts
+
+When the customer's DBA creates the database and prefers SQL scripts to running Liquibase, Liquibase generates the script without connecting to any database (offline mode). From the project root, writing outside `db/liquibase/` (template-owned: `tools/serasoft-verify.sh` fails on extra files there), one CSV per database (e.g. per environment):
+
+```
+liquibase --search-path=db/liquibase --changelog-file=master.xml \
+    --url="offline:postgresql?outputLiquibaseSql=all&changeLogFile=db/integrations_db-prod.csv" \
+    --output-file=db/integrations_db-postgresql.sql \
+    update-sql
+```
+
+(`offline:mssql` for Microsoft SQL Server: the script is split in `GO` batches, run it with `sqlcmd`.) The script creates the `config` and `logs` schemas, the template tables with their initial rows (e.g. the `MEDIUM` severity) and Liquibase's `databasechangelog` table with one row per applied change. The DBA runs it with the usual tools, for example `psql -v ON_ERROR_STOP=1 -f integrations_db-postgresql.sql`.
+
+- Keep the `databasechangelog` rows (`outputLiquibaseSql=all`): with them the database records which template changes it has received, `liquibase status` reports it as up to date, and later template versions can be applied either by Liquibase or by a new script.
+- Commit the CSV (`db/integrations_db-prod.csv` above) in the project repository, but only once the script has been applied: the offline mode writes there the changes it put in the script. For a later template version, run the same command with the same CSV: the new script holds only the changes the database does not have yet (an unchanged template gives an empty script). Alternatively, `update-sql` with the real connection (`--url=jdbc:…`) computes the differences from the database itself.
+- The script does not create the database, the user Hop connects with, or its grants: they are the DBA's choice. Hop's user needs to read and write the tables of `config` and `logs`.
+- The project rows (processes, event categories) are not in the script: run the project seed (e.g. `db/seed/<project>_config.sql`) after it.
 
 ## Process identity
 
