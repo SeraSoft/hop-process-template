@@ -1,7 +1,7 @@
 # Design: register a project environment on Windows (tools/serasoft-register-env.ps1)
 
-Status: approved in brainstorming, ready for implementation planning
-Tracks: issues to be opened (one per task of the implementation plan), single PR
+Status: implemented (plan `docs/superpowers/plans/2026-11-12-register-env-ps1.md`); manual Windows PowerShell 5.1 check pending (Testing)
+Tracks: #81, #82, single PR
 Branch: feat/register-env-ps1
 Date: 2026-11-12
 
