@@ -72,10 +72,10 @@ hop-run.sh -j myproject -e myproject-dev -r local -f /path/to/myproject/main.hwf
 | `config/template-*.json` | template | template variables and database defaults (see "Environments") |
 | `config/project-config.json` | project | the Hop project configuration |
 | `config/<project>-<env>.json`, `config/<short name>.properties` | project | project variables per environment, optional variables per process |
-| `config/env/<env>.list` | project | load order of the environment files, for the Serasoft Airflow platform and `tools/serasoft-register-env.sh` |
+| `config/env/<env>.list` | project | load order of the environment files, for the Serasoft Airflow platform and `tools/serasoft-register-env.sh` / `tools/serasoft-register-env.ps1` |
 | `metadata/` | template and project | Hop metadata: the integrations database connections and run configurations are template-owned, the project adds its own |
 | `db/liquibase/`, `db/sqlite/data/` | template | changelog of the integrations database and SQLite seeds |
-| `tools/` | template | `serasoft-verify.sh`, `serasoft-register-env.sh` |
+| `tools/` | template | `serasoft-verify.sh`, `serasoft-register-env.sh`, `serasoft-register-env.ps1` |
 | `SERASOFT_VERSION`, `SERASOFT_MANIFEST.sha256` | template | version and checksums of the template files (see "Template updates") |
 
 To add a process: create `src/project/main/<short name>/start.hwf` (the template repository has a minimal example in `src/project/main/default/start.hwf`), declare the short name in `config.integrations_processes`, and put its own variables, if any, in `config/<short name>.properties`.
@@ -246,7 +246,7 @@ The process receives `${operations.to.import}` = `972,15004,763,10282`. Do not u
 
 ## Template updates
 
-The scripts need Bash 4+ and GNU coreutils: Linux, WSL, or Git Bash on Windows (on macOS install GNU coreutils).
+`serasoft-sync.sh` and `serasoft-verify.sh` need Bash 4+ and GNU coreutils: Linux, WSL, or Git Bash on Windows (on macOS install GNU coreutils).
 
 A project gets the template files from an **annotated release tag** of hop-process-template with `tools/serasoft-sync.sh`, and checks them with `tools/serasoft-verify.sh`. The project does not share the template's Git history.
 
@@ -254,7 +254,7 @@ A project gets the template files from an **annotated release tag** of hop-proce
 
 | Category | Paths | Sync | Verify |
 |---|---|---|---|
-| Template | `main.hwf`, `src/template/**`, `config/template-*.json`, `metadata/rdbms/integrations_db_*.json`, `metadata/workflow-log/workflow_log.json`, `metadata/pipeline-run-configuration/local.json`, `metadata/workflow-run-configuration/local.json`, `db/liquibase/**`, `tools/serasoft-verify.sh`, `tools/serasoft-register-env.sh`, and this README as `src/template/README.md` | copied, overwritten | checked |
+| Template | `main.hwf`, `src/template/**`, `config/template-*.json`, `metadata/rdbms/integrations_db_*.json`, `metadata/workflow-log/workflow_log.json`, `metadata/pipeline-run-configuration/local.json`, `metadata/workflow-run-configuration/local.json`, `db/liquibase/**`, `tools/serasoft-verify.sh`, `tools/serasoft-register-env.sh`, `tools/serasoft-register-env.ps1`, and this README as `src/template/README.md` | copied, overwritten | checked |
 | SQLite seed | `db/sqlite/data/integrations_db`, `integrations_db.config`, `integrations_db.logs` | copied only when missing, never overwritten | not checked |
 | Project | everything else: `src/project/**`, `config/project-config.json`, the project environment files, `README.md`, `.gitignore`, … | never touched | not checked |
 
@@ -356,7 +356,9 @@ export HOP_HOME=/opt/hop
 - The project is registered with the name of its folder (`--project` to change it) and `config/project-config.json`; the environment is named `<project>-<env>` (`--hop-env` to change it), because environment names are shared by every project of the installation.
 - Every manifest line is checked first (missing or unreadable file, comma in a path, absolute path outside `/run/secrets/`): on error nothing is registered (exit code `1`; `64` for an unknown option or an invalid name).
 - The files are registered in the order of the manifest, which is the load order (a later file overrides an earlier one): keep the template files first and the secret last (see "Environments").
-- Re-run it after a change of the manifest: the existing environment gets the new file list. A project already registered with another folder is an error. If `hop-conf` fails after the project was registered, fix the cause and re-run: the project is kept and the environment is created.
+- Keep the project folder path ASCII and without `&`, `^`, `%`: the script refuses the latter (`cmd.exe` would interpret them), and non-ASCII characters may not survive the Windows console code pages.
+
+Re-run it after a change of the manifest: the existing environment gets the new file list. A project already registered with another folder is an error. If `hop-conf` fails after the project was registered, fix the cause and re-run: the project is kept and the environment is created.
 - `hop-conf` writes the `hop-config.json` of the installation (`$HOP_HOME/config`, or `HOP_CONFIG_FOLDER` when set): run the script with the same `HOP_HOME` and `HOP_CONFIG_FOLDER` that `hop_runner.sh` uses.
 
 Then:
@@ -364,6 +366,30 @@ Then:
 ```
 hop_runner.sh main.hwf -prj:<project> -env:<project>-prod -param:p_base_process_name=<process>
 ```
+
+## Registering a local environment on Windows
+
+For local development with Hop GUI on Windows, `tools/serasoft-register-env.ps1` registers the project and one of its environments from `config/env/<env>.list`, like `tools/serasoft-register-env.sh` does on Linux. It runs on Windows PowerShell 5.1 (on every Windows 10/11) and PowerShell 7.
+
+1. **Secrets file.** Each `/run/secrets/<name>` line of the manifest is a Hop environment file with the variables of `config/secrets-example.json` and their real values, kept outside the repository in `%USERPROFILE%\.serasoft\secrets\<name>` or `<name>.json` (e.g. `C:\Users\me\.serasoft\secrets\myproject_local.json`):
+
+   ```json
+   { "variables": [ { "name": "myproject.db.pwd", "value": "..." } ] }
+   ```
+
+2. **Close Hop GUI**: it keeps the configuration in memory and may write `hop-config.json` again when it exits, dropping the registration.
+3. **Register**, from the project folder:
+
+   ```
+   powershell -NoProfile -ExecutionPolicy Bypass -File tools\serasoft-register-env.ps1 -Env local -HopHome C:\hop
+   ```
+
+   `-ExecutionPolicy Bypass` applies to this run only and changes no system setting. `-HopHome` can be left out when `HOP_HOME` is set. Other parameters: `-Project <name>` (default: the project folder name), `-HopEnv <name>` (default: `<project>-<env>`), `-SecretsDir <folder>`.
+4. Open Hop GUI and select the project and the environment printed by the script.
+
+Keep the project folder path ASCII and without `&`, `^`, `%`: the script refuses the latter (`cmd.exe` would interpret them), and non-ASCII characters may not survive the Windows console code pages.
+
+Re-run it after a change of the manifest: the environment gets the new file list. It stops before touching `hop-config.json` when a file of the manifest is missing, and when the project is already registered with another folder (use `-Project`).
 
 ## Migrating a template 1.0.x project
 
