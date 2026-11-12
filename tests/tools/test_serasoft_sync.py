@@ -199,7 +199,7 @@ def test_refuses_non_git_destination(template, tmp_path):
     plain.mkdir()
     r = sync(template, "--tag", "3.2.0", "--dest", str(plain))
     assert r.returncode == 1
-    assert "not the root of a Git work tree" in r.stderr
+    assert "not inside a Git work tree" in r.stderr
 
 
 def test_refuses_template_itself(template):
@@ -393,3 +393,89 @@ def test_no_ignored_warning_without_ignore_rules(template, project):
     r = sync(template, "--tag", "3.2.0", "--dest", str(project))
     assert r.returncode == 0, r.stderr
     assert "ignored by .gitignore" not in r.stderr
+
+
+@pytest.fixture
+def monorepo(tmp_path):
+    """A repository with the Hop project in etl/ and other content next to it."""
+    repo = tmp_path / "mono"
+    write(repo, "README.md", "mono\n")
+    write(repo, "reporting/README.md", "reports\n")
+    for rel, text in PROJECT_FILES.items():
+        write(repo, f"etl/{rel}", text)
+    git(repo, "init", "-q", "-b", "main")
+    commit_all(repo, "init")
+    return repo
+
+
+def outside_etl(repo):
+    status = git(repo, "status", "--porcelain", "--untracked-files=all")
+    # git() strips the output, which can eat the leading space of the first line
+    paths = [line.split(maxsplit=1)[1] for line in status.splitlines()]
+    return [p for p in paths if not p.startswith("etl/")]
+
+
+def test_creation_in_subfolder(template, monorepo):
+    etl = monorepo / "etl"
+    r = sync(template, "--tag", "3.2.0", "--dest", str(etl))
+    assert r.returncode == 0, r.stderr
+    assert "added=16 changed=0 removed=0 adopted=0 forced=0" in r.stdout
+    assert from_template(etl) == sorted(SHIPPED + SEEDS)
+    assert (etl / "SERASOFT_VERSION").is_file()
+    assert not (monorepo / "SERASOFT_VERSION").exists()
+    assert not (monorepo / "main.hwf").exists()
+    assert outside_etl(monorepo) == []
+    assert verify(etl).returncode == 0
+
+
+def test_second_sync_in_subfolder_changes_nothing(template, monorepo):
+    etl = monorepo / "etl"
+    assert sync(template, "--tag", "3.2.0", "--dest", str(etl)).returncode == 0
+    commit_all(monorepo, "first sync")
+    r = sync(template, "--tag", "3.2.0", "--dest", str(etl))
+    assert r.returncode == 0, r.stderr
+    assert "added=0 changed=0 removed=0" in r.stdout
+    assert git(monorepo, "status", "--porcelain") == ""
+
+
+def test_adopt_in_subfolder(template_with_legacy, tmp_path):
+    repo = tmp_path / "mono2x"
+    write(repo, "reporting/README.md", "reports\n")
+    for rel, text in LEGACY_FILES.items():
+        if rel != "README.md":
+            write(repo, f"etl/{rel}", text)
+    for rel, text in PROJECT_FILES.items():
+        write(repo, f"etl/{rel}", text)
+    git(repo, "init", "-q", "-b", "main")
+    commit_all(repo, "2.x project in etl/")
+    r = sync(template_with_legacy, "--tag", "3.2.0", "--dest", str(repo / "etl"), "--adopt-from", "2.1.2")
+    assert r.returncode == 0, r.stderr
+    assert "adopted=5 forced=0" in r.stdout
+    assert not (repo / "etl/config/default-env.json").exists()
+    assert outside_etl(repo) == []
+    assert verify(repo / "etl").returncode == 0
+
+
+def test_subfolder_refused_when_work_tree_is_dirty(template, monorepo):
+    write(monorepo, "reporting/draft.md", "uncommitted\n")
+    r = sync(template, "--tag", "3.2.0", "--dest", str(monorepo / "etl"))
+    assert r.returncode == 1
+    assert "uncommitted changes" in r.stderr
+    assert "mono has uncommitted changes" in r.stderr
+    assert not (monorepo / "etl/main.hwf").exists()
+
+
+def test_subfolder_root_gitignore_warning(template, monorepo):
+    write(monorepo, ".gitignore", "etl/config/*\n")
+    commit_all(monorepo, "ignore etl config")
+    r = sync(template, "--tag", "3.2.0", "--dest", str(monorepo / "etl"))
+    assert r.returncode == 0, r.stderr
+    warning = [l for l in r.stderr.splitlines() if l.startswith("WARNING: ignored by .gitignore")]
+    assert len(warning) == 1
+    assert "config/template-env.json" in warning[0]
+
+
+def test_refuses_folder_inside_template(template):
+    r = sync(template, "--tag", "3.2.0", "--dest", str(template / "docs"))
+    assert r.returncode == 1
+    assert "--dest is the template itself or a folder inside it" in r.stderr

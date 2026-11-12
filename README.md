@@ -296,6 +296,16 @@ tools/serasoft-sync.sh --tag 3.2.0 --dest ../myproject --adopt-from auto
 - A file adopted and then dismissed (because the new version no longer has it) is counted in both `adopted` and `removed` in the summary line.
 - `--adopt-from` is refused when the project already has a manifest.
 
+### Projects in a subfolder
+
+A Hop project may live in a subfolder of its repository (e.g. `etl/`, next to other content). Give that folder as `--dest`: the template files, `SERASOFT_VERSION` and `SERASOFT_MANIFEST.sha256` go there, nothing outside it is touched. The sync still refuses a work tree with uncommitted changes anywhere, so that its diff can be reviewed on its own:
+
+```
+tools/serasoft-sync.sh --tag 3.4.0 --dest ../myrepo/etl
+```
+
+Run the verify from the subfolder (in CI: `cd etl && tools/serasoft-verify.sh`). On the Serasoft Airflow platform, set `path: etl` for the project in `config/hop_projects.yaml` (SeraSoft/airflow-dags): the distribution copies only that subfolder.
+
 ### Checking a project
 
 From the project root, by hand or in its CI:
@@ -341,6 +351,7 @@ export HOP_HOME=/opt/hop
 <project>/tools/serasoft-register-env.sh --env prod
 ```
 
+- A project in a subfolder of its repository (see "Projects in a subfolder") has not been tried with `hop_runner.sh`.
 - Each `/run/secrets/<name>` line of the manifest becomes `/etc/serasoft/secrets/<name>` (the folder the platform uses on its SSH targets; change it with `--secrets-dir`). Keep those files readable only by the user that runs Hop (`chmod 600`).
 - The project is registered with the name of its folder (`--project` to change it) and `config/project-config.json`; the environment is named `<project>-<env>` (`--hop-env` to change it), because environment names are shared by every project of the installation.
 - Every manifest line is checked first (missing or unreadable file, comma in a path, absolute path outside `/run/secrets/`): on error nothing is registered (exit code `1`; `64` for an unknown option or an invalid name).
