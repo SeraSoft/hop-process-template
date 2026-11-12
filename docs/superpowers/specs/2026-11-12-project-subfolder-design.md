@@ -1,8 +1,8 @@
 # Design: Hop projects in a subfolder of a Git repository
 
-Status: approved in brainstorming, ready for implementation planning
+Status: implemented (plan `docs/superpowers/plans/2026-11-12-project-subfolder.md`)
 Repositories: SeraSoft/hop-process-template (this spec) and SeraSoft/airflow-dags
-Tracks: issues to be opened (one per task of the implementation plan), one PR per repository
+Tracks: #79 (PR #80); SeraSoft/airflow-dags#61, #62, #63 (PR SeraSoft/airflow-dags#64)
 Date: 2026-11-12
 
 ## Context
