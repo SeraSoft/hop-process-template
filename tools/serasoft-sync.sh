@@ -5,7 +5,7 @@
 # that has the tag. It does not commit: review the diff, commit, open the PR/MR
 # (README.md, "Template updates").
 #
-# Usage: tools/serasoft-sync.sh --tag <X.Y.Z> --dest <project repository>
+# Usage: tools/serasoft-sync.sh --tag <X.Y.Z> --dest <project folder: a Git repository or a folder inside one>
 #                               [--adopt-from <tag|auto> [--force]]
 set -euo pipefail
 
@@ -14,7 +14,7 @@ SEEDS=(db/sqlite/data/integrations_db db/sqlite/data/integrations_db.config db/s
 LIQUIBASE=db/liquibase/master.xml
 
 usage() {
-  echo "usage: tools/serasoft-sync.sh --tag <X.Y.Z> --dest <project repository> [--adopt-from <tag|auto> [--force]]" >&2
+  echo "usage: tools/serasoft-sync.sh --tag <X.Y.Z> --dest <project folder: a Git repository or a folder inside one> [--adopt-from <tag|auto> [--force]]" >&2
   exit 64
 }
 die() { echo "ERROR: $*" >&2; exit 1; }
@@ -46,10 +46,14 @@ commit="$(git -C "$upstream" rev-parse --verify --quiet "refs/tags/$tag^{commit}
 
 [[ -d "$dest" ]] || die "$dest is not a directory"
 dest="$(cd "$dest" && pwd -P)"
-[[ "$(git -C "$dest" rev-parse --show-toplevel 2>/dev/null)" == "$dest" ]] \
-  || die "$dest is not the root of a Git work tree"
-[[ "$dest" != "$(cd "$upstream" && pwd -P)" ]] || die "--dest is the template itself"
-[[ -z "$(git -C "$dest" status --porcelain)" ]] || die "$dest has uncommitted changes"
+# The project is --dest: the root of a work tree or a folder inside one.
+top="$(git -C "$dest" rev-parse --show-toplevel 2>/dev/null)" \
+  || die "$dest is not inside a Git work tree"
+template_root="$(cd "$upstream" && pwd -P)"
+[[ "$dest" != "$template_root" && "$dest" != "$template_root"/* ]] \
+  || die "--dest is the template itself or a folder inside it"
+# Whole work tree: the sync diff must be reviewable on its own.
+[[ -z "$(git -C "$top" status --porcelain)" ]] || die "$top has uncommitted changes"
 [[ -z "$adopt_from" || ! -f "$dest/$MANIFEST" ]] \
   || die "--adopt-from is for the first sync only: $dest already has $MANIFEST"
 
