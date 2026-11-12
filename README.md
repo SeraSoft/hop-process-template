@@ -306,6 +306,8 @@ tools/serasoft-sync.sh --tag 3.4.0 --dest ../myrepo/etl
 
 Run the verify from the subfolder (in CI: `cd etl && tools/serasoft-verify.sh`). On the Serasoft Airflow platform, set `path: etl` for the project in `config/hop_projects.yaml` (SeraSoft/airflow-dags): the distribution copies only that subfolder.
 
+The registration scripts name the Hop project after its folder by default: for a project in `etl/` pass the real name, `tools/serasoft-register-env.sh --project <name>` or `tools\serasoft-register-env.ps1 -Project <name>` (the same name as the `hop_projects.yaml` entry on the platform).
+
 ### Checking a project
 
 From the project root, by hand or in its CI:
@@ -384,7 +386,7 @@ For local development with Hop GUI on Windows, `tools/serasoft-register-env.ps1`
    powershell -NoProfile -ExecutionPolicy Bypass -File tools\serasoft-register-env.ps1 -Env local -HopHome C:\hop
    ```
 
-   `-ExecutionPolicy Bypass` applies to this run only and changes no system setting. `-HopHome` can be left out when `HOP_HOME` is set. Other parameters: `-Project <name>` (default: the project folder name), `-HopEnv <name>` (default: `<project>-<env>`), `-SecretsDir <folder>`.
+   `-ExecutionPolicy Bypass` applies to this run only and changes no system setting. `-HopHome` can be left out when `HOP_HOME` is set. Other parameters: `-Project <name>` (default: the project folder name; pass it for a project in a subfolder such as `etl/`), `-HopEnv <name>` (default: `<project>-<env>`), `-SecretsDir <folder>`.
 4. Open Hop GUI and select the project and the environment printed by the script.
 
 Keep the project folder path ASCII and without `&`, `^`, `%`: the script refuses the latter (`cmd.exe` would interpret them), and non-ASCII characters may not survive the Windows console code pages.

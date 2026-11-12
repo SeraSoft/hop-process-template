@@ -23,11 +23,11 @@ echo "$*" >> "$S/calls.log"
 has() { local n=$1 f=$2 a; while IFS='|' read -r a _; do [[ "$a" == "$n" ]] && return 0; done < "$f"; return 1; }
 case "$1" in
   -pl)
-    [[ -n "${FAKE_PL_FAIL:-}" ]] && exit 1
+    [[ -n "${FAKE_PL_FAIL:-}" ]] && { echo "fake pl boom" >&2; exit 1; }
     echo "Projects:"
     while IFS='|' read -r n h; do echo "  $n : $h"; echo "    Configuration file: file:$h/config/project-config.json"; done < "$S/projects" ;;
   -el)
-    [[ -n "${FAKE_EL_FAIL:-}" ]] && exit 1
+    [[ -n "${FAKE_EL_FAIL:-}" ]] && { echo "fake el boom" >&2; exit 1; }
     echo "Lifecycle environments:"
     while IFS='|' read -r n p f; do echo "  $n"; echo "    Purpose: x"; echo "    Project name: $p"; done < "$S/envs" ;;
   -pc)
@@ -238,6 +238,7 @@ def test_missing_project_config(setup):
 def test_list_failure(setup, switch, flag):
     r = run(setup, "-Env", "local", env={switch: "1"})
     assert r.returncode == 1 and "ERROR:" in r.stderr and f"hop-conf {flag} failed" in r.stderr
+    assert f"fake {flag[1:]} boom" in r.stderr  # the output of hop-conf is shown
 
 
 def test_error_action_preference_stop(setup):
@@ -246,3 +247,12 @@ def test_error_action_preference_stop(setup):
     assert r.returncode == 0, r.stderr
     assert "OK serasoft-register-env project=myproj hop-env=myproj-local files=4" in r.stdout
     assert (s["proj"] / "config/project-config.json").read_text() == PROJECT_CONFIG
+
+
+def test_missing_secret_message(setup):
+    s = setup
+    (s["secrets"] / "myproj_local").unlink()
+    r = run(s, "-Env", "local")
+    assert r.returncode == 1
+    assert "myproj_local.json" in r.stderr and "config/secrets-example.json" in r.stderr
+    assert calls(s) == []

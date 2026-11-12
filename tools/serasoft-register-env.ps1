@@ -72,11 +72,13 @@ if (-not (Test-Path -LiteralPath $Manifest -PathType Leaf)) { Exit-Error "manife
 $Files = @()
 foreach ($raw in [IO.File]::ReadAllLines($Manifest)) {
   $line = $raw.Trim()
+  $hint = ''
   if ($line -eq '' -or $line.StartsWith('#')) { continue }
   if ($line.StartsWith('/run/secrets/')) {
     $secret = $line.Substring('/run/secrets/'.Length)
     if ($secret -eq '' -or $secret.Contains('/') -or $secret.Contains('\')) { Exit-Error "${Manifest}: invalid secret path: $line" }
     $path = Join-Path $SecretsDir $secret
+    $hint = " (looked for $path and $path.json; create it from config/secrets-example.json)"
     if (-not (Test-Path -LiteralPath $path -PathType Leaf) -and (Test-Path -LiteralPath "$path.json" -PathType Leaf)) { $path = "$path.json" }
   } elseif ($line.StartsWith('/') -or $line.StartsWith('\') -or $line -match '^[A-Za-z]:') {
     Exit-Error "${Manifest}: absolute paths are allowed only under /run/secrets/: $line"
@@ -89,7 +91,7 @@ foreach ($raw in [IO.File]::ReadAllLines($Manifest)) {
   if (Test-Path -LiteralPath $path -PathType Leaf) {
     try { [IO.File]::OpenRead($path).Dispose(); $readable = $true } catch { $readable = $false }
   }
-  if (-not $readable) { Exit-Error "${Manifest}: $path (from '$line') is missing or not readable" }
+  if (-not $readable) { Exit-Error "${Manifest}: $path (from '$line') is missing or not readable$hint" }
   $Files += $path
 }
 if ($Files.Count -eq 0) { Exit-Error "$Manifest lists no file" }
@@ -98,7 +100,7 @@ if ($Files.Count -eq 0) { Exit-Error "$Manifest lists no file" }
 $ProjectConfig = [IO.Path]::Combine($ProjectHome, 'config', 'project-config.json')
 if (-not (Test-Path -LiteralPath $ProjectConfig -PathType Leaf)) { Exit-Error "$ProjectConfig not found" }
 $r = Invoke-HopConf @('-pl')
-if ($r.Code -ne 0) { Exit-Error 'hop-conf -pl failed' }
+if ($r.Code -ne 0) { Exit-Error ("hop-conf -pl failed`n" + $r.Out) }
 $RegisteredHome = ''
 foreach ($l in ($r.Out -split "`n")) {
   if ($l -match '^  (\S+) : (.*)$' -and $Matches[1] -ceq $opt.Project) { $RegisteredHome = $Matches[2].Trim(); break }
@@ -120,7 +122,7 @@ if (-not $RegisteredHome) {
 
 # --- environment ---
 $r = Invoke-HopConf @('-el')
-if ($r.Code -ne 0) { Exit-Error 'hop-conf -el failed' }
+if ($r.Code -ne 0) { Exit-Error ("hop-conf -el failed`n" + $r.Out) }
 $Action = '-ec'
 foreach ($l in ($r.Out -split "`n")) {
   if ($l -match '^  (\S+)\s*$' -and $Matches[1] -ceq $opt.HopEnv) { $Action = '-em'; break }
