@@ -61,7 +61,7 @@ template_root="$(cd "$upstream" && pwd -P)"
 owned_path() {
   [[ "/$1/" != */../* && "$1" != */ ]] || return 1
   case "$1" in
-    main.hwf|tools/serasoft-verify.sh|tools/serasoft-register-env.sh) return 0 ;;
+    main.hwf|tools/serasoft-verify.sh|tools/serasoft-register-env.sh|tools/serasoft-register-env.ps1) return 0 ;;
     src/template/*|db/liquibase/*) return 0 ;;
     config/template-*.json) [[ "$1" != config/*/* ]] ;;
     metadata/rdbms/integrations_db_*.json) [[ "$1" != metadata/rdbms/*/* ]] ;;
