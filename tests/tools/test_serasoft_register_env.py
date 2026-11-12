@@ -17,6 +17,7 @@ touch "$S/projects" "$S/envs"
 echo "$*" >> "$S/calls.log"
 case "$1" in
   -pl)
+    if [[ -n "${FAKE_PL_FAIL:-}" ]]; then echo "fake pl boom" >&2; exit 1; fi
     echo "Projects:"
     while IFS='|' read -r n h; do
       echo "  $n : $h"
@@ -24,6 +25,7 @@ case "$1" in
     done < "$S/projects"
     echo "Search: include project text files set to 'true'" ;;
   -el)
+    if [[ -n "${FAKE_EL_FAIL:-}" ]]; then echo "fake el boom" >&2; exit 1; fi
     echo "Lifecycle environments:"
     while IFS='|' read -r n p f; do
       echo "  $n"
@@ -259,3 +261,20 @@ def test_project_home_with_space_read_entirely(setup):
     r = run(s, "--env", "prod", "--secrets-dir", str(s["secrets"]))
     assert r.returncode == 0, r.stderr
     assert not any(c.startswith("-pc") for c in calls(s))
+
+
+@pytest.mark.parametrize("switch,flag", [("FAKE_PL_FAIL", "-pl"), ("FAKE_EL_FAIL", "-el")])
+def test_list_failure_shows_hop_conf_output(setup, switch, flag):
+    s = setup
+    r = run(s, "--env", "prod", "--secrets-dir", str(s["secrets"]), env={switch: "1"})
+    assert r.returncode == 1
+    assert f"hop-conf.sh {flag} failed" in r.stderr and f"fake {flag[1:]} boom" in r.stderr
+
+
+def test_missing_secret_message(setup):
+    s = setup
+    (s["secrets"] / "myproj_prod").unlink()
+    r = run(s, "--env", "prod", "--secrets-dir", str(s["secrets"]))
+    assert r.returncode == 1
+    assert "myproj_prod" in r.stderr and "config/secrets-example.json" in r.stderr
+    assert calls(s) == []

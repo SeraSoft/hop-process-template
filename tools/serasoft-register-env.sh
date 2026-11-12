@@ -63,7 +63,9 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     path="$home/$line"
   fi
   [[ "$path" != *,* ]] || die "$manifest: the path of '$line' contains a comma: $path"
-  [[ -f "$path" && -r "$path" ]] || die "$manifest: $path (from '$line') is missing or not readable"
+  hint=""
+  [[ "$line" == /run/secrets/* ]] && hint=" (create it from config/secrets-example.json)"
+  [[ -f "$path" && -r "$path" ]] || die "$manifest: $path (from '$line') is missing or not readable$hint"
   files+=("$path")
 done < "$manifest"
 [[ ${#files[@]} -gt 0 ]] || die "$manifest lists no file"
