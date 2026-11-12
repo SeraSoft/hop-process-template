@@ -37,6 +37,7 @@ on Swarm.
 | 6 | `tools/serasoft-migrate-1x.py`: out of scope | No 1.0.x project in a subfolder seen so far |
 | 7 | Releases: template `3.4.0`, airflow-dags `v1.8.0` | New features |
 | 8 | One spec and one plan (this repository) for both; airflow-dags gets a short spec with its own decisions pointing here | The two changes are designed together, implemented and reviewed separately |
+| 9 | Marker `.serasoft-path` (the path, one line) in every version folder with a path, written before the atomic rename; an existing folder holding another path fails the project, pointer unchanged | Different paths can give the same suffix (`a/b`, `a-b`): without the marker a switch on the same commit would reuse a folder with other content |
 
 ## airflow-dags: distribution
 
@@ -75,6 +76,13 @@ the Python side.
   otherwise the project fails with `path '<path>' not found in <repo> at <commit12>`
   (exit as the other per-project errors; the other projects go on). Only
   `"$work/src/$path/."` is copied to the share.
+- Marker: with a path, the version folder gets a file `.serasoft-path` (the path
+  and a newline), written before the atomic rename. When the folder already
+  exists (also in the "unchanged" shortcut) its marker must equal the path,
+  otherwise the project fails with
+  `version folder <dir> holds path '<found>', not '<path>': rename the folder in the repository or make a new commit`
+  and the pointer does not move (`a/b` and `a-b` give the same suffix).
+  Folders without path get no marker and are not checked.
 - Pointers (`<project>.current`, `<project>@<ref>.ref`), the "unchanged" check
   (pointer equals `dir`), the `.serasoft-current` marker, retention and grace
   period work on version names and need no change.

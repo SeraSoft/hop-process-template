@@ -428,6 +428,16 @@ def test_creation_in_subfolder(template, monorepo):
     assert verify(etl).returncode == 0
 
 
+def test_second_sync_in_subfolder_changes_nothing(template, monorepo):
+    etl = monorepo / "etl"
+    assert sync(template, "--tag", "3.2.0", "--dest", str(etl)).returncode == 0
+    commit_all(monorepo, "first sync")
+    r = sync(template, "--tag", "3.2.0", "--dest", str(etl))
+    assert r.returncode == 0, r.stderr
+    assert "added=0 changed=0 removed=0" in r.stdout
+    assert git(monorepo, "status", "--porcelain") == ""
+
+
 def test_adopt_in_subfolder(template_with_legacy, tmp_path):
     repo = tmp_path / "mono2x"
     write(repo, "reporting/README.md", "reports\n")
@@ -468,4 +478,4 @@ def test_subfolder_root_gitignore_warning(template, monorepo):
 def test_refuses_folder_inside_template(template):
     r = sync(template, "--tag", "3.2.0", "--dest", str(template / "docs"))
     assert r.returncode == 1
-    assert "template" in r.stderr
+    assert "--dest is the template itself or a folder inside it" in r.stderr
