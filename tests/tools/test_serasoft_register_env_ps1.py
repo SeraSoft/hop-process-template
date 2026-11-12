@@ -23,15 +23,18 @@ echo "$*" >> "$S/calls.log"
 has() { local n=$1 f=$2 a; while IFS='|' read -r a _; do [[ "$a" == "$n" ]] && return 0; done < "$f"; return 1; }
 case "$1" in
   -pl)
+    [[ -n "${FAKE_PL_FAIL:-}" ]] && exit 1
     echo "Projects:"
     while IFS='|' read -r n h; do echo "  $n : $h"; echo "    Configuration file: file:$h/config/project-config.json"; done < "$S/projects" ;;
   -el)
+    [[ -n "${FAKE_EL_FAIL:-}" ]] && exit 1
     echo "Lifecycle environments:"
     while IFS='|' read -r n p f; do echo "  $n"; echo "    Purpose: x"; echo "    Project name: $p"; done < "$S/envs" ;;
   -pc)
     shift
     while [[ $# -gt 0 ]]; do case "$1" in -p) n=$2 ;; -ph) h=$2 ;; esac; shift 2; done
     has "$n" "$S/projects" && exit 1
+    [[ -n "${FAKE_STDERR:-}" ]] && echo "fake stderr line" >&2
     echo "$n|$h" >> "$S/projects"
     if [[ -n "${FAKE_REWRITE:-}" ]]; then echo '{"rewritten": true}' > "$h/config/project-config.json"; fi
     if [[ -n "${FAKE_PC_FAIL:-}" ]]; then echo "fake pc boom" >&2; exit 1; fi ;;
@@ -77,17 +80,21 @@ def setup(tmp_path):
     return {"hop": hop, "state": state, "proj": proj, "profile": profile, "secrets": secrets, "tmp": tmp_path}
 
 
-def run(s, *args, env=None):
+def run(s, *args, env=None, strict=False):
     e = {"FAKE_HOP_STATE": str(s["state"]), "USERPROFILE": str(s["profile"]), "HOP_HOME": str(s["hop"]),
          "HOME": "/tmp", **(env or {})}
     flags = []
     for k, v in e.items():
         if v is not None:
             flags += ["-e", f"{k}={v}"]
+    script = str(s["proj"] / "tools" / "serasoft-register-env.ps1")
+    if strict:  # caller with $ErrorActionPreference = 'Stop' (e.g. set by a profile)
+        pw = ["-Command", "$ErrorActionPreference='Stop'; & '" + script + "' " + " ".join(args) + "; exit $LASTEXITCODE"]
+    else:
+        pw = ["-File", script, *args]
     return subprocess.run(
         ["docker", "run", "--rm", "--user", f"{os.getuid()}:{os.getgid()}", "-v", f"{s['tmp']}:{s['tmp']}",
-         "-w", str(s["tmp"]), *flags, IMAGE, "pwsh", "-NoProfile", "-File",
-         str(s["proj"] / "tools" / "serasoft-register-env.ps1"), *args],
+         "-w", str(s["tmp"]), *flags, IMAGE, "pwsh", "-NoProfile", *pw],
         capture_output=True, text=True, check=False)
 
 
@@ -147,6 +154,7 @@ def test_hop_home_parameter(setup):
     s = setup
     r = run(s, "-Env", "local", "-HopHome", str(s["hop"]), env={"HOP_HOME": None})
     assert r.returncode == 0, r.stderr
+    assert f"-ec -e myproj-local -ep myproj -eu local -eg {files(s, s['secrets'] / 'myproj_local')}" in calls(s)
 
 
 @pytest.mark.parametrize("change,message", [
@@ -155,6 +163,7 @@ def test_hop_home_parameter(setup):
     (lambda s: (s["secrets"] / "myproj_local").unlink(), "missing or not readable"),
     (lambda s: (s["proj"] / "config/env/local.list").write_text("/etc/passwd\n"), "absolute paths"),
     (lambda s: (s["proj"] / "config/env/local.list").write_text("C:\\x\\y.json\n"), "absolute paths"),
+    (lambda s: (s["proj"] / "config/env/local.list").write_text("\\\\server\\share\\x.json\n"), "absolute paths"),
     (lambda s: (s["proj"] / "config/env/local.list").write_text("/run/secrets/a/b\n"), "invalid secret path"),
     (lambda s: (s["proj"] / "config/env/local.list").write_text("# only comments\n\n"), "lists no file"),
 ])
@@ -215,3 +224,25 @@ def test_invalid_name(setup):
 def test_missing_hop_home(setup):
     r = run(setup, "-Env", "local", env={"HOP_HOME": None})
     assert r.returncode == 1 and "HOP_HOME" in r.stderr
+
+
+def test_missing_project_config(setup):
+    s = setup
+    (s["proj"] / "config/project-config.json").unlink()
+    r = run(s, "-Env", "local")
+    assert r.returncode == 1 and "ERROR:" in r.stderr and "project-config.json" in r.stderr
+    assert not any(c.startswith(("-pc", "-ec", "-em")) for c in calls(s))
+
+
+@pytest.mark.parametrize("switch,flag", [("FAKE_PL_FAIL", "-pl"), ("FAKE_EL_FAIL", "-el")])
+def test_list_failure(setup, switch, flag):
+    r = run(setup, "-Env", "local", env={switch: "1"})
+    assert r.returncode == 1 and "ERROR:" in r.stderr and f"hop-conf {flag} failed" in r.stderr
+
+
+def test_error_action_preference_stop(setup):
+    s = setup
+    r = run(s, "-Env", "local", env={"FAKE_STDERR": "1", "FAKE_REWRITE": "1"}, strict=True)
+    assert r.returncode == 0, r.stderr
+    assert "OK serasoft-register-env project=myproj hop-env=myproj-local files=4" in r.stdout
+    assert (s["proj"] / "config/project-config.json").read_text() == PROJECT_CONFIG

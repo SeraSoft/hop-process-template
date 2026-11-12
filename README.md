@@ -72,7 +72,7 @@ hop-run.sh -j myproject -e myproject-dev -r local -f /path/to/myproject/main.hwf
 | `config/template-*.json` | template | template variables and database defaults (see "Environments") |
 | `config/project-config.json` | project | the Hop project configuration |
 | `config/<project>-<env>.json`, `config/<short name>.properties` | project | project variables per environment, optional variables per process |
-| `config/env/<env>.list` | project | load order of the environment files, for the Serasoft Airflow platform and `tools/serasoft-register-env.sh` |
+| `config/env/<env>.list` | project | load order of the environment files, for the Serasoft Airflow platform and `tools/serasoft-register-env.sh` / `tools/serasoft-register-env.ps1` |
 | `metadata/` | template and project | Hop metadata: the integrations database connections and run configurations are template-owned, the project adds its own |
 | `db/liquibase/`, `db/sqlite/data/` | template | changelog of the integrations database and SQLite seeds |
 | `tools/` | template | `serasoft-verify.sh`, `serasoft-register-env.sh`, `serasoft-register-env.ps1` |
@@ -246,7 +246,7 @@ The process receives `${operations.to.import}` = `972,15004,763,10282`. Do not u
 
 ## Template updates
 
-The scripts need Bash 4+ and GNU coreutils: Linux, WSL, or Git Bash on Windows (on macOS install GNU coreutils).
+`serasoft-sync.sh` and `serasoft-verify.sh` need Bash 4+ and GNU coreutils: Linux, WSL, or Git Bash on Windows (on macOS install GNU coreutils).
 
 A project gets the template files from an **annotated release tag** of hop-process-template with `tools/serasoft-sync.sh`, and checks them with `tools/serasoft-verify.sh`. The project does not share the template's Git history.
 
@@ -356,7 +356,9 @@ export HOP_HOME=/opt/hop
 - The project is registered with the name of its folder (`--project` to change it) and `config/project-config.json`; the environment is named `<project>-<env>` (`--hop-env` to change it), because environment names are shared by every project of the installation.
 - Every manifest line is checked first (missing or unreadable file, comma in a path, absolute path outside `/run/secrets/`): on error nothing is registered (exit code `1`; `64` for an unknown option or an invalid name).
 - The files are registered in the order of the manifest, which is the load order (a later file overrides an earlier one): keep the template files first and the secret last (see "Environments").
-- Re-run it after a change of the manifest: the existing environment gets the new file list. A project already registered with another folder is an error. If `hop-conf` fails after the project was registered, fix the cause and re-run: the project is kept and the environment is created.
+- Keep the project folder path ASCII and without `&`, `^`, `%`: the script refuses the latter (`cmd.exe` would interpret them), and non-ASCII characters may not survive the Windows console code pages.
+
+Re-run it after a change of the manifest: the existing environment gets the new file list. A project already registered with another folder is an error. If `hop-conf` fails after the project was registered, fix the cause and re-run: the project is kept and the environment is created.
 - `hop-conf` writes the `hop-config.json` of the installation (`$HOP_HOME/config`, or `HOP_CONFIG_FOLDER` when set): run the script with the same `HOP_HOME` and `HOP_CONFIG_FOLDER` that `hop_runner.sh` uses.
 
 Then:
@@ -379,11 +381,13 @@ For local development with Hop GUI on Windows, `tools/serasoft-register-env.ps1`
 3. **Register**, from the project folder:
 
    ```
-   powershell -ExecutionPolicy Bypass -File tools\serasoft-register-env.ps1 -Env local -HopHome C:\hop
+   powershell -NoProfile -ExecutionPolicy Bypass -File tools\serasoft-register-env.ps1 -Env local -HopHome C:\hop
    ```
 
    `-ExecutionPolicy Bypass` applies to this run only and changes no system setting. `-HopHome` can be left out when `HOP_HOME` is set. Other parameters: `-Project <name>` (default: the project folder name), `-HopEnv <name>` (default: `<project>-<env>`), `-SecretsDir <folder>`.
 4. Open Hop GUI and select the project and the environment printed by the script.
+
+Keep the project folder path ASCII and without `&`, `^`, `%`: the script refuses the latter (`cmd.exe` would interpret them), and non-ASCII characters may not survive the Windows console code pages.
 
 Re-run it after a change of the manifest: the environment gets the new file list. It stops before touching `hop-config.json` when a file of the manifest is missing, and when the project is already registered with another folder (use `-Project`).
 

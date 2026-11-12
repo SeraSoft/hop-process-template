@@ -54,8 +54,14 @@ if (-not $HopHome) { $HopHome = $env:HOP_HOME }
 if (-not $HopHome) { Exit-Error 'HOP_HOME environment variable is not set (or use -HopHome)' }
 if ($OnWindows) { $HopConf = Join-Path $HopHome 'hop-conf.bat' } else { $HopConf = Join-Path $HopHome 'hop-conf.sh' }
 if (-not (Test-Path -LiteralPath $HopConf -PathType Leaf)) { Exit-Error "$HopConf not found" }
+# hop-conf.bat forwards %* unquoted: cmd.exe would interpret these characters in a path
+$CmdChars = '[&^%]'
+if ($OnWindows -and $ProjectHome -match $CmdChars) { Exit-Error "project folder $ProjectHome contains a character that cmd.exe would interpret (& ^ %)" }
 
 function Invoke-HopConf([string[]]$HopArgs) {
+  # a caller (profile, session) with 'Stop' must not turn stderr lines of hop-conf into terminating errors
+  $ErrorActionPreference = 'Continue'
+  $PSNativeCommandUseErrorActionPreference = $false
   $out = & $HopConf @HopArgs 2>&1 | ForEach-Object { "$_" }
   return @{ Code = $LASTEXITCODE; Out = ($out -join "`n") }
 }
@@ -78,6 +84,7 @@ foreach ($raw in [IO.File]::ReadAllLines($Manifest)) {
     $path = Join-Path $ProjectHome ($line.Replace('/', [IO.Path]::DirectorySeparatorChar))
   }
   if ($path.Contains(',')) { Exit-Error "${Manifest}: the path of '$line' contains a comma: $path" }
+  if ($OnWindows -and $path -match $CmdChars) { Exit-Error "${Manifest}: the path of '$line' contains a character that cmd.exe would interpret (& ^ %): $path" }
   $readable = $false
   if (Test-Path -LiteralPath $path -PathType Leaf) {
     try { [IO.File]::OpenRead($path).Dispose(); $readable = $true } catch { $readable = $false }

@@ -48,7 +48,7 @@ would store `/c/...` paths that Hop on Windows cannot read.
   directory.
 - Names (`-Env`, `-Project`, `-HopEnv`) must match `^[A-Za-z0-9_.-]+$`.
 - Missing `-HopHome` and `HOP_HOME`, or no `hop-conf.bat` (Windows) /
-  executable `hop-conf.sh` (elsewhere) in it: error.
+  `hop-conf.sh` (elsewhere, used by the tests) in it: error.
 
 Exit codes: 0 success; 64 usage error (unknown or missing parameter, invalid
 name); 1 manifest, file or registration error. Messages on stderr start with
@@ -67,7 +67,10 @@ Same as `serasoft-register-env.sh`:
    separator); `/run/secrets/<name>` (one path component) → `<secrets-dir>\<name>`,
    or `<secrets-dir>\<name>.json` if the first does not exist; any other
    absolute path (`/…`, `C:\…`, `\\…`) → error; a resolved path containing `,`
-   → error; every file must exist and be readable; an empty list → error. No
+   → error; on Windows only, a resolved path (and the project folder) containing
+   `&`, `^` or `%` → error (`hop-conf.bat` forwards `%*` unquoted and PowerShell
+   quotes an argument only if it has whitespace, so `cmd.exe` would interpret
+   them); every file must exist and be readable; an empty list → error. No
    `hop-conf` call unless every line passes.
 2. **Project**: `hop-conf -pl`; lines `  <name> : <home>`. Not registered →
    `hop-conf -pc -p <project> -ph <folder> -pf config/project-config.json`; the
@@ -77,7 +80,11 @@ Same as `serasoft-register-env.sh`:
    home → exit 1 naming both.
 3. **Environment**: `hop-conf -el`; lines `  <name>`. Missing → `-ec`, existing
    → `-em`, with `-e <hop-env> -ep <project> -eu <env> -eg <files joined with ,>`.
-4. **Summary** on stdout:
+4. `Invoke-HopConf` sets `$ErrorActionPreference = 'Continue'` (and
+   `$PSNativeCommandUseErrorActionPreference = $false`) in its own scope, so a
+   profile or session with `'Stop'` does not turn `hop-conf.bat` stderr lines
+   into terminating errors, which would skip the `project-config.json` restore.
+5. **Summary** on stdout:
    `OK serasoft-register-env project=<project> hop-env=<hop-env> files=<n>`
    followed by `  Hop GUI: select project <project>, environment <hop-env>`.
 
@@ -91,7 +98,7 @@ Windows" (after "Running with cron"):
   `%USERPROFILE%\.serasoft\secrets\<name>` or `<name>.json`, where `<name>` is
   the `/run/secrets/<name>` line of the manifest;
 - the command:
-  `powershell -ExecutionPolicy Bypass -File tools\serasoft-register-env.ps1 -Env local [-HopHome C:\hop]`
+  `powershell -NoProfile -ExecutionPolicy Bypass -File tools\serasoft-register-env.ps1 -Env local [-HopHome C:\hop]`
   (`-ExecutionPolicy Bypass` applies to that run only and changes no system
   setting);
 - close Hop GUI before running it: Hop GUI keeps the configuration in memory
@@ -117,9 +124,22 @@ script.
 - A test that the script file is ASCII only.
 - `tests/tools/test_serasoft_sync.py`: the script is template-owned (shipped,
   in the manifest).
-- Real run by the user on Windows with Windows PowerShell 5.1: register a
-  project with `-Env local`, open Hop GUI, run `check_state.hwf` on a process;
-  re-run after changing the manifest.
+- Manual checklist for the user (Windows PowerShell 5.1, Hop 2.16):
+  (a) the README command with Hop GUI closed, with `-HopHome` and with only
+  `HOP_HOME`: OK line, exit 0;
+  (b) Hop GUI: select project/environment, run `check_state.hwf` on a process;
+  `hop-config.json` has `C:\...` paths and the secrets `.json` is used;
+  (c) re-run unchanged (environment modified, project kept), then change the
+  manifest and re-run (new list in the GUI);
+  (d) project path with a space;
+  (e) project path with an accented character, run twice;
+  (f) path with `&`: refused with ERROR, nothing registered (the `& ^ %` check
+  runs only on Windows, so it cannot be unit-tested on Linux);
+  (g) a profile with `$ErrorActionPreference='Stop'` on a fresh project (stderr
+  and project-config restore path);
+  (h) errors: missing secrets file (exit 1, `hop-config.json` unchanged), bad
+  parameter (exit 64), `git status` clean afterwards;
+  (i) optionally the same with `pwsh -File`.
 
 ## Out of scope
 
