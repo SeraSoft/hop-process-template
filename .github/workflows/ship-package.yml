@@ -8,38 +8,71 @@ on:
     # ("GitHub Releases requires a tag").
     tags:
       - '*'             # Also works if you push a tag like v1.0.0
+  # Attach the fixed-name ZIP to a release published before it existed: the
+  # versioned ZIP already published for that release is left as it is.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag (e.g. 3.5.0)
+        required: true
 
 jobs:
   build-zip:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Set version variable
+        env:
+          TAG_INPUT: ${{ inputs.tag }}
+          REF_NAME: ${{ github.ref_name }}
+        run: echo "TAG_VERSION=${TAG_INPUT:-$REF_NAME}" >> "$GITHUB_ENV"
+
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ env.TAG_VERSION }}
+          # tools/serasoft-sync.sh reads the annotated tag from the repository
+          fetch-depth: 0
+
+      - name: Annotated tag
+        # actions/checkout can leave the checked-out tag lightweight
+        run: git fetch --force origin "refs/tags/${TAG_VERSION}:refs/tags/${TAG_VERSION}"
 
       - name: Set up ZIP directory
+        # The template files, SERASOFT_VERSION and SERASOFT_MANIFEST.sha256 come
+        # from tools/serasoft-sync.sh, exactly as in a project synchronized from
+        # the tag: a project created from the ZIP needs no adoption. Then the
+        # project files the ZIP has always shipped, never overwriting a synced one.
         run: |
-          mkdir -p hop-process-template/
-          cp README.md hop-process-template/
-          cp main.hwf hop-process-template/
-          cp .gitignore hop-process-template/
-          cp -r src/ hop-process-template/
-          cp -r metadata/ hop-process-template/
-          cp -r integration-tests/ hop-process-template/
-          cp -r db/ hop-process-template/
-          cp -r config/ hop-process-template/
-          cp -r tools/ hop-process-template/
-        #  cp -r docs/ hop-process-template/
-
-      - name: Set version variable
-        run: echo "TAG_VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
-
-      - name: Create ZIP
-        run: zip -r hop-process-template-v${{ env.TAG_VERSION }}.zip hop-process-template
+          stage="$RUNNER_TEMP/stage/hop-process-template"
+          mkdir -p "$stage"
+          git init -q "$stage"
+          tools/serasoft-sync.sh --tag "$TAG_VERSION" --dest "$stage"
+          rm -rf "$stage/.git"
+          for p in README.md main.hwf .gitignore src metadata integration-tests db config tools; do
+            cp -r --update=none "$p" "$stage/"
+          done
+          (cd "$stage" && tools/serasoft-verify.sh)
+          (cd "$RUNNER_TEMP/stage" && zip -qr "$GITHUB_WORKSPACE/hop-process-template-v${TAG_VERSION}.zip" hop-process-template)
+          # Same archive under a fixed name: releases/latest/download/hop-process-template.zip
+          cp "hop-process-template-v${TAG_VERSION}.zip" hop-process-template.zip
 
       - name: Upload ZIP to Release
+        if: github.event_name != 'workflow_dispatch'
         uses: softprops/action-gh-release@v1
         with:
-          files: hop-process-template-v${{ env.TAG_VERSION }}.zip
+          tag_name: ${{ env.TAG_VERSION }}
+          files: |
+            hop-process-template-v${{ env.TAG_VERSION }}.zip
+            hop-process-template.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload fixed-name ZIP to an existing release
+        if: github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.TAG_VERSION }}
+          files: hop-process-template.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

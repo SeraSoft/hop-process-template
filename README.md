@@ -36,7 +36,12 @@ docker run --rm -v "$PWD/db/liquibase":/liquibase/changelog:ro liquibase/liquiba
 
 A new project gets the template from a release of hop-process-template, in one of two ways.
 
-**With the Serasoft projects plugin for Hop GUI** (a private Serasoft plugin, `hop-process-template-plugins`): create the project with the **Apply Serasoft Template** option. The plugin downloads the release ZIP named by `template.download.url` in `serasoft-hop-config.json`, in the Hop configuration folder; set it to the wanted release, e.g. `https://github.com/SeraSoft/hop-process-template/releases/download/3.3.0/hop-process-template-v3.3.0.zip`. The ZIP does not record the template version: once the project is a Git repository, record it with a one-off adoption from the same release, run from a checkout of hop-process-template (see "Adopting a project that already holds template files"), then commit:
+**With the Serasoft projects plugin for Hop GUI** (a private Serasoft plugin, `hop-process-template-plugins`): create the project with the **Apply Serasoft Template** option. The plugin downloads the release ZIP named by `template.download.url` in `serasoft-hop-config.json`, in the Hop configuration folder. Every release attaches the same ZIP under two names:
+
+- `https://github.com/SeraSoft/hop-process-template/releases/latest/download/hop-process-template.zip`: always the latest release (pre-releases excluded);
+- `https://github.com/SeraSoft/hop-process-template/releases/download/<tag>/hop-process-template-v<tag>.zip`: one release, to pin it.
+
+The ZIP is built with `tools/serasoft-sync.sh` and carries `SERASOFT_VERSION` and `SERASOFT_MANIFEST.sha256`: the project already records its template version, and its first template update is a normal sync (see "Creating or updating a project"). A project created from an older ZIP, without `SERASOFT_VERSION` (the versioned ZIPs of 3.5.0 and earlier releases), needs a one-off adoption from the same release before that, run from a checkout of hop-process-template (see "Adopting a project that already holds template files"), then commit:
 
 ```
 tools/serasoft-sync.sh --tag 3.3.0 --dest ../myproject --adopt-from 3.3.0
