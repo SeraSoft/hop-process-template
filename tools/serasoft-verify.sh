@@ -21,6 +21,14 @@ if ! check="$(sha256sum --check --strict "$MANIFEST" 2>&1)"; then
   echo "ERROR: template files modified or removed:" >&2
   grep -v ': OK$' <<<"$check" >&2 || true
   failed=1
+  # A Windows checkout with core.autocrlf=true writes CRLF: say so instead of a list of FAILED
+  crlf="$(grep -lU $'\r' "$MANIFEST" 2>/dev/null || true)"
+  while IFS= read -r f; do
+    if [[ -f "$f" ]] && grep -qU $'\r' "$f"; then crlf+="${crlf:+ }$f"; break; fi
+  done < <(sed -E 's/^[0-9a-f]{64} [ *]//; s/\r$//' "$MANIFEST")
+  if [[ -n "$crlf" ]]; then
+    echo "ERROR: CRLF line endings in the template files (e.g. $crlf): a Windows checkout with core.autocrlf=true; run 'git config core.autocrlf input' (or add a .gitattributes with '* text=auto eol=lf') and check the files out again (README, \"Template updates on Windows: line endings\")" >&2
+  fi
 fi
 
 for dir in "${OWNED_DIRS[@]}"; do

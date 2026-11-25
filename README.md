@@ -251,7 +251,7 @@ The process receives `${operations.to.import}` = `972,15004,763,10282`. Do not u
 
 ## Template updates
 
-`serasoft-sync.sh` and `serasoft-verify.sh` need Bash 4+ and GNU coreutils: Linux, WSL, or Git Bash on Windows (on macOS install GNU coreutils).
+`serasoft-sync.sh` and `serasoft-verify.sh` need Bash 4+ and GNU coreutils: Linux, or on Windows WSL, Git Bash or MSYS2 (see "Template updates on Windows: line endings"; on macOS install GNU coreutils).
 
 A project gets the template files from an **annotated release tag** of hop-process-template with `tools/serasoft-sync.sh`, and checks them with `tools/serasoft-verify.sh`. The project does not share the template's Git history.
 
@@ -345,9 +345,34 @@ Recommended in the project repository:
   SERASOFT_* text eol=lf
   src/template/** text eol=lf
   db/liquibase/** text eol=lf
+  tools/serasoft-* text eol=lf
   ```
 
 - a `.gitignore` with at least `logs/`, `temp/` and the environment files that hold credentials. It must not ignore template-owned paths: after a rule such as `config/*` add `!config/template-*.json` (and likewise for `db/sqlite/data/*` seeds), otherwise the written files are left out of the commit and the verify fails on a fresh clone.
+
+### Template updates on Windows: line endings
+
+On Windows run `serasoft-sync.sh` and `serasoft-verify.sh` from WSL, Git Bash (Git for Windows) or MSYS2, not from `cmd` or PowerShell, which do not run `.sh` scripts. To check a project, from its root folder in Git Bash:
+
+```
+tools/serasoft-verify.sh
+```
+
+From PowerShell the same check is `& "C:\Program Files\Git\bin\bash.exe" tools/serasoft-verify.sh`. If the script lost its executable bit (copies through Windows, WinSCP), run it as `bash tools/serasoft-verify.sh`.
+
+Git for Windows is installed with `core.autocrlf=true` by default: Git writes text files with CRLF line endings in the working copy and LF in the repository. The template files must stay LF everywhere, because `SERASOFT_MANIFEST.sha256` holds their checksums:
+
+- `serasoft-sync.sh` always writes the template files with LF, whatever the `core.autocrlf` of the template checkout (before 3.5.1 it wrote CRLF there, and the verify then failed in the project's CI on Linux);
+- in the project repository, set `git config core.autocrlf input`, or add the `.gitattributes` recommended in "Checking a project" (or simply `* text=auto eol=lf`). Otherwise every checkout writes CRLF and a local verify fails. The sync warns when the project converts line endings, `--adopt-from` says so when the files differ from the starting tag only by their line endings (fix the checkout instead of using `--force`), and the verify says so when it finds CRLF files.
+
+To fix an existing checkout, first commit or stash your changes (the last command discards uncommitted changes), then:
+
+```
+git config core.autocrlf input
+git rm --cached -r -q . && git reset --hard
+```
+
+A project synced from Windows with an older sync and `core.autocrlf=true` has a manifest of CRLF files: run the sync again (3.5.1 or later, same tag) and commit the result.
 
 ## Running with cron (`hop_runner.sh`)
 

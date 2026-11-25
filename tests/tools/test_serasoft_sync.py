@@ -482,3 +482,60 @@ def test_refuses_folder_inside_template(template):
     r = sync(template, "--tag", "3.2.0", "--dest", str(template / "docs"))
     assert r.returncode == 1
     assert "--dest is the template itself or a folder inside it" in r.stderr
+
+
+def test_no_line_ending_conversion_from_the_template_checkout(template, project):
+    # Git for Windows default: the template checkout has core.autocrlf=true; git archive
+    # would convert the files to CRLF and the manifest would not match a Linux checkout.
+    git(template, "config", "core.autocrlf", "true")
+    r = sync(template, "--tag", "3.2.0", "--dest", str(project))
+    assert r.returncode == 0, r.stderr
+    for rel in SHIPPED:
+        assert b"\r" not in (project / rel).read_bytes(), rel
+    assert verify(project).returncode == 0
+
+
+def test_warns_when_the_project_converts_line_endings(template, project):
+    git(project, "config", "core.autocrlf", "true")
+    r = sync(template, "--tag", "3.2.0", "--dest", str(project))
+    assert r.returncode == 0, r.stderr
+    assert "WARNING: core.autocrlf=true" in r.stderr
+    assert "core.autocrlf input" in r.stderr and "eol=lf" in r.stderr
+
+
+@pytest.mark.parametrize("setup", ["input", "attributes", "none"])
+def test_no_line_ending_warning_when_safe(template, project, setup):
+    if setup == "input":
+        git(project, "config", "core.autocrlf", "input")
+    elif setup == "attributes":
+        git(project, "config", "core.autocrlf", "true")
+        write(project, ".gitattributes", "* text=auto eol=lf\n")
+        commit_all(project, "eol")
+    r = sync(template, "--tag", "3.2.0", "--dest", str(project))
+    assert r.returncode == 0, r.stderr
+    assert "core.autocrlf" not in r.stderr
+
+
+def test_adopt_explains_crlf_only_differences(template_with_legacy, project_2x):
+    # A Windows checkout with core.autocrlf=true: the adopted files differ from the
+    # starting tag only by their line endings.
+    for rel in LEGACY_FILES:
+        f = project_2x / rel
+        if rel != "README.md" and f.exists():
+            f.write_bytes(f.read_bytes().replace(b"\n", b"\r\n"))
+    commit_all(project_2x, "CRLF checkout")
+    git(project_2x, "config", "core.autocrlf", "true")
+    r = sync(template_with_legacy, "--tag", "3.2.0", "--dest", str(project_2x), "--adopt-from", "2.1.2")
+    assert r.returncode == 1
+    assert "files differ from template 2.1.2" in r.stderr
+    assert "only by CRLF line endings" in r.stderr and "core.autocrlf input" in r.stderr
+    # the project's core.autocrlf is reported before the sync stops
+    assert "WARNING: core.autocrlf=true" in r.stderr
+    assert git(project_2x, "status", "--porcelain") == ""
+
+
+def test_adopt_real_change_has_no_crlf_hint(template_with_legacy, project_2x):
+    write(project_2x, "main.hwf", "<workflow>v0 patched</workflow>\n")
+    commit_all(project_2x, "local patch")
+    r = sync(template_with_legacy, "--tag", "3.2.0", "--dest", str(project_2x), "--adopt-from", "2.1.2")
+    assert r.returncode == 1 and "CRLF" not in r.stderr
