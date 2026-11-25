@@ -116,3 +116,29 @@ def test_outside_project_root(project):
 
 def test_arguments_rejected(project):
     assert verify(project, "extra").returncode == 64
+
+
+def test_crlf_template_files_explained(project):
+    p = project / "main.hwf"
+    p.write_bytes(p.read_bytes().replace(b"\n", b"\r\n"))
+    r = verify(project)
+    assert r.returncode == 1
+    assert "main.hwf" in r.stderr
+    assert "CRLF" in r.stderr and "core.autocrlf" in r.stderr
+
+
+def test_crlf_manifest_explained(project):
+    m = project / "SERASOFT_MANIFEST.sha256"
+    m.write_bytes(m.read_bytes().replace(b"\n", b"\r\n"))
+    for rel in OWNED:
+        f = project / rel
+        f.write_bytes(f.read_bytes().replace(b"\n", b"\r\n"))
+    r = verify(project)
+    assert r.returncode == 1
+    assert "CRLF" in r.stderr
+
+
+def test_modified_file_without_crlf_has_no_crlf_hint(project):
+    write(project, "main.hwf", "<workflow>changed</workflow>\n")
+    r = verify(project)
+    assert r.returncode == 1 and "CRLF" not in r.stderr

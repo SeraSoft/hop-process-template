@@ -102,7 +102,9 @@ extract() {
   while IFS=$'\t' read -r s p; do [[ -n "$s" ]] && src+=("$s"); done <<<"$listing"
   [[ ${#src[@]} -gt 0 ]] || die "no template file in $1"
   mkdir -p "$2"
-  { git -C "$upstream" archive "$1" -- "${src[@]}" | tar -x -C "$2"; } \
+  # no line-ending conversion: with core.autocrlf=true (Git for Windows default) git archive
+  # would write CRLF files, and the manifest would not match a checkout on Linux (CI)
+  { git -C "$upstream" -c core.autocrlf=false -c core.eol=lf archive "$1" -- "${src[@]}" | tar -x -C "$2"; } \
     || die "cannot extract the template files from $1"
   if [[ -f "$2/README.md" ]]; then
     mkdir -p "$2/src/template"
@@ -275,6 +277,14 @@ while IFS= read -r -d '' f; do ignored+=("$f"); done \
   < <(git -C "$dest" ls-files --others --ignored --exclude-standard -z -- "${new[@]}" "${seeds[@]}")
 [[ ${#ignored[@]} -eq 0 ]] \
   || warn "ignored by .gitignore in $dest: ${ignored[*]} (add them with git add -f, or un-ignore them: template files must be committed)"
+# A project that converts line endings gets CRLF template files at its next checkout:
+# the verify would fail (README, "Template updates on Windows: line endings").
+if [[ "$(git -C "$dest" config --get core.autocrlf || true)" == true ]]; then
+  attrs="$(git -C "$dest" check-attr eol text -- main.hwf)"
+  if [[ "$attrs" != *"eol: lf"* && "$attrs" != *"text: unset"* ]]; then
+    warn "core.autocrlf=true in $dest: Git will check out the template files with CRLF line endings and tools/serasoft-verify.sh will fail; run 'git config core.autocrlf input' there, or add a .gitattributes with '* text=auto eol=lf' (README, \"Template updates on Windows: line endings\")"
+  fi
+fi
 (cd "$dest" && sha256sum -- "${new[@]}") > "$dest/$MANIFEST"
 printf '%s %s\n' "$tag" "$commit" > "$dest/SERASOFT_VERSION"
 
