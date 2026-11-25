@@ -363,7 +363,7 @@ From PowerShell the same check is `& "C:\Program Files\Git\bin\bash.exe" tools/s
 Git for Windows is installed with `core.autocrlf=true` by default: Git writes text files with CRLF line endings in the working copy and LF in the repository. The template files must stay LF everywhere, because `SERASOFT_MANIFEST.sha256` holds their checksums:
 
 - `serasoft-sync.sh` always writes the template files with LF, whatever the `core.autocrlf` of the template checkout (before 3.5.1 it wrote CRLF there, and the verify then failed in the project's CI on Linux);
-- in the project repository, set `git config core.autocrlf input`, or add the `.gitattributes` recommended in "Checking a project" (or simply `* text=auto eol=lf`). Otherwise every checkout writes CRLF and a local verify fails. The sync warns when the project converts line endings, and the verify says so when it finds CRLF files.
+- in the project repository, set `git config core.autocrlf input`, or add the `.gitattributes` recommended in "Checking a project" (or simply `* text=auto eol=lf`). Otherwise every checkout writes CRLF and a local verify fails. The sync warns when the project converts line endings, `--adopt-from` says so when the files differ from the starting tag only by their line endings (fix the checkout instead of using `--force`), and the verify says so when it finds CRLF files.
 
 To fix an existing checkout, first commit or stash your changes (the last command discards uncommitted changes), then:
 

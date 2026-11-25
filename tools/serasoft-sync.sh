@@ -54,6 +54,16 @@ template_root="$(cd "$upstream" && pwd -P)"
   || die "--dest is the template itself or a folder inside it"
 # Whole work tree: the sync diff must be reviewable on its own.
 [[ -z "$(git -C "$top" status --porcelain)" ]] || die "$top has uncommitted changes"
+
+# A project that converts line endings gets CRLF template files at its next checkout
+# (reported first, also when a later check stops the sync):
+# the verify would fail (README, "Template updates on Windows: line endings").
+if [[ "$(git -C "$dest" config --get core.autocrlf || true)" == true ]]; then
+  attrs="$(git -C "$dest" check-attr eol text -- main.hwf)"
+  if [[ "$attrs" != *"eol: lf"* && "$attrs" != *"text: unset"* ]]; then
+    warn "core.autocrlf=true in $dest: Git will check out the template files with CRLF line endings and tools/serasoft-verify.sh will fail; run 'git config core.autocrlf input' there, or add a .gitattributes with '* text=auto eol=lf' (README, \"Template updates on Windows: line endings\")"
+  fi
+fi
 [[ -z "$adopt_from" || ! -f "$dest/$MANIFEST" ]] \
   || die "--adopt-from is for the first sync only: $dest already has $MANIFEST"
 
@@ -207,7 +217,7 @@ elif [[ -n "$adopt_from" ]]; then
     cand["${f#./}"]=1
   done < <(cd "$dest" && { find ./src/template ./db/liquibase ! -type d -print0 2>/dev/null || true; })
   mapfile -t cands < <(printf '%s\n' "${!cand[@]}" | LC_ALL=C sort)
-  modified=()
+  modified=() crlf_only=()
   for f in "${cands[@]}"; do
     [[ -e "$dest/$f" || -L "$dest/$f" ]] || continue
     if [[ -n "${in_from[$f]:-}" ]] \
@@ -215,12 +225,21 @@ elif [[ -n "$adopt_from" ]]; then
       adopted=$((adopted + 1))
     else
       modified+=("$f")
+      # same content once the CRs are removed: a CRLF checkout (core.autocrlf=true)
+      if [[ -n "${in_from[$f]:-}" && -f "$dest/$f" ]] \
+          && git -C "$upstream" cat-file blob "$from_commit:${in_from[$f]}" | cmp -s - <(tr -d '\r' < "$dest/$f"); then
+        crlf_only+=("$f")
+      fi
     fi
     [[ -n "${in_new[$f]:-}" ]] || adopt_rm["$f"]=1
   done
   if [[ ${#modified[@]} -gt 0 ]]; then
-    [[ "$force" -eq 1 ]] \
-      || die "files differ from template $adopt_from (local changes, or not from the template): ${modified[*]} (review them; --force overwrites or removes them)"
+    if [[ "$force" -ne 1 ]]; then
+      hint=""
+      [[ ${#crlf_only[@]} -eq 0 ]] \
+        || hint=$'\n'"ERROR: ${#crlf_only[@]} of them differ only by CRLF line endings (core.autocrlf=true?): run 'git config core.autocrlf input', check the files out again and re-run, instead of --force (README, \"Template updates on Windows: line endings\")"
+      die "files differ from template $adopt_from (local changes, or not from the template): ${modified[*]} (review them; --force overwrites or removes them)$hint"
+    fi
     forced=${#modified[@]}
     warn "--force: overwriting or removing files that differ from $adopt_from: ${modified[*]}"
   fi
@@ -277,14 +296,6 @@ while IFS= read -r -d '' f; do ignored+=("$f"); done \
   < <(git -C "$dest" ls-files --others --ignored --exclude-standard -z -- "${new[@]}" "${seeds[@]}")
 [[ ${#ignored[@]} -eq 0 ]] \
   || warn "ignored by .gitignore in $dest: ${ignored[*]} (add them with git add -f, or un-ignore them: template files must be committed)"
-# A project that converts line endings gets CRLF template files at its next checkout:
-# the verify would fail (README, "Template updates on Windows: line endings").
-if [[ "$(git -C "$dest" config --get core.autocrlf || true)" == true ]]; then
-  attrs="$(git -C "$dest" check-attr eol text -- main.hwf)"
-  if [[ "$attrs" != *"eol: lf"* && "$attrs" != *"text: unset"* ]]; then
-    warn "core.autocrlf=true in $dest: Git will check out the template files with CRLF line endings and tools/serasoft-verify.sh will fail; run 'git config core.autocrlf input' there, or add a .gitattributes with '* text=auto eol=lf' (README, \"Template updates on Windows: line endings\")"
-  fi
-fi
 (cd "$dest" && sha256sum -- "${new[@]}") > "$dest/$MANIFEST"
 printf '%s %s\n' "$tag" "$commit" > "$dest/SERASOFT_VERSION"
 
