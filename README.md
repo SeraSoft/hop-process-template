@@ -210,6 +210,14 @@ config/<project>-<env>.json
 
 Never add project variables to the template files: `tools/serasoft-sync.sh` overwrites them at every template update and `tools/serasoft-verify.sh` reports them as modified.
 
+## Files written by a process
+
+A project may run with its folder read-only: on the Serasoft Airflow platform every job mounts the projects share read-only, and each new version of a project is a new folder. A process must never write inside `${PROJECT_HOME}`:
+
+- **Template log and event file**: `serasoft.execution.log.filename` and `serasoft.execution.file.name` default to `${PROJECT_HOME}/logs/…` and `${PROJECT_HOME}/temp/…` (`config/template-env.json`). Where the project folder is read-only, override them in an environment file listed only in the manifests of those environments (for example `config/airflow.json` in `config/env/<env>.list` of the platform environments, not in the manifest of the local Hop GUI), pointing to `/tmp/<project>/logs/…` and `/tmp/<project>/temp/…`. Otherwise every run logs `Could not create folder "…/logs"` and loses the execution log attached to the feedback mail.
+- **Work files of the project** (intermediate CSV or Excel files, exports, sort or staging folders, downloads): in a folder given by a project variable set per environment, under `/tmp/<project>/` on the platform. `/tmp` of the job container exists only while the job runs: enough for files written and read within the same execution. Enable "Create parent folder" in the output transforms, so that the folder is created at run time.
+- **Files that must outlive the execution** (outputs for other systems, archives): to a database or to a destination agreed with the platform administrator, for example a separate writable share; never to the projects share.
+
 ## Process parameters (`p_process_params`)
 
 `main.hwf` declares only the template parameters: `p_base_process_name`, `p_log_filename` and `p_process_params`. The values specific to a process are passed through `p_process_params`:
@@ -608,8 +616,8 @@ The table below summarizes the set of base environment variables provided with t
 |serasoft.lock.mail.text|Sample text message used because a process cannot be started because a lock occurs. It includes the base process name, hostname, last job run timestamp, and log file name|`<p>The process ${p_base_process_name} on server ${v_hostname} can't be started because <strong>same process started at ${v_last_instance_start_timestamp} is not yet terminated</strong>.</p><p>Execution log file available at: ${p_log_filename}</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>`|
 |serasoft.application.error.mail.text|Sample text message used when an application error occurs. It includes the log file name and mentions that detailed exceptions are in the .csv file inside the `logs.zip` attachment|`<p>During process ${p_base_process_name}'s execution we collected some exceptions on integrations_log_details.</p><p>Process ${p_base_process_name}'s log and the .csv file with the collected exceptions are in the logs.zip file attached to this email.</p><p>Execution log file available at: ${p_log_filename}</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>`|
 |serasoft.notactive.mail.text|Sample text message used when a process cannot be started because it is not active. It includes the base process name, hostname, and log file name|`<p>The process ${p_base_process_name} on server ${v_hostname} can't be started because <strong>is set to not active</strong>.</p><p>Execution log file available at: ${p_log_filename}</p><p>PLEASE DO NOT REPLAY TO THIS EMAIL!</p>`|
-|serasoft.execution.log.filename|Log file name, attached to the feedback mail inside `logs.zip`|`${PROJECT_HOME}/logs/execution_log_${p_base_process_name}_${serasoft.project.main.workflow}_${v_process_run_timestamp}.log`|
-|serasoft.execution.file.name|File name with the events recorded, attached to the feedback mail inside `logs.zip`|`${PROJECT_HOME}/temp/execution_file_${p_base_process_name}_${serasoft.project.main.workflow}_${v_process_run_timestamp}.csv`|
+|serasoft.execution.log.filename|Log file name, attached to the feedback mail inside `logs.zip`; outside the project folder where it is read-only (see "Files written by a process")|`${PROJECT_HOME}/logs/execution_log_${p_base_process_name}_${serasoft.project.main.workflow}_${v_process_run_timestamp}.log`|
+|serasoft.execution.file.name|File name with the events recorded, attached to the feedback mail inside `logs.zip`; outside the project folder where it is read-only (see "Files written by a process")|`${PROJECT_HOME}/temp/execution_file_${p_base_process_name}_${serasoft.project.main.workflow}_${v_process_run_timestamp}.csv`|
 
 ## Exit codes
 
